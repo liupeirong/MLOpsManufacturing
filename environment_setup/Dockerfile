@@ -12,3 +12,8 @@ RUN conda update -n base -c defaults conda && \
     az extension add -n azure-cli-ml && \
     az --version && \
     chmod -R 777 /usr/local/envs/mlopstensorflow_ci/lib/python3.7
+
+# if this var isn't set, it defaults to $HOME/.azure/cliextensions
+# which doesn't exist when running in ADO and ADO sets HOME to
+# /home/vsts_azpcontainer
+ENV AZURE_EXTENSION_DIR /root/.azure/cliextensions

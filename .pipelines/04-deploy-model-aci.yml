@@ -45,13 +45,6 @@ stages:
         pipelineId: '$(resources.pipeline.model-train-ci.pipelineID)'
         artifactBuildId: ${{ parameters.artifactBuildId }}
     - task: AzureCLI@1
-      displayName: 'Install AzureML CLI'
-      inputs:
-        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
-        scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
-        inlineScript: 'az extension add -n azure-cli-ml'
-    - task: AzureCLI@1
       displayName: "Deploy to ACI (CLI)"
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'

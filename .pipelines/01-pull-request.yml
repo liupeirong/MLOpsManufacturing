@@ -1,0 +1,25 @@
+# Pipeline to run basic code quality tests as part of pull requests to the master branch.
+
+resources:
+  containers:
+  - container: mlops
+    image: public/mlops/tensorflow:latest
+    endpoint: mlopstensorflowacr 
+
+trigger: none
+pr:
+  branches:
+    include:
+    - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+container: mlops
+
+variables:
+- template: variables-template.yml
+- group: devopsforai-aml-vg
+
+steps:
+- template: code-quality-template.yml

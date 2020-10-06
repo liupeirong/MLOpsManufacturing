@@ -1,0 +1,53 @@
+# Pipeline for building the container image that is used by other pipelines for scoring.
+parameters:
+- name : artifactBuildId
+  displayName: Model Train CI Build ID. Default is 'latest'.
+  type: string
+  default: latest
+
+resources:
+  containers:
+  - container: mlops
+    image: mcr.microsoft.com/mlops/python:latest
+  pipelines:
+  - pipeline: model-train-ci
+    source: mlops-custom-training # Name of the triggering pipeline
+    trigger:
+      branches:
+        include:
+        - master
+
+pr: none
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - ml_model/scoring/
+    exclude:
+    - ml_model/scoring/deployment_config_aci.yml
+    - ml_model/scoring/deployment_config_aks.yml
+
+pool: 
+  vmImage: 'ubuntu-latest'
+
+container: mlops
+
+variables:
+- group: devopsforai-aml-vg
+- template: variables-template.yml
+
+steps:
+- template: get-model-id-artifact-template.yml
+  parameters:
+    projectId: '$(resources.pipeline.model-train-ci.projectID)'
+    pipelineId: '$(resources.pipeline.model-train-ci.pipelineID)'
+    artifactBuildId: ${{ parameters.artifactBuildId }}
+- template: package-model-template.yml
+  parameters:
+    modelId: $(MODEL_NAME):$(get_model.MODEL_VERSION)
+    scoringScriptPath: '$(Build.SourcesDirectory)/$(SOURCES_DIR_TRAIN)/$(SCORE_SCRIPT)'
+    condaFilePath: '$(Build.SourcesDirectory)/$(SOURCES_DIR_TRAIN)/conda_dependencies.yml'
+    imageName: $(MODEL_NAME).$(get_model.MODEL_VERSION)
+

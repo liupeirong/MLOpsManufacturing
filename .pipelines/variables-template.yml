@@ -1,0 +1,69 @@
+# Pipeline template that defines common runtime environment variables.
+variables:
+  # Source Config
+  # The directory containing the scripts for training, evaluating, and registering the model
+  - name: SOURCES_DIR_TRAIN
+    value: ml_model
+    # The path to the data preprocessing script under SOURCES_DIR_TRAIN
+  - name: PREPROCESS_SCRIPT_PATH
+    value: preprocessing/preprocess_aml.py
+    # The path to the model training script under SOURCES_DIR_TRAIN
+  - name: TRAIN_SCRIPT_PATH
+    value: training/train_aml.py
+    # The path to the model evaluation script under SOURCES_DIR_TRAIN
+  - name: EVALUATE_SCRIPT_PATH
+    value: evaluate/evaluate_model.py
+    # The path to the model registration script under SOURCES_DIR_TRAIN
+  - name: REGISTER_SCRIPT_PATH
+    value: register/register_model.py
+    # The path to the model scoring script relative to SOURCES_DIR_TRAIN
+  - name: SCORE_SCRIPT
+    value: scoring/score.py
+    
+  # Azure ML Variables
+  - name: EXPERIMENT_NAME
+    value: flower_classification
+  - name: DATASET_NAME
+    value: flower_dataset
+  # Uncomment DATASTORE_NAME if you have configured non default datastore to point to your data
+  # - name: DATASTORE_NAME
+  #   value: datablobstore
+  # Name of the published ML pipelines
+  - name: PREPROCESSING_PIPELINE_NAME
+    value: "flower-data-processing-pipeline"
+  - name: TRAINING_PIPELINE_NAME
+    value: "flower-training-Pipeline"
+  - name: MODEL_NAME
+    value: flower_classifier
+
+  # AML Compute Cluster Config
+  - name: AML_ENV_NAME
+    value: flower_classifier_training_env
+  - name: AML_ENV_TRAIN_CONDA_DEP_FILE
+    value: "conda_dependencies.yml"
+  - name: AML_COMPUTE_CLUSTER_CPU_SKU
+    value: STANDARD_DS2_V2
+  - name: AML_COMPUTE_CLUSTER_NAME
+    value: train-cluster
+  - name: AML_CLUSTER_MIN_NODES
+    value: 0
+  - name: AML_CLUSTER_MAX_NODES
+    value: 4
+  - name: AML_CLUSTER_PRIORITY
+    value: lowpriority
+
+  # The name for the (docker/webapp) scoring image
+  - name: IMAGE_NAME
+    value: "flowerclassifier"
+
+  # These are the default values set in ml_service\util\env_variables.py. Uncomment and override if desired.
+  # Set to false to disable the evaluation step in the ML pipeline and register the newly trained model unconditionally.
+  # - name: RUN_EVALUATION
+  #   value: "true"
+  # Set to false to register the model regardless of the outcome of the evaluation step in the ML pipeline.
+  # - name: ALLOW_RUN_CANCEL
+  #   value: "true"
+
+  # Flag to allow rebuilding the AML Environment after it was built for the first time. This enables dependency updates from conda_dependencies.yaml.
+  # - name: AML_REBUILD_ENVIRONMENT
+  #  value: "false"

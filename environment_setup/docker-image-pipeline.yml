@@ -1,0 +1,35 @@
+# Pipeline that builds and pushes the microsoft/mlopspython image.
+resources:
+- repo: self
+
+pool: 
+  vmImage: 'ubuntu-latest'
+
+trigger:
+  branches:
+    include:
+    - master
+
+  paths:
+    include:
+    - environment_setup/Dockerfile
+
+variables:
+- group: devopsforai-aml-vg
+- name: containerRegistry
+  value: $[coalesce(variables['acrServiceConnection'], 'acrconnection')]
+- name: imageName
+  value: $[coalesce(variables['agentImageName'], 'public/mlops/tensorflow')]
+        
+steps:
+  - task: Docker@2
+    displayName: Build and Push
+    inputs:
+      command: buildAndPush
+      containerRegistry: '$(containerRegistry)'
+      repository: '$(imageName)'
+      tags: |
+       ${{format('build-{0}', '$(Build.BuildNumber)')}}
+       latest
+      buildContext: '$(Build.SourcesDirectory)' 
+      dockerFile: '$(Build.SourcesDirectory)/environment_setup/Dockerfile'

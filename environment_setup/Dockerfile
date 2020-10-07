@@ -7,6 +7,8 @@ ENV PATH /usr/local/envs/mlopstensorflow_ci/bin:$PATH
 
 RUN conda update -n base -c defaults conda && \
     conda install python=3.7.5 && \
+    apt-get update && \
+    apt-get install gcc python3-dev -y && \
     conda env create -f /setup/ci_dependencies.yml && \
     /bin/bash -c "source activate mlopstensorflow_ci" && \
     az --version && \

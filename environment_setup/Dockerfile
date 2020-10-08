@@ -8,6 +8,8 @@ ENV PATH /usr/local/envs/mlopstensorflow_ci/bin:$PATH
 RUN conda update -n base -c defaults conda && \
     conda install python=3.7.5 && \
     apt-get update && \
+    apt-get install gcc python3-dev -y && \
+    apt-get update && \
     apt-get install ca-certificates curl apt-transport-https lsb-release gnupg -y && \
     curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null && \
     AZ_REPO=$(lsb_release -cs) && \

@@ -8,6 +8,7 @@ dependencies:
   # dependencies with versions aligned with conda_dependencies.yml.
   - numpy=1.18.*
   - conda-forge::jq
+  - pillow=7.2.*
   - pip=20.0.*
 
   - pip:

@@ -11,7 +11,7 @@ resources:
     image: mcr.microsoft.com/mlops/python:latest
   pipelines:
   - pipeline: model-train-ci
-    source: mlops-custom-training # Name of the triggering pipeline
+    source: 03-train-evaluate-register-model # Name of the triggering pipeline
     trigger:
       branches:
         include:

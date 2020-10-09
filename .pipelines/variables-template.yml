@@ -56,6 +56,12 @@ variables:
   - name: IMAGE_NAME
     value: "flowerclassifier"
 
+  # Data used for smoke testing deployed service, comma separated
+  # - name: TEST_IMAGE_URLS
+  #   value: url_to_sunflower_jpg,url_to_daisy_jpg
+  # - name: TEST_IMAGE_CLASSES
+  #   value: sunflowers,daisy
+
   # These are the default values set in ml_service\util\env_variables.py. Uncomment and override if desired.
   # Set to false to disable the evaluation step in the ML pipeline and register the newly trained model unconditionally.
   # - name: RUN_EVALUATION

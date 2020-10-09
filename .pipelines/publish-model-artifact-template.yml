@@ -1,13 +1,6 @@
 # Pipeline template to check if a model was registered for the build and publishes an artifact with the model JSON
 steps:
 - task: AzureCLI@1
-  displayName: 'Install AzureML CLI'
-  inputs:
-    azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
-    scriptLocation: inlineScript
-    workingDirectory: $(Build.SourcesDirectory)
-    inlineScript: 'az extension add -n azure-cli-ml'
-- task: AzureCLI@1
   inputs:
     azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
     scriptLocation: inlineScript

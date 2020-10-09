@@ -8,10 +8,11 @@ parameters:
 resources:
   containers:
   - container: mlops
-    image: mcr.microsoft.com/mlops/python:latest
+    image: public/mlops/tensorflow:latest
+    endpoint: mlopstensorflowacr
   pipelines:
   - pipeline: model-train-ci
-    source: mlops-custom-training # Name of the triggering pipeline
+    source: 03-train-evaluate-register-model # Name of the triggering pipeline
     trigger:
       branches:
         include:

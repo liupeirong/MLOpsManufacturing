@@ -14,7 +14,8 @@ trigger: none
 resources:
   containers:
   - container: mlops
-    image: mcr.microsoft.com/mlops/python:latest
+    image: public/mlops/tensorflow:latest
+    endpoint: mlopstensorflowacr
   pipelines:
   - pipeline: model-train-ci
     source: 03-train-evaluate-register-model # Name of the triggering pipeline
@@ -43,13 +44,6 @@ stages:
         projectId: '$(resources.pipeline.model-train-ci.projectID)'
         pipelineId: '$(resources.pipeline.model-train-ci.pipelineID)'
         artifactBuildId: ${{ parameters.artifactBuildId }}
-    - task: AzureCLI@1
-      displayName: 'Install AzureML CLI'
-      inputs:
-        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
-        scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
-        inlineScript: 'az extension add -n azure-cli-ml'
     - task: AzureCLI@1
       displayName: "Deploy to ACI (CLI)"
       inputs:

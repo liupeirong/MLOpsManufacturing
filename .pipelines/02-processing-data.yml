@@ -71,13 +71,13 @@ stages:
         inlineScript: |
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          python -m ml_service.pipelines.run_preprocess_pipeline --output_pipeline_id_file "preprocessing_pipeline_id.txt" --skip_preprocessing_execution
+          python -m ml_service.pipelines.run_data_processing_pipeline --output_pipeline_id_file "preprocessing_pipeline_id.txt" --skip_preprocessing_execution
           # Set AMLPIPELINEID variable for next AML Pipeline task in next job
           PREPROCESSPIPELINEID="$(cat preprocessing_pipeline_id.txt)"
           echo "##vso[task.setvariable variable=PREPROCESSPIPELINEID;isOutput=true]$PREPROCESSPIPELINEID"
       name: 'getpreprocessingpipelineid'
       displayName: 'Get Preprocessing Pipeline ID'
-  - job: "Run_Preprocessing_Pipeline"
+  - job: "Run_Data_Processing_Pipeline"
     dependsOn: "Get_Preprocessing_Pipeline_ID"
     displayName: "Trigger Preprocessing Pipeline"
     timeoutInMinutes: 0

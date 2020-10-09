@@ -64,7 +64,7 @@ def predict_image(classifier, image_array):
     imgfeatures /= 255
 
     # These are the classes our model can predict
-    classnames = ['axes', 'boots', 'carabiners', 'crampons', 'gloves', 'hardshell_jackets', 'harnesses', 'helmets', 'insulated_jackets', 'pulleys', 'rope', 'tents']  # NOQA: E501
+    classnames = ['daisy', 'dandelion', 'roses', 'sunflowers', 'tulips']
 
     # Predict the class of each input image
     predictions = classifier.predict(imgfeatures)
@@ -82,18 +82,23 @@ if __name__ == "__main__":
     from PIL import Image
     from preprocessing.preprocess_images import resize_image
     from dotenv import load_dotenv
+    import os
 
     # Test scoring
     load_dotenv()
-    init()
-    image_urls = []
-    image_urls.append('http://images.the-house.com/giro-g10mx-mtgy-07.jpg')
-    image_urls.append('https://i.stack.imgur.com/HeliW.jpg')
-    image_urls.append('https://productimages.camping-gear-outlet.com/e5/62379.jpg')  # NOQA: E501
-    image_urls.append('http://s7d1.scene7.com/is/image/MoosejawMB/MIKAJMKFMKCAPNABx1024698_zm?$product1000$')  # NOQA: E501
-    image_urls.append('http://www.buffalosystems.co.uk/wp-content/uploads/2012/06/zoom_apline_jacket_dark_russet-2365x3286.jpg')  # NOQA: E501
+    url_str = os.environ.get("TEST_IMAGE_URLS")
+    class_str = os.environ.get("TEST_IMAGE_CLASSES")
+    image_urls = url_str.split(',') 
+    image_classes = class_str.split(',')
+    if len(image_urls) != len(image_classes):
+        raise "number of urls is not same as number of classes"
 
-    size = (128, 128)
+    with open("parameters.json") as f:
+        pars = json.load(f)
+        image_size = pars["preprocessing"]["image_size"]
+        size = (image_size["x"], image_size["y"])
+
+    init()
     img_array = []
     for url_idx in range(len(image_urls)):
         response = requests.get(image_urls[url_idx])
@@ -105,4 +110,7 @@ if __name__ == "__main__":
     compressed = gzip.compress(input_json.encode('utf-8'))
     predictions = internal_run(compressed)
     predicted_classes = json.loads(predictions)
+    for (p, a) in zip(predicted_classes, image_classes):
+        if p != a:
+            raise f"prediction {p} is not same as actual {a}"
     print("Test result: ", predicted_classes)

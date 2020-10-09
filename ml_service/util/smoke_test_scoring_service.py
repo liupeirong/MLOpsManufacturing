@@ -7,6 +7,7 @@ from ml_service.util.env_variables import Env
 import secrets
 import json
 import gzip
+import os
 
 
 def call_web_service(e, service_name, body):
@@ -51,6 +52,10 @@ def call_web_app(url, headers, body):
 
 
 def main():
+    from io import BytesIO
+    from PIL import Image
+    from ml_model.preprocessing.preprocess_images import resize_image
+    import numpy as np
 
     parser = argparse.ArgumentParser("smoke_test_scoring_service.py")
 
@@ -62,19 +67,36 @@ def main():
     )
     args = parser.parse_args()
 
-    with open('./data/smoke-test-data.json') as f:
-        input_data = json.load(f)
-        compressed_input = gzip.compress(
-            json.dumps(input_data).encode('utf-8'))
-    expected_output = ['axes']
-
     e = Env()
-    output_json = call_web_service(e, args.service, compressed_input)
-    output = json.loads(output_json)
-    print("Verifying service output")
 
-    assert expected_output[0] in output
-    assert len(expected_output) == len(output)
+    url_str = os.environ.get("TEST_IMAGE_URLS")
+    class_str = os.environ.get("TEST_IMAGE_CLASSES")
+    image_urls = url_str.split(',') 
+    image_classes = class_str.split(',')
+    if len(image_urls) != len(image_classes):
+        raise "number of urls is not same as number of classes"
+
+    with open("ml_model/parameters.json") as f:
+        pars = json.load(f)
+        image_size = pars["preprocessing"]["image_size"]
+        size = (image_size["x"], image_size["y"])
+
+    img_array = []
+    for url_idx in range(len(image_urls)):
+        response = requests.get(image_urls[url_idx])
+        img = Image.open(BytesIO(response.content))
+        img = np.array(resize_image(img, size))
+        img_array.append(img.tolist())
+
+    input_json = json.dumps({"data": img_array})
+    compressed = gzip.compress(input_json.encode('utf-8'))
+    predictions = call_web_service(e, args.service, compressed)
+    predicted_classes = json.loads(predictions)
+    assert len(predicted_classes) == len(image_classes)
+    for (p, a) in zip(predicted_classes, image_classes):
+        print(f"predicted: {p}, actual: {a}")
+        assert p == a
+
     print("Smoke test successful.")
 
 

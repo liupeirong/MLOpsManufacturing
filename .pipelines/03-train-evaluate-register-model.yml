@@ -76,7 +76,7 @@ stages:
         inlineScript: |
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          python -m ml_service.pipelines.run_train_pipeline --output_pipeline_id_file "pipeline_id.txt" --skip_train_execution
+          python -m ml_service.pipelines.run_training_pipeline --output_pipeline_id_file "pipeline_id.txt" --skip_train_execution
           # Set AMLPIPELINEID variable for next AML Pipeline task in next job
           AMLPIPELINEID="$(cat pipeline_id.txt)"
           echo "##vso[task.setvariable variable=AMLPIPELINEID;isOutput=true]$AMLPIPELINEID"

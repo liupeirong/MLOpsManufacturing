@@ -45,6 +45,7 @@ stages:
     steps:
     - template: code-quality-template.yml
     - task: AzureCLI@1
+      enabled: false
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
@@ -69,6 +70,7 @@ stages:
     timeoutInMinutes: 0
     steps:
     - task: AzureCLI@1
+      enabled: false
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
@@ -92,6 +94,7 @@ stages:
     steps:
     - task: ms-air-aiagility.vss-services-azureml.azureml-restApi-task.MLPublishedPipelineRestAPITask@0
       displayName: 'Invoke ML pipeline'
+      enabled: false
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         PipelineId: '$(AMLPIPELINE_ID)'
@@ -99,6 +102,7 @@ stages:
         PipelineParameters: '"ParameterAssignments": {"model_name": "$(MODEL_NAME)"}, "tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'
   - job: "Training_Run_Report"
     dependsOn: "Run_ML_Pipeline"
+    container: mlops
     condition: always()
     displayName: "Publish artifact if new model was registered"
     timeoutInMinutes: 0

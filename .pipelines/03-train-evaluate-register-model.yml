@@ -45,7 +45,6 @@ stages:
     steps:
     - template: code-quality-template.yml
     - task: AzureCLI@1
-      enabled: false
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
@@ -70,7 +69,6 @@ stages:
     timeoutInMinutes: 0
     steps:
     - task: AzureCLI@1
-      enabled: false
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
@@ -94,7 +92,6 @@ stages:
     steps:
     - task: ms-air-aiagility.vss-services-azureml.azureml-restApi-task.MLPublishedPipelineRestAPITask@0
       displayName: 'Invoke ML pipeline'
-      enabled: false
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         PipelineId: '$(AMLPIPELINE_ID)'

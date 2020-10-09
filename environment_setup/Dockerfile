@@ -4,6 +4,9 @@ COPY ml_model/ci_dependencies.yml /setup/
 
 # activate environment
 ENV PATH /usr/local/envs/mlopstensorflow_ci/bin:$PATH
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV LANGUAGE C.UTF-8
 
 RUN conda update -n base -c defaults conda && \
     conda install python=3.7.5 && \

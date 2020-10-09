@@ -1,4 +1,4 @@
-# Pipeline to run basic code quality tests as part of pull requests to the master branch.
+# Pipeline to run basic code quality tests as part of pull requests to the main branch.
 
 resources:
   containers:
@@ -9,7 +9,7 @@ resources:
 pr:
   branches:
     include:
-    - master
+    - main
 
 pool:
   vmImage: 'ubuntu-latest'

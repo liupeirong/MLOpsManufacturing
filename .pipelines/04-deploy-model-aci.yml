@@ -17,12 +17,11 @@ resources:
     endpoint: mlopstensorflowacr
   pipelines:
   - pipeline: model-train-ci
-#    source: 03-train-evaluate-register-model # Name of the triggering pipeline
-    source: 01-pull-request-validation
+    source: 03-train-evaluate-register-model # Name of the triggering pipeline
     trigger:
       branches:
         include:
-        - testpipelinetrigger
+        - main
 
 variables:
 - template: variables-template.yml

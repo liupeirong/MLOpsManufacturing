@@ -10,7 +10,6 @@ parameters:
 pr: none
 
 # Trigger this pipeline on model-train pipeline completion
-trigger: none
 resources:
   containers:
   - container: mlops
@@ -18,11 +17,12 @@ resources:
     endpoint: mlopstensorflowacr
   pipelines:
   - pipeline: model-train-ci
-    source: 03-train-evaluate-register-model # Name of the triggering pipeline
+#    source: 03-train-evaluate-register-model # Name of the triggering pipeline
+    source: 01-pull-request-validation
     trigger:
       branches:
         include:
-        - master
+        - testpipelinetrigger
 
 variables:
 - template: variables-template.yml

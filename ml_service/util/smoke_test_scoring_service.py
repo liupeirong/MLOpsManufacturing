@@ -71,7 +71,7 @@ def main():
 
     url_str = os.environ.get("TEST_IMAGE_URLS")
     class_str = os.environ.get("TEST_IMAGE_CLASSES")
-    image_urls = url_str.split(',') 
+    image_urls = url_str.split(',')
     image_classes = class_str.split(',')
     if len(image_urls) != len(image_classes):
         raise "number of urls is not same as number of classes"

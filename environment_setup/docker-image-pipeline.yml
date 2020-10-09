@@ -5,11 +5,11 @@ resources:
 pool: 
   vmImage: 'ubuntu-latest'
 
+pr: none
 trigger:
   branches:
     include:
     - master
-
   paths:
     include:
     - environment_setup/Dockerfile

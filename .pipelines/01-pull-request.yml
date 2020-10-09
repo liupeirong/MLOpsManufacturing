@@ -6,7 +6,6 @@ resources:
     image: public/mlops/tensorflow:latest
     endpoint: mlopstensorflowacr 
 
-trigger: none
 pr:
   branches:
     include:

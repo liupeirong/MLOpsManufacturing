@@ -10,7 +10,6 @@ parameters:
 pr: none
 
 # Trigger this pipeline on model-train pipeline completion
-trigger: none
 resources:
   containers:
   - container: mlops
@@ -22,7 +21,7 @@ resources:
     trigger:
       branches:
         include:
-        - master
+        - main
 
 variables:
 - template: variables-template.yml

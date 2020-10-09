@@ -16,13 +16,13 @@ resources:
     trigger:
       branches:
         include:
-        - master
+        - main
 
 pr: none
 trigger:
   branches:
     include:
-    - master
+    - main
   paths:
     include:
     - ml_model/scoring/

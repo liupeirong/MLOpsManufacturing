@@ -2,14 +2,14 @@
 trigger:
   branches:
     include:
-      - master
+      - main
   paths:
     include:
       - environment_setup/arm-templates/*
 pr:
   branches:
     include:
-      - master
+      - main
   paths:
     include:
       - environment_setup/arm-templates/*

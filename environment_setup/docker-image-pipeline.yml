@@ -9,7 +9,7 @@ pr: none
 trigger:
   branches:
     include:
-    - master
+    - main
   paths:
     include:
     - environment_setup/Dockerfile

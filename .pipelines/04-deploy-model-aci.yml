@@ -7,8 +7,6 @@ parameters:
   type: string
   default: latest
 
-pr: none
-
 # Trigger this pipeline on model-train pipeline completion
 resources:
   containers:
@@ -22,6 +20,9 @@ resources:
       branches:
         include:
         - main
+
+pr: none
+trigger: none
 
 variables:
 - template: variables-template.yml

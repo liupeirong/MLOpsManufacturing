@@ -10,6 +10,11 @@ pr:
   branches:
     include:
     - main
+  paths:
+    exclude:
+    - .env.example
+    - README.md
+    - LICENSE
 
 pool:
   vmImage: 'ubuntu-latest'

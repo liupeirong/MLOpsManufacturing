@@ -1,6 +1,6 @@
-Data Processing Pipeline: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/02-processing-data?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=17&branchName=main)
-Model Training Pipeline: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/03-train-evaluate-register-model?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=18&branchName=main)
-Deployment Pipeline: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/04-deploy-model-aci?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=19&branchName=main)
+Data Processing: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/02-processing-data?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=17&branchName=main)
+Model Training: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/03-train-evaluate-register-model?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=18&branchName=main)
+Deployment: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/04-deploy-model-aci?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=19&branchName=main)
 
 # Overview
 

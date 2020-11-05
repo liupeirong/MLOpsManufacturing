@@ -91,4 +91,4 @@ stages:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         PipelineId: '$(PREPROCESSPIPELINE_ID)'
         ExperimentName: '$(EXPERIMENT_NAME)_preprocess'
-        PipelineParameters: '"tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "data_file_path": "flower_dataset_small"'
+        # PipelineParameters: '"tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "data_file_path": "flower_dataset_small"'

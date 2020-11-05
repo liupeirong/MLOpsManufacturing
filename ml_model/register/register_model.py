@@ -63,6 +63,7 @@ def main():
         run_id = args.run_id
     if (run_id == 'amlcompute'):
         run_id = run.parent.id
+        run = run.parent
     model_name = args.model_name
     model_path = args.step_input
 
@@ -80,7 +81,7 @@ def main():
     model_tags = {}
     for tag in register_args["tags"]:
         try:
-            mtag = run.parent.get_metrics()[tag]
+            mtag = run.get_metrics()[tag]
             model_tags[tag] = mtag
         except KeyError:
             print(f"Could not find {tag} metric on parent run.")
@@ -89,7 +90,7 @@ def main():
     print(f"Loading model from {model_path}")
     model_file = os.path.join(model_path, model_name)
     model = load_model(model_file)
-    parent_tags = run.parent.get_tags()
+    parent_tags = run.get_tags()
     try:
         build_id = parent_tags["BuildId"]
     except KeyError:
@@ -112,6 +113,7 @@ def main():
                 model_tags,
                 exp,
                 run_id,
+                run,
                 dataset_id)
         elif (build_uri is None):
             register_aml_model(
@@ -120,6 +122,7 @@ def main():
                 model_tags,
                 exp,
                 run_id,
+                run,
                 dataset_id,
                 build_id)
         else:
@@ -129,6 +132,7 @@ def main():
                 model_tags,
                 exp,
                 run_id,
+                run,
                 dataset_id,
                 build_id,
                 build_uri)
@@ -151,14 +155,13 @@ def register_aml_model(
     model_tags,
     exp,
     run_id,
+    run,
     dataset_id,
     build_id: str = 'none',
     build_uri=None
 ):
     try:
-        tagsValue = {"area": "flower",
-                     "run_id": run_id,
-                     "experiment_name": exp.name}
+        tagsValue = {}
         tagsValue.update(model_tags)
         if (build_id != 'none'):
             model_already_registered(model_name, exp, run_id)
@@ -166,8 +169,7 @@ def register_aml_model(
             if (build_uri is not None):
                 tagsValue["BuildUri"] = build_uri
 
-        model = AMLModel.register(
-            workspace=exp.workspace,
+        model = run.register_model(
             model_name=model_name,
             model_path=model_path,
             tags=tagsValue,

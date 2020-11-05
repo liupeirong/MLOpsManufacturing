@@ -30,7 +30,7 @@ variables:
   #   value: datablobstore
   # Name of the published ML pipelines
   - name: PREPROCESSING_PIPELINE_NAME
-    value: "flower-data-processing-pipeline"
+    value: "flower-preprocessing-pipeline"
   - name: TRAINING_PIPELINE_NAME
     value: "flower-training-Pipeline"
   - name: MODEL_NAME

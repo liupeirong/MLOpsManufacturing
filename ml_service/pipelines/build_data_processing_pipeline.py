@@ -48,12 +48,12 @@ def main():
     # Options to store output data:
     # Option 1: Use blob API to write output data. Otherwise, no way to dynamically change the output dataset based on PipelineParameter, # NOQA: E501
     #     The following will not work. It generate a path like "PipelineParameter_Name:data_file_path_Default:gear_images"  # NOQA: E501
-    #         output_ds = OutputFileDatasetConfig(destination=(datastore, data_file_path_param))  # NOQA: E501
+    #         output_dataset = OutputFileDatasetConfig(destination=(datastore, data_file_path_param))  # NOQA: E501
     #     This option means writing a file locally and upload to the datastore. Fewer dataset, more code.  # NOQA: E501
     # Option 2: Use a dynamic path in OutputFileDatasetConfig, and register a new dataset at completion  # NOQA: E501
     #     Output dataset can be mounted, so more dataset to maintain, less code.   # NOQA: E501
     # Using Option 2 below.
-    output_ds = OutputFileDatasetConfig(
+    output_dataset = OutputFileDatasetConfig(
         name=e.processed_dataset_name,
         destination=(datastore, "/dataset/{output-name}/{run-id}")
     ).register_on_complete(
@@ -69,7 +69,7 @@ def main():
             "--datastore_name", datastore_name,
             "--data_file_path", data_file_path_param,
             "--caller_run_id", caller_run_id_param,
-            "--step_output", output_ds,
+            "--output_dataset", output_dataset,
         ],
         runconfig=run_config,
         allow_reuse=False,

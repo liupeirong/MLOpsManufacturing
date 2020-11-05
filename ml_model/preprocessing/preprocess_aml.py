@@ -62,7 +62,7 @@ def main():
     )
 
     parser.add_argument(
-        "--step_output",
+        "--output_dataset",
         type=str,
         help=("output of processed data")
     )
@@ -73,12 +73,12 @@ def main():
     print("Argument [datastore_name]: %s" % args.datastore_name)
     print("Argument [data_file_path]: %s" % args.data_file_path)
     print("Argument [caller_run_id]: %s" % args.caller_run_id)
-    print("Argument [step_output]: %s" % args.step_output)
+    print("Argument [output_dataset]: %s" % args.output_dataset)
 
     data_file_path = args.data_file_path
     dataset_name = args.dataset_name
     datastore_name = args.datastore_name
-    output_path = args.step_output
+    output_dataset = args.output_dataset
 
     run = Run.get_context()
 
@@ -109,14 +109,15 @@ def main():
         run.parent.log(k, v)
 
     # Link dataset to the step run so it is trackable in the UI
-    run.input_datasets['input_dataset'] = dataset
-    run.parent.tag("dataset_id", value=dataset.id)
+    # run input_datasets is not registered. Bug https://docs.microsoft.com/en-us/answers/questions/114019/registered-dataset-is-not-logged-as-reference-in-a.html.  # NOQA: E501 
+    run.input_datasets['flower_dataset_raw'] = dataset
+    run.parent.input_datasets['flower_dataset_raw'] = dataset
 
     # Process data
     mount_context = dataset.mount()
     mount_context.start()
     print(f"mount_point is: {mount_context.mount_point}")
-    resize_images(mount_context.mount_point, output_path, preprocessing_args)
+    resize_images(mount_context.mount_point, output_dataset, preprocessing_args)
     mount_context.stop()
 
     run.tag("run_type", value="preprocess")

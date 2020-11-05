@@ -43,7 +43,6 @@ def main():
     # data_file_path can be specified for registering new versions of dataset
     model_name_param = PipelineParameter(name="model_name", default_value=e.model_name)  # NOQA: E501
     data_file_path_param = PipelineParameter(name="data_file_path", default_value="nopath")  # NOQA: E501
-    caller_run_id_param = PipelineParameter(name="caller_run_id", default_value="none")  # NOQA: E501
 
     # Create a PipelineData to pass data between steps
     pipeline_data = PipelineData(
@@ -60,7 +59,6 @@ def main():
             "--model_name", model_name_param,
             "--step_output", pipeline_data,
             "--data_file_path", data_file_path_param,
-            "--caller_run_id", caller_run_id_param,
             "--dataset_name", e.processed_dataset_name,
             "--datastore_name", datastore_name,
         ],

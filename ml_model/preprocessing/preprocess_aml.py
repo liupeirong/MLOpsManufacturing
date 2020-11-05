@@ -56,12 +56,6 @@ def main():
     )
 
     parser.add_argument(
-        "--caller_run_id",
-        type=str,
-        help=("caller run id, for example ADF pipeline run id")
-    )
-
-    parser.add_argument(
         "--output_dataset",
         type=str,
         help=("output of processed data")
@@ -72,7 +66,6 @@ def main():
     print("Argument [dataset_name]: %s" % args.dataset_name)
     print("Argument [datastore_name]: %s" % args.datastore_name)
     print("Argument [data_file_path]: %s" % args.data_file_path)
-    print("Argument [caller_run_id]: %s" % args.caller_run_id)
     print("Argument [output_dataset]: %s" % args.output_dataset)
 
     data_file_path = args.data_file_path
@@ -111,7 +104,6 @@ def main():
     # Link dataset to the step run so it is trackable in the UI
     # run input_datasets is not registered. Bug https://docs.microsoft.com/en-us/answers/questions/114019/registered-dataset-is-not-logged-as-reference-in-a.html.  # NOQA: E501
     run.input_datasets['flower_dataset_raw'] = dataset
-    run.parent.input_datasets['flower_dataset_raw'] = dataset
 
     # Process data
     mount_context = dataset.mount()

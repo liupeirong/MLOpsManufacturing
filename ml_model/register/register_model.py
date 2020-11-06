@@ -104,6 +104,12 @@ def main():
         print("BuildUri tag not found on parent run.")
         print(f"Tags present: {parent_tags}")
 
+    print(f"Loading training run_id from {model_path}")
+    run_id_file = os.path.join(model_path, "run_id.txt")
+    with open(run_id_file, "r") as text_file:
+        training_run_id = text_file.read()
+    training_run = Run.get(ws, training_run_id)
+
     if (model is not None):
         dataset_id = parent_tags["dataset_id"]
         if (build_id is None):
@@ -113,7 +119,7 @@ def main():
                 model_tags,
                 exp,
                 run_id,
-                run,
+                training_run,
                 dataset_id)
         elif (build_uri is None):
             register_aml_model(
@@ -122,7 +128,7 @@ def main():
                 model_tags,
                 exp,
                 run_id,
-                run,
+                training_run,
                 dataset_id,
                 build_id)
         else:
@@ -132,7 +138,7 @@ def main():
                 model_tags,
                 exp,
                 run_id,
-                run,
+                training_run,
                 dataset_id,
                 build_id,
                 build_uri)

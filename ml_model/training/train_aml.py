@@ -143,6 +143,8 @@ def main():
     os.makedirs('outputs', exist_ok=True)
     output_path = os.path.join('outputs', model_name)
     model.save(output_path)
+    with open('outputs/run_id.txt', "w") as text_file:
+        print(f"{run.id}", file=text_file)
 
     run.tag("run_type", value="train")
     print(f"tags now present for run: {run.tags}")

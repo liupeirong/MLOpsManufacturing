@@ -6,7 +6,7 @@
     },
     "training":
     {
-        "num_epochs": 30
+        "num_epochs": 5
     },
     "evaluation":
     {

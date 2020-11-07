@@ -28,10 +28,29 @@ import os
 import sys
 import argparse
 import traceback
-from keras.models import load_model
-from azureml.core import Run, Dataset
+from azureml.core import Run
 from azureml.core.model import Model as AMLModel
 from util.model_helper import get_aml_context
+
+
+def find_child_run(parent_run, child_run_id):
+    found_run = None
+    runs = parent_run.get_children()
+    for r in runs:
+        if r.id == child_run_id:
+            found_run = r
+            break
+    return found_run
+
+
+def find_run(experiment, run_id):
+    found_run = None
+    runs = experiment.get_runs()
+    for r in runs:
+        if r.id == run_id:
+            found_run = r
+            break
+    return found_run
 
 
 def main():
@@ -43,7 +62,7 @@ def main():
     parser.add_argument(
         "--run_id",
         type=str,
-        help="Training run ID",
+        help="Parent run ID for the training pipeline",
     )
 
     parser.add_argument(
@@ -61,10 +80,11 @@ def main():
     args = parser.parse_args()
     if (args.run_id is not None):
         run_id = args.run_id
+        run = find_run(exp, run_id)
     if (run_id == 'amlcompute'):
         run_id = run.parent.id
         run = run.parent
-    print(f"run_id is {run_id}")
+    print(f"parent run_id is {run_id}")
     model_name = args.model_name
     model_path = args.step_input
 
@@ -87,9 +107,6 @@ def main():
         except KeyError:
             print(f"Could not find {tag} metric on parent run.")
 
-    print(f"Loading model from {model_path}")
-    model_file = os.path.join(model_path, model_name)
-    model = load_model(model_file)
     parent_tags = run.get_tags()
     try:
         build_id = parent_tags["BuildId"]
@@ -110,46 +127,32 @@ def main():
         training_run_id = text_file.read().replace('\n', '')
 
     # the parent pipeline run consists of training, evaluation, and registration  # NOQA: E501
-    runs = run.get_children()
-    for r in runs:
-        if r.id == training_run_id:
-            training_run = r
-            break
+    training_run = find_child_run(run, training_run_id)
 
-    if (model is not None):
-        dataset_id = parent_tags["dataset_id"]
+    if training_run is not None:
         if (build_id is None):
             register_aml_model(
-                model_file,
                 model_name,
                 model_tags,
                 exp,
-                run_id,
-                training_run,
-                dataset_id)
+                training_run)
         elif (build_uri is None):
             register_aml_model(
-                model_file,
                 model_name,
                 model_tags,
                 exp,
-                run_id,
                 training_run,
-                dataset_id,
                 build_id)
         else:
             register_aml_model(
-                model_file,
                 model_name,
                 model_tags,
                 exp,
-                run_id,
                 training_run,
-                dataset_id,
                 build_id,
                 build_uri)
     else:
-        print("Model not found. Skipping model registration.")
+        print("Training run not found. Skipping model registration.")
         sys.exit(0)
 
 
@@ -162,13 +165,10 @@ def model_already_registered(model_name, exp, run_id):
 
 
 def register_aml_model(
-    model_path,
     model_name,
     model_tags,
     exp,
-    run_id,
     run,
-    dataset_id,
     build_id: str = 'none',
     build_uri=None
 ):
@@ -176,18 +176,15 @@ def register_aml_model(
         tagsValue = {}
         tagsValue.update(model_tags)
         if (build_id != 'none'):
-            model_already_registered(model_name, exp, run_id)
+            model_already_registered(model_name, exp, run.id)
             tagsValue["BuildId"] = build_id
             if (build_uri is not None):
                 tagsValue["BuildUri"] = build_uri
 
         model = run.register_model(
             model_name=model_name,
-            model_path=model_path,
-            tags=tagsValue,
-            datasets=[('training data',
-                       Dataset.get_by_id(exp.workspace, dataset_id))])
-        os.chdir("..")
+            model_path=os.path.join("outputs", model_name),
+            tags=tagsValue)
         print(
             "Model registered: {} \nModel Description: {} "
             "\nModel Version: {}".format(

@@ -138,13 +138,13 @@ def main():
     os.makedirs(step_output_path, exist_ok=True)
     model_output_path = os.path.join(step_output_path, model_name)
     model.save(model_output_path)
+    with open(os.path.join(step_output_path, "run_id.txt"), "w") as text_file:
+        print(f"{run.id}", file=text_file)
 
     # Also upload model file to run outputs for history
     os.makedirs('outputs', exist_ok=True)
     output_path = os.path.join('outputs', model_name)
     model.save(output_path)
-    with open('outputs/run_id.txt', "w") as text_file:
-        print(f"{run.id}", file=text_file)
 
     run.tag("run_type", value="train")
     print(f"tags now present for run: {run.tags}")

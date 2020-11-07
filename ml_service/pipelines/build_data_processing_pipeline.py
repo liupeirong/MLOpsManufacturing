@@ -42,6 +42,7 @@ def main():
 
     datastore = Datastore(aml_workspace, name=datastore_name)
     data_file_path_param = PipelineParameter(name="data_file_path", default_value=e.dataset_name)  # NOQA: E501
+    preprocessing_param = PipelineParameter(name="preprocessing_param", default_value=None)  # NOQA: E501
 
     # The version of the input/output dataset can't be determined at pipeline publish time, only run time.  # NOQA: E501
     # Options to store output data:
@@ -68,6 +69,7 @@ def main():
             "--datastore_name", datastore_name,
             "--data_file_path", data_file_path_param,
             "--output_dataset", output_dataset,
+            "--preprocessing_param", preprocessing_param
         ],
         runconfig=run_config,
         allow_reuse=False,

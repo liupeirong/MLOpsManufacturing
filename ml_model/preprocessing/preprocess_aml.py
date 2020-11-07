@@ -61,17 +61,25 @@ def main():
         help=("output of processed data")
     )
 
+    parser.add_argument(
+        "--preprocessing_param",
+        type=str,
+        help=("image pre-processing parameters")
+    )
+
     args = parser.parse_args()
 
     print("Argument [dataset_name]: %s" % args.dataset_name)
     print("Argument [datastore_name]: %s" % args.datastore_name)
     print("Argument [data_file_path]: %s" % args.data_file_path)
     print("Argument [output_dataset]: %s" % args.output_dataset)
+    print("Argument [preprocessing_param]: %s" % args.preprocessing_param)
 
     data_file_path = args.data_file_path
     dataset_name = args.dataset_name
     datastore_name = args.datastore_name
     output_dataset = args.output_dataset
+    preprocessing_param = args.preprocessing_param
 
     run = Run.get_context()
 
@@ -86,9 +94,13 @@ def main():
         aml_workspace)
 
     # Load the training parameters from the parameters file
-    print("Getting preprocessing parameters")
-    with open("parameters.json") as f:
-        pars = json.load(f)
+    print("Getting default preprocessing parameters")
+    if preprocessing_param == "":
+        with open("parameters.json") as f:
+            pars = json.load(f)
+    else:
+        pars = json.load(preprocessing_param)
+
     try:
         preprocessing_args = pars["preprocessing"]
     except KeyError:

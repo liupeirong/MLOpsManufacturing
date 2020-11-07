@@ -108,7 +108,7 @@ def main():
     run_id_file = os.path.join(model_path, "run_id.txt")
     with open(run_id_file, "r") as text_file:
         training_run_id = text_file.read().replace('\n', '')
-    training_run = Run.get(ws, training_run_id)
+    training_run = ws.get_run(training_run_id)
 
     if (model is not None):
         dataset_id = parent_tags["dataset_id"]

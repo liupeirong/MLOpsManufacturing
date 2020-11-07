@@ -64,6 +64,7 @@ def main():
     if (run_id == 'amlcompute'):
         run_id = run.parent.id
         run = run.parent
+    print(f"run_id is {run_id}")
     model_name = args.model_name
     model_path = args.step_input
 
@@ -86,7 +87,6 @@ def main():
         except KeyError:
             print(f"Could not find {tag} metric on parent run.")
 
-    # load the model
     print(f"Loading model from {model_path}")
     model_file = os.path.join(model_path, model_name)
     model = load_model(model_file)
@@ -108,7 +108,13 @@ def main():
     run_id_file = os.path.join(model_path, "run_id.txt")
     with open(run_id_file, "r") as text_file:
         training_run_id = text_file.read().replace('\n', '')
-    training_run = ws.get_run(training_run_id)
+
+    # the parent pipeline run consists of training, evaluation, and registration  # NOQA: E501
+    runs = run.get_children()
+    for r in runs:
+        if r.id == training_run_id:
+            training_run = r
+            break
 
     if (model is not None):
         dataset_id = parent_tags["dataset_id"]

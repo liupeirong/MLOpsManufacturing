@@ -29,6 +29,8 @@ variables:
   # - name: DATASTORE_NAME
   #   value: datablobstore
   # Name of the published ML pipelines
+  - name: RAW_DATAFILE_PATH
+    value: flower_dataset
   - name: PREPROCESSING_PIPELINE_NAME
     value: "flower-preprocessing-pipeline"
   - name: TRAINING_PIPELINE_NAME

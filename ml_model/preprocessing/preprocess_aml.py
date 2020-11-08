@@ -102,7 +102,6 @@ def main():
         aml_workspace)
 
     # Link dataset to the step run so it is trackable in the UI
-    # run input_datasets is not registered. Bug https://docs.microsoft.com/en-us/answers/questions/114019/registered-dataset-is-not-logged-as-reference-in-a.html.  # NOQA: E501
     run.input_datasets['flower_dataset_raw'] = dataset
 
     # Process data

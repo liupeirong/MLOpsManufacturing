@@ -82,36 +82,24 @@ def main():
     preprocessing_param = args.preprocessing_param
 
     run = Run.get_context()
-
-    # Get Azure machine learning workspace
     aml_workspace, *_ = get_aml_context(run)
 
-    # Get the dataset
+    if preprocessing_param is None or preprocessing_param == "":
+        with open("parameters.json") as f:
+            pars = json.load(f)
+            preprocessing_args = pars["preprocessing"]
+    else:
+        preprocessing_args = json.loads(preprocessing_param)
+    print(f"preprocessing parameters {preprocessing_args}")
+    for (k, v) in preprocessing_args.items():
+        run.log(k, v)
+        run.parent.log(k, v)
+
     dataset = get_or_register_dataset(
         dataset_name,
         datastore_name,
         data_file_path,
         aml_workspace)
-
-    # Load the training parameters from the parameters file
-    print("Getting default preprocessing parameters")
-    if preprocessing_param == "":
-        with open("parameters.json") as f:
-            pars = json.load(f)
-    else:
-        pars = json.loads(preprocessing_param)
-
-    try:
-        preprocessing_args = pars["preprocessing"]
-    except KeyError:
-        print("Could not load preprocessing values from file")
-        preprocessing_args = {}
-
-    # Log the training parameters
-    print(f"Parameters: {preprocessing_args}")
-    for (k, v) in preprocessing_args.items():
-        run.log(k, v)
-        run.parent.log(k, v)
 
     # Link dataset to the step run so it is trackable in the UI
     # run input_datasets is not registered. Bug https://docs.microsoft.com/en-us/answers/questions/114019/registered-dataset-is-not-logged-as-reference-in-a.html.  # NOQA: E501

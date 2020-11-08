@@ -74,5 +74,5 @@ variables:
   # - name: AML_REBUILD_ENVIRONMENT
   #  value: "false"
 
-- name: PREPROCESSING_PARAM
-  value: {"image_size": {"x": 128, "y": 128},"batch_size": 30}
+  - name: PREPROCESSING_PARAM
+    value: {"image_size": {"x": 128, "y": 128},"batch_size": 30}

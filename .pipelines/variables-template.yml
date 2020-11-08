@@ -57,7 +57,7 @@ variables:
     value: "flowerclassifier"
 
   - name: PREPROCESSING_PARAM
-    value: '{"image_size": {"x": 128, "y": 128},"batch_size": 30}'
+    value: '{\"image_size\": {\"x\": 128, \"y\": 128},\"batch_size\": 30}'
 
   # Data used for smoke testing deployed service, comma separated
   # - name: TEST_IMAGE_URLS

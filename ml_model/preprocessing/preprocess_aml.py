@@ -99,7 +99,7 @@ def main():
         with open("parameters.json") as f:
             pars = json.load(f)
     else:
-        pars = json.load(preprocessing_param)
+        pars = json.loads(preprocessing_param)
 
     try:
         preprocessing_args = pars["preprocessing"]

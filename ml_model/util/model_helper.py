@@ -101,7 +101,7 @@ def register_dataset(
                                name=dataset_name,
                                create_new_version=True)
 
-    return dataset
+    return Dataset.get_by_name(aml_workspace, dataset_name)
 
 
 def get_or_register_dataset(

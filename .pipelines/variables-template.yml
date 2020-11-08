@@ -56,6 +56,9 @@ variables:
   - name: IMAGE_NAME
     value: "flowerclassifier"
 
+  - name: PREPROCESSING_PARAM
+    value: {"image_size": {"x": 128, "y": 128},"batch_size": 30}
+
   # Data used for smoke testing deployed service, comma separated
   # - name: TEST_IMAGE_URLS
   #   value: url_to_sunflower_jpg,url_to_daisy_jpg
@@ -73,6 +76,3 @@ variables:
   # Flag to allow rebuilding the AML Environment after it was built for the first time. This enables dependency updates from conda_dependencies.yaml.
   # - name: AML_REBUILD_ENVIRONMENT
   #  value: "false"
-
-  - name: PREPROCESSING_PARAM
-    value: {"image_size": {"x": 128, "y": 128},"batch_size": 30}

@@ -75,4 +75,4 @@ variables:
   #  value: "false"
 
 - name: PREPROCESSING_PARAM
-  value: '{"image_size": {"x": 128, "y": 128},"batch_size": 30}}'
+  value: {"image_size": {"x": 128, "y": 128},"batch_size": 30}}

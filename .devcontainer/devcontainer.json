@@ -1,0 +1,55 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json
+{
+    "name": "MLOpsManufacturing",
+    "context": "..",
+    "dockerFile": "./image/Dockerfile",
+    // Set *default* container specific settings.json values on container create.
+    "settings": {
+      "autoDocstring.docstringFormat": "google",
+      "terminal.integrated.shell.linux": "/bin/bash",
+      "python.pythonPath": "/opt/conda/bin/python",
+      "python.linting.enabled": true,
+      "python.linting.flake8Enabled": true,
+      "python.formatting.autopep8Path": "/opt/conda/bin/flake8",
+      "python.formatting.yapfPath": "/opt/conda/bin/flake8",
+      "python.linting.flake8Path": "/opt/conda/bin/flake8",
+      "python.linting.pycodestylePath": "/opt/conda/bin/pycodestyle",
+      "python.linting.pydocstylePath": "/opt/conda/bin/pydocstyle",
+      "python.testing.pytestPath": "/opt/conda/bin/pytest",
+      "terminal.integrated.inheritEnv": false,
+    },
+    // Add the IDs of extensions you want installed when the container is created.
+    "extensions": [
+      "ms-python.python",
+      "DavidAnson.vscode-markdownlint",
+      "ms-azuretools.vscode-docker",
+      "njpwerner.autodocstring",
+      "ms-azure-devops.azure-pipelines",
+      "streetsidesoftware.code-spell-checker",
+      "ms-toolsai.vscode-ai",
+      "ms-vscode.azure-account",
+      "redhat.vscode-yaml",
+      "eamodio.gitlens",
+      "ms-vsliveshare.vsliveshare"
+    ],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+    // Use 'initializeCommand' to run command string or list of command arguments to run on the local machine before the container is created. 
+    "initializeCommand": "/bin/sh ${localWorkspaceFolder}/.devcontainer/image/dockergid.sh ${localWorkspaceFolder}",
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "",
+    // "postAttachCommand": "",
+    // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "vscode",
+    "mounts": [
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ],
+    "runArgs": [
+      // "--env-file",
+      // ".devcontainer/devcontainer.env",
+      "--volume",
+      "/var/run/docker.sock:/var/run/docker.sock"
+      // "--gpus=all" requires some additional prereqs see https://docs.microsoft.com/en-us/windows/win32/direct3d12/gpu-cuda-in-wsl
+    ],
+  }
+  

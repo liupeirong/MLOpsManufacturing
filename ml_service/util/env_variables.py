@@ -70,3 +70,7 @@ class Env:
     aml_env_name_score_copy: Optional[str] = os.environ.get("AML_ENV_NAME_SCORE_COPY")  # NOQA: E501
     batchscore_script_path: Optional[str] = os.environ.get("BATCHSCORE_SCRIPT_PATH")  # NOQA: E501
     batchscore_copy_script_path: Optional[str] = os.environ.get("BATCHSCORE_COPY_SCRIPT_PATH")  # NOQA: E501
+    aml_custom_docker_env_name: Optional[str] = os.environ.get("AML_CUSTOM_DOCKER_ENV_NAME")  # NOQA: E501
+    aml_custom_dockerfile: Optional[str] = os.environ.get("AML_CUSTOM_DOCKERFILE")  # NOQA: E501
+    preprocess_os_cmd_script_path: Optional[str] = os.environ.get("PREPROCESS_OS_CMD_SCRIPT_PATH")  # NOQA: E501
+    preprocessing_os_cmd_pipeline_name: Optional[str] = os.environ.get("PREPROCESSING_OS_CMD_PIPELINE_NAME")  # NOQA: E501

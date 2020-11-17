@@ -33,6 +33,8 @@ variables:
     value: flower_dataset
   - name: PREPROCESSING_PIPELINE_NAME
     value: "flower-preprocessing-pipeline"
+  - name: PREPROCESSING_OS_CMD_PIPELINE_NAME
+    value: "custom-data-processing-pipeline"
   - name: TRAINING_PIPELINE_NAME
     value: "flower-training-Pipeline"
   - name: MODEL_NAME

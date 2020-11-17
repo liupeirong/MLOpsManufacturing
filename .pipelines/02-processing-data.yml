@@ -51,44 +51,7 @@ stages:
           python -m ml_service.pipelines.build_data_processing_pipeline
       displayName: 'Publish Data Preprocessing Pipeline'
 
-- stage: 'Trigger_Preprocessing_Pipeline'
-  displayName: 'Preprocess data'
-  condition: succeeded()
-  variables:
-    BUILD_URI: '$(SYSTEM.COLLECTIONURI)$(SYSTEM.TEAMPROJECT)/_build/results?buildId=$(BUILD.BUILDID)'
-  jobs:
-  - job: "Get_Preprocessing_Pipeline_ID"
-    condition: and(succeeded(), eq(coalesce(variables['auto-preprocess-data'], 'true'), 'true'))
-    displayName: "Get Preprocessing Pipeline ID for execution"
-    container: mlops
-    timeoutInMinutes: 0
-    steps:
-    - task: AzureCLI@1
-      inputs:
-        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
-        scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
-        inlineScript: |
-          set -e # fail on error
-          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          python -m ml_service.pipelines.run_data_processing_pipeline --output_pipeline_id_file "preprocessing_pipeline_id.txt" --skip_preprocessing_execution
-          # Set AMLPIPELINEID variable for next AML Pipeline task in next job
-          PREPROCESSPIPELINEID="$(cat preprocessing_pipeline_id.txt)"
-          echo "##vso[task.setvariable variable=PREPROCESSPIPELINEID;isOutput=true]$PREPROCESSPIPELINEID"
-      name: 'getpreprocessingpipelineid'
-      displayName: 'Get Preprocessing Pipeline ID'
-  - job: "Run_Data_Processing_Pipeline"
-    dependsOn: "Get_Preprocessing_Pipeline_ID"
-    displayName: "Trigger Preprocessing Pipeline"
-    timeoutInMinutes: 0
-    pool: server
-    variables:
-      PREPROCESSPIPELINE_ID: $[ dependencies.Get_Preprocessing_Pipeline_ID.outputs['getpreprocessingpipelineid.PREPROCESSPIPELINEID'] ]
-    steps:
-    - task: ms-air-aiagility.vss-services-azureml.azureml-restApi-task.MLPublishedPipelineRestAPITask@0
-      displayName: 'Invoke Preprocessing pipeline'
-      inputs:
-        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
-        PipelineId: '$(PREPROCESSPIPELINE_ID)'
-        ExperimentName: '$(EXPERIMENT_NAME)_preprocess'
-        PipelineParameters: '"ParameterAssignments": {"data_file_path": "$(RAW_DATAFILE_PATH)", "preprocessing_param": "$(PREPROCESSING_PARAM)"}, "tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'
+# Trigger_Preprocessing_Pipeline
+- template: trigger-preprocessing-pipeline.yml
+  parameters:
+    pipeline_name: $(PREPROCESSING_PIPELINE_NAME)

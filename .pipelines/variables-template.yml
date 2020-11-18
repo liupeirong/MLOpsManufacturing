@@ -19,6 +19,9 @@ variables:
     # The path to the model scoring script relative to SOURCES_DIR_TRAIN
   - name: SCORE_SCRIPT
     value: scoring/score.py
+    # The path to the data os cmd preprocessing script under SOURCES_DIR_TRAIN
+  - name: PREPROCESSING_OS_CMD_SCRIPT_PATH
+    value: preprocessing/preprocess_os_cmd.py
     
   # Azure ML Variables
   - name: EXPERIMENT_NAME
@@ -40,11 +43,17 @@ variables:
   - name: MODEL_NAME
     value: flower_classifier
 
-  # AML Compute Cluster Config
+  # AML Environment Config
   - name: AML_ENV_NAME
     value: flower_classifier_training_env
   - name: AML_ENV_TRAIN_CONDA_DEP_FILE
     value: "conda_dependencies.yml"
+  - name: AML_PREPROCESSING_CUSTOM_DOCKER_ENV_NAME
+    value: flower_custom_preprocess_env
+  - name: AML_PREPROCESSING_CUSTOM_DOCKERFILE
+    value: ml_model/preprocessing/Dockerfile
+
+  # AML Compute Cluster Config
   - name: AML_COMPUTE_CLUSTER_CPU_SKU
     value: STANDARD_DS2_V2
   - name: AML_COMPUTE_CLUSTER_NAME

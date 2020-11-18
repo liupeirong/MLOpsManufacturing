@@ -15,4 +15,4 @@ jobs:
     steps:
     - script: docker build -f Dockerfile .
       workingDirectory: $(Build.SourcesDirectory)/ml_model/preprocessing/
-      displayName: 'Copy first level contents only to ArtifactStagingDirectory'
+      displayName: 'Docker build validation aml pipeline compatible step'

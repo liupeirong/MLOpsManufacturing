@@ -54,4 +54,4 @@ stages:
 # Trigger_Preprocessing_Pipeline
 - template: trigger-preprocessing-pipeline.yml
   parameters:
-    pipeline_name: $(PREPROCESSING_PIPELINE_NAME)
+    aml_pipeline_name: $(PREPROCESSING_PIPELINE_NAME)

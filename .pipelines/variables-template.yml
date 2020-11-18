@@ -29,8 +29,10 @@ variables:
   # - name: DATASTORE_NAME
   #   value: datablobstore
   # Name of the published ML pipelines
+  - name: RAW_DATAFILE_PATH
+    value: flower_dataset
   - name: PREPROCESSING_PIPELINE_NAME
-    value: "flower-data-processing-pipeline"
+    value: "flower-preprocessing-pipeline"
   - name: TRAINING_PIPELINE_NAME
     value: "flower-training-Pipeline"
   - name: MODEL_NAME
@@ -56,6 +58,9 @@ variables:
   - name: IMAGE_NAME
     value: "flowerclassifier"
 
+  - name: PREPROCESSING_PARAM
+    value: '{\"image_size\": {\"x\": 128, \"y\": 128},\"batch_size\": 30}'
+
   # Data used for smoke testing deployed service, comma separated
   # - name: TEST_IMAGE_URLS
   #   value: url_to_sunflower_jpg,url_to_daisy_jpg
@@ -67,8 +72,8 @@ variables:
   # - name: RUN_EVALUATION
   #   value: "true"
   # Set to false to register the model regardless of the outcome of the evaluation step in the ML pipeline.
-  # - name: ALLOW_RUN_CANCEL
-  #   value: "true"
+  - name: ALLOW_RUN_CANCEL
+    value: "false"
 
   # Flag to allow rebuilding the AML Environment after it was built for the first time. This enables dependency updates from conda_dependencies.yaml.
   # - name: AML_REBUILD_ENVIRONMENT

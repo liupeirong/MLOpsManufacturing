@@ -67,7 +67,7 @@ def main():
                 tags["BuildUri"] = e.build_uri
             experiment = Experiment(
                 workspace=aml_workspace,
-                name=e.experiment_name)
+                name=e.experiment_name + "_preprocess")
             run = experiment.submit(
                 published_pipeline,
                 tags=tags)

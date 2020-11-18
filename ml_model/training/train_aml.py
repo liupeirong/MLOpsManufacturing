@@ -55,12 +55,6 @@ def main():
     )
 
     parser.add_argument(
-        "--caller_run_id",
-        type=str,
-        help=("caller run id, for example ADF pipeline run id")
-    )
-
-    parser.add_argument(
         "--dataset_name",
         type=str,
         help=("Dataset name. Dataset must be passed by name\
@@ -78,7 +72,6 @@ def main():
     print("Argument [model_name]: %s" % args.model_name)
     print("Argument [step_output]: %s" % args.step_output)
     print("Argument [data_file_path]: %s" % args.data_file_path)
-    print("Argument [caller_run_id]: %s" % args.caller_run_id)
     print("Argument [dataset_name]: %s" % args.dataset_name)
     print("Argument [datastore_name]: %s" % args.datastore_name)
 
@@ -144,6 +137,8 @@ def main():
     os.makedirs(step_output_path, exist_ok=True)
     model_output_path = os.path.join(step_output_path, model_name)
     model.save(model_output_path)
+    with open(os.path.join(step_output_path, "run_id.txt"), "w") as text_file:
+        print(f"{run.id}", file=text_file)
 
     # Also upload model file to run outputs for history
     os.makedirs('outputs', exist_ok=True)

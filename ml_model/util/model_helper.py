@@ -96,12 +96,14 @@ def register_dataset(
     else:
         datastore = aml_workspace.get_default_datastore()
     # if the path is same as the latest version, no new version will be registered  # NOQA: E501
+    # however, run.input_datasets['name'] = dataset will not log the dataset in the run  # NOQA: E501
+    # in this case, the dataset returned from Dataset.get_by_name does get logged  # NOQA: E501
     dataset = Dataset.File.from_files(path=(datastore, file_path))
     dataset = dataset.register(workspace=aml_workspace,
                                name=dataset_name,
                                create_new_version=True)
 
-    return dataset
+    return Dataset.get_by_name(aml_workspace, dataset_name)
 
 
 def get_or_register_dataset(

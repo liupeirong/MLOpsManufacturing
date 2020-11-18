@@ -56,15 +56,15 @@ def main():
     )
 
     parser.add_argument(
-        "--caller_run_id",
+        "--output_dataset",
         type=str,
-        help=("caller run id, for example ADF pipeline run id")
+        help=("output of processed data")
     )
 
     parser.add_argument(
-        "--step_output",
+        "--preprocessing_param",
         type=str,
-        help=("output of processed data")
+        help=("image pre-processing parameters")
     )
 
     args = parser.parse_args()
@@ -72,51 +72,43 @@ def main():
     print("Argument [dataset_name]: %s" % args.dataset_name)
     print("Argument [datastore_name]: %s" % args.datastore_name)
     print("Argument [data_file_path]: %s" % args.data_file_path)
-    print("Argument [caller_run_id]: %s" % args.caller_run_id)
-    print("Argument [step_output]: %s" % args.step_output)
+    print("Argument [output_dataset]: %s" % args.output_dataset)
+    print("Argument [preprocessing_param]: %s" % args.preprocessing_param)
 
     data_file_path = args.data_file_path
     dataset_name = args.dataset_name
     datastore_name = args.datastore_name
-    output_path = args.step_output
+    output_dataset = args.output_dataset
+    preprocessing_param = args.preprocessing_param
 
     run = Run.get_context()
-
-    # Get Azure machine learning workspace
     aml_workspace, *_ = get_aml_context(run)
 
-    # Get the dataset
+    if preprocessing_param is None or preprocessing_param == "":
+        with open("parameters.json") as f:
+            pars = json.load(f)
+            preprocessing_args = pars["preprocessing"]
+    else:
+        preprocessing_args = json.loads(preprocessing_param)
+    print(f"preprocessing parameters {preprocessing_args}")
+    for (k, v) in preprocessing_args.items():
+        run.log(k, v)
+        run.parent.log(k, v)
+
     dataset = get_or_register_dataset(
         dataset_name,
         datastore_name,
         data_file_path,
         aml_workspace)
 
-    # Load the training parameters from the parameters file
-    print("Getting preprocessing parameters")
-    with open("parameters.json") as f:
-        pars = json.load(f)
-    try:
-        preprocessing_args = pars["preprocessing"]
-    except KeyError:
-        print("Could not load preprocessing values from file")
-        preprocessing_args = {}
-
-    # Log the training parameters
-    print(f"Parameters: {preprocessing_args}")
-    for (k, v) in preprocessing_args.items():
-        run.log(k, v)
-        run.parent.log(k, v)
-
     # Link dataset to the step run so it is trackable in the UI
-    run.input_datasets['input_dataset'] = dataset
-    run.parent.tag("dataset_id", value=dataset.id)
+    run.input_datasets['flower_dataset_raw'] = dataset
 
     # Process data
     mount_context = dataset.mount()
     mount_context.start()
     print(f"mount_point is: {mount_context.mount_point}")
-    resize_images(mount_context.mount_point, output_path, preprocessing_args)
+    resize_images(mount_context.mount_point, output_dataset, preprocessing_args)  # NOQA: E501
     mount_context.stop()
 
     run.tag("run_type", value="preprocess")

@@ -33,13 +33,7 @@ def main():
     )
 
     parser.add_argument(
-        "--caller_run_id",
-        type=str,
-        help=("caller run id, for example ADF pipeline run id")
-    )
-
-    parser.add_argument(
-        "--step_output",
+        "--output_dataset",
         type=str,
         help=("output for passing data to next step")
     )
@@ -49,13 +43,12 @@ def main():
     print("Argument [dataset_name]: %s" % args.dataset_name)
     print("Argument [datastore_name]: %s" % args.datastore_name)
     print("Argument [data_file_path]: %s" % args.data_file_path)
-    print("Argument [caller_run_id]: %s" % args.caller_run_id)
-    print("Argument [step_output]: %s" % args.step_output)
+    print("Argument [output_dataset]: %s" % args.output_dataset)
 
     data_file_path = args.data_file_path
     dataset_name = args.dataset_name
     datastore_name = args.datastore_name
-    step_output_path = args.step_output
+    output_dataset_path = args.output_dataset
 
     run = Run.get_context()
 
@@ -71,7 +64,6 @@ def main():
 
     # Link dataset to the step run so it is trackable in the UI
     run.input_datasets['input_dataset'] = dataset
-    run.parent.tag("dataset_id", value=dataset.id)
 
     # Process data
     mount_context = dataset.mount()
@@ -85,7 +77,9 @@ def main():
     # in the docker image (ml_model/preprocessing/Dockerfile)
     process = subprocess.Popen(['cp',
                                 '{0}/.'.format(mount_context.mount_point),
-                                step_output_path, '-r', '-v'],
+                                output_dataset_path,
+                                '-r',
+                                '-v'],
                                stdout=subprocess.PIPE,
                                universal_newlines=True)
     # Check output

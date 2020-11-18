@@ -43,7 +43,6 @@ def main():
 
     datastore = Datastore(aml_workspace, name=datastore_name)
     data_file_path_param = PipelineParameter(name="data_file_path", default_value=e.dataset_name)  # NOQA: E501
-    caller_run_id_param = PipelineParameter(name="caller_run_id", default_value="none")  # NOQA: E501
 
     # The version of the input/output dataset can't be determined at pipeline publish time, only run time.  # NOQA: E501
     # Options to store output data:
@@ -54,7 +53,7 @@ def main():
     # Option 2: Use a dynamic path in OutputFileDatasetConfig, and register a new dataset at completion  # NOQA: E501
     #     Output dataset can be mounted, so more dataset to maintain, less code.   # NOQA: E501
     # Using Option 2 below.
-    output_ds = OutputFileDatasetConfig(
+    output_dataset = OutputFileDatasetConfig(
         name=e.processed_dataset_name,
         destination=(datastore, "/dataset/{output-name}/{run-id}")
     ).register_on_complete(
@@ -69,8 +68,7 @@ def main():
             "--dataset_name", e.dataset_name,
             "--datastore_name", datastore_name,
             "--data_file_path", data_file_path_param,
-            "--caller_run_id", caller_run_id_param,
-            "--step_output", output_ds,
+            "--output_dataset", output_dataset,
         ],
         runconfig=run_config,
         allow_reuse=False,

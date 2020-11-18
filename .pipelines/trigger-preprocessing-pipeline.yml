@@ -43,5 +43,5 @@ stages:
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         PipelineId: '$(PREPROCESSPIPELINE_ID)'
-        ExperimentName: '$(EXPERIMENT_NAME)'
-        PipelineParameters: '"tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'
+        ExperimentName: '$(EXPERIMENT_NAME)_preprocess'
+        PipelineParameters: '"ParameterAssignments": {"data_file_path": "$(RAW_DATAFILE_PATH)", "preprocessing_param": "$(PREPROCESSING_PARAM)"}, "tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'

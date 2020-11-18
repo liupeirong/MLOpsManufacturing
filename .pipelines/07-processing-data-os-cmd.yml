@@ -19,6 +19,7 @@ trigger:
     - .pipelines/07-processing-data-os-cmd.yml
     - .pipelines/variables-template.yml
     - .pipelines/code-quality-template.yml
+    - .pipelines/trigger-preprocessing-pipeline.yml
 
 
 variables:

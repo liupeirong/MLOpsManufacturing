@@ -4,8 +4,8 @@ parameters:
     type: string
 
 stages:
-- stage: 'Trigger_Preprocessing_Pipeline ${{ parameters.aml_pipeline_name }}'
-  displayName: 'Preprocess data'
+- stage: 'Trigger_Preprocessing_Pipeline'
+  displayName: 'Preprocess data ${{ parameters.aml_pipeline_name }}'
   condition: succeeded()
   variables:
     BUILD_URI: '$(SYSTEM.COLLECTIONURI)$(SYSTEM.TEAMPROJECT)/_build/results?buildId=$(BUILD.BUILDID)'

@@ -25,22 +25,15 @@ def get_environment(
 
         if restored_environment is None or create_new:
 
-            if restored_environment is None:
-                # Environment has to be created
-                if conda_dependencies_file is not None:
-                    new_env = Environment.from_conda_specification(
-                        environment_name,
-                        os.path.join(e.sources_directory_train, conda_dependencies_file),  # NOQA: E501
-                    )  # NOQA: E501
-                    restored_environment = new_env
-                else:
-                    restored_environment = Environment(environment_name)
+            # Environment has to be created
+            if conda_dependencies_file is not None:
+                new_env = Environment.from_conda_specification(
+                    environment_name,
+                    os.path.join(e.sources_directory_train, conda_dependencies_file),  # NOQA: E501
+                )  # NOQA: E501
+                restored_environment = new_env
             else:
-                if conda_dependencies_file is not None:
-                    # Environment has to be updated
-                    restored_environment.conda_dependencies_file =\
-                        os.path.join(e.sources_directory_train,
-                                     conda_dependencies_file)
+                restored_environment = Environment(environment_name)
 
             if enable_docker is not None:
                 restored_environment.docker.enabled = enable_docker

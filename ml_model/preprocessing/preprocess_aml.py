@@ -28,10 +28,14 @@ import argparse
 import json
 from preprocess_images import resize_images
 from util.model_helper import get_or_register_dataset, get_aml_context
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def main():
-    print("Running preprocess.py")
+    observability.start_span()
+    observability.log("Running preprocess.py")
 
     parser = argparse.ArgumentParser("preprocess")
     parser.add_argument(
@@ -90,7 +94,7 @@ def main():
             preprocessing_args = pars["preprocessing"]
     else:
         preprocessing_args = json.loads(preprocessing_param)
-    print(f"preprocessing parameters {preprocessing_args}")
+    observability.log(f"preprocessing parameters {preprocessing_args}")
     for (k, v) in preprocessing_args.items():
         run.log(k, v)
         run.parent.log(k, v)
@@ -107,14 +111,16 @@ def main():
     # Process data
     mount_context = dataset.mount()
     mount_context.start()
-    print(f"mount_point is: {mount_context.mount_point}")
+    observability.log(f"mount_point is: {mount_context.mount_point}")
     resize_images(mount_context.mount_point, output_dataset, preprocessing_args)  # NOQA: E501
     mount_context.stop()
 
     run.tag("run_type", value="preprocess")
-    print(f"tags now present for run: {run.tags}")
+    observability.log(f"tags now present for run: {run.tags}")
 
     run.complete()
+
+    observability.end_span()
 
 
 if __name__ == '__main__':

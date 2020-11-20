@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 import os
 from typing import Optional
-
 from dotenv import load_dotenv
 
 
@@ -40,6 +39,9 @@ class Env:
     max_nodes: int = int(os.environ.get("AML_CLUSTER_MAX_NODES", 4))
     aml_preprocessing_custom_docker_env_name: Optional[str] = os.environ.get("AML_PREPROCESSING_CUSTOM_DOCKER_ENV_NAME")  # NOQA: E501
     preprocessing_os_cmd_pipeline_name: Optional[str] = os.environ.get("PREPROCESSING_OS_CMD_PIPELINE_NAME")  # NOQA: E501
+    app_insights_connection_string: Optional[str] = os.environ.get("APP_INSIGHTS_CONNECTION_STRING")  # NOQA: E501
+    log_to_console: Optional[bool] = os.environ.get("LOG_TO_CONSOLE", "false").lower().strip() == "true"  # NOQA: E501
+    log_level: Optional[str] = os.environ.get("LOG_LEVEL", "WARNING")  # NOQA: E501
 
     # derived variables
     processed_dataset_name: Optional[str] = f"{dataset_name}_processed"  # NOQA: E501

@@ -7,9 +7,15 @@ from azureml.data import OutputFileDatasetConfig
 from ml_service.util.attach_compute import get_compute
 from ml_service.util.env_variables import Env
 from ml_service.util.manage_environment import get_environment
+from ml_service.util.logger.logger_interface import Severity
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def main():
+    observability.start_span()
+
     e = Env()
     # Get Azure machine learning workspace
     aml_workspace = Workspace.get(
@@ -17,12 +23,12 @@ def main():
         subscription_id=e.subscription_id,
         resource_group=e.resource_group,
     )
-    print(f"get_workspace:{aml_workspace}")
-
+    observability.log(f"get_workspace:{aml_workspace}")
+    observability.log(f"ohoh", Severity.CRITICAL)
     # Get Azure machine learning cluster
     aml_compute = get_compute(aml_workspace, e.compute_name, e.vm_size)
     if aml_compute is not None:
-        print(f"aml_compute:{aml_compute}")
+        observability.log(f"aml_compute:{aml_compute}")
 
     # Create a reusable Azure ML environment
     environment = get_environment(
@@ -74,7 +80,7 @@ def main():
         runconfig=run_config,
         allow_reuse=False,
     )
-    print("Step Preprocess created")
+    observability.log("Step Preprocess created")
 
     steps = [preprocess_step]
     preprocess_pipeline = Pipeline(workspace=aml_workspace, steps=steps)
@@ -85,8 +91,9 @@ def main():
         description="Data preprocessing pipeline",
         version=e.build_id,
     )
-    print(f"Published pipeline: {published_pipeline.name}")
-    print(f"for build {published_pipeline.version}")
+    observability.log(f"Published pipeline: {published_pipeline.name}")
+    observability.log(f"for build {published_pipeline.version}")
+    observability.end_span()
 
 
 if __name__ == "__main__":

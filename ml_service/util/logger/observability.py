@@ -70,6 +70,15 @@ class Observability(LoggerInterface):
         for logger in self._loggers.loggers:
             logger.log(description, severity)
 
+    def exception(self, exception: Exception):
+        """
+        this method sends the exception to all registered loggers
+        :param exception: Actual exception to be sent
+        :return:
+        """
+        for logger in self._loggers.loggers:
+            logger.exception(exception)
+
     def get_logger(self, logger_class):
         """
         This method iterate over the loggers and it

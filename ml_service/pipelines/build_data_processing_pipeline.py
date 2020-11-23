@@ -7,7 +7,6 @@ from azureml.data import OutputFileDatasetConfig
 from ml_service.util.attach_compute import get_compute
 from ml_service.util.env_variables import Env
 from ml_service.util.manage_environment import get_environment
-from ml_service.util.logger.logger_interface import Severity
 from ml_service.util.logger.observability import Observability
 
 observability = Observability()
@@ -24,7 +23,6 @@ def main():
         resource_group=e.resource_group,
     )
     observability.log(f"get_workspace:{aml_workspace}")
-    observability.log(f"ohoh", Severity.CRITICAL)
     # Get Azure machine learning cluster
     aml_compute = get_compute(aml_workspace, e.compute_name, e.vm_size)
     if aml_compute is not None:
@@ -39,6 +37,15 @@ def main():
     )  #
     run_config = RunConfiguration()
     run_config.environment = environment
+
+    # Activate AppInsights in Pipeline run:
+    # https://docs.microsoft.com/en-us/azure/machine-learning/how-to-log-pipelines-application-insights
+    # Add environment variable with Application Insights Connection String
+    # Replace the value with your own connection string
+    run_config.environment.environment_variables = {
+        "APPLICATIONINSIGHTS_CONNECTION_STRING":
+        e.app_insights_connection_string
+    }
 
     if e.datastore_name:
         datastore_name = e.datastore_name

@@ -27,8 +27,8 @@ from azureml.core.run import Run
 import os
 import argparse
 import json
-from train import split_data, train_model, get_model_metrics
-from util.model_helper import get_or_register_dataset
+from ml_model.training.train import split_data, train_model, get_model_metrics
+from ml_model.util.model_helper import get_or_register_dataset
 
 
 def main():

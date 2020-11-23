@@ -47,3 +47,11 @@ class AzureMlLogger(LoggerInterface, ObservabilityAbstract):
                 time_stamp, self.severity_map[severity], callee, description
             )
         )
+
+    def exception(self, exception: Exception):
+        """
+        Prints the exception to console
+        :param exception: Actual exception to be sent
+        :return:
+        """
+        self.log(exception, Severity.CRITICAL)

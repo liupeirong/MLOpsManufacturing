@@ -1,4 +1,5 @@
 import inspect
+import uuid
 from opencensus.trace.tracer import Tracer
 
 
@@ -16,6 +17,9 @@ class LoggerInterface(Tracer):
         pass
 
     def log(self, name, value, description, severity, log_parent):
+        pass
+
+    def exception(self, exception):
         pass
 
     def finish(self):
@@ -65,6 +69,48 @@ class ObservabilityAbstract:
     severity = Severity()
     severity_map = {10: "DEBUG", 20: "INFO",
                     30: "WARNING", 40: "ERROR", 50: "CRITICAL"}
+
+    def get_run_id_and_set_context(self, run):
+        """
+        gets the correlation ID by the in following order:
+        - If the script is running  in an Online run Context of AML --> run_id
+        - If the script is running where a build_id
+        environment variable  is set --> build_id
+        - Else --> generate a unique id
+
+        Sets also the custom context dimensions based on On or Offline run
+        :param run:
+        :return: correlation_id
+        """
+        run_id = str(uuid.uuid1())
+        if not run.id.startswith(self.OFFLINE_RUN):
+            run_id = run.id
+            self.custom_dimensions = {
+                'custom_dimensions': {
+                    "parent_run_id": run.parent.id,
+                    "step_id": run.id,
+                    "step_name": run.name,
+                    "experiment_name": run.experiment.name,
+                    "run_url": run.parent.get_portal_url(),
+                    "offline_run": False
+                }
+            }
+        elif self.env.build_id:
+            run_id = self.env.build_id
+            self.custom_dimensions = {
+                'custom_dimensions': {
+                    "run_id": self.env.build_id,
+                    "offline_run": True
+                }
+            }
+        else:
+            self.custom_dimensions = {
+                'custom_dimensions': {
+                    "run_id": run_id,
+                    "offline_run": True
+                }
+            }
+        return run_id
 
     @staticmethod
     def get_callee(stack_level):

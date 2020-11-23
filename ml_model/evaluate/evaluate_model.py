@@ -25,7 +25,7 @@ POSSIBILITY OF SUCH DAMAGE.
 """
 from azureml.core import Run
 import argparse
-from util.model_helper import get_model
+from ml_model.util.model_helper import get_model
 
 
 def evaluate_model_performs_better(model, run):

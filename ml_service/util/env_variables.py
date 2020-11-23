@@ -42,6 +42,9 @@ class Env:
     app_insights_connection_string: Optional[str] = os.environ.get("APP_INSIGHTS_CONNECTION_STRING")  # NOQA: E501
     log_to_console: Optional[bool] = os.environ.get("LOG_TO_CONSOLE", "false").lower().strip() == "true"  # NOQA: E501
     log_level: Optional[str] = os.environ.get("LOG_LEVEL", "WARNING")  # NOQA: E501
+    log_sampling_rate: float = float(os.environ.get("LOG_SAMPLING_RATE", 1.0))  # NOQA: E501
+    trace_sampling_rate: float = float(os.environ.get("TRACE_SAMPLING_RATE", 1.0))  # NOQA: E501
+    metrics_export_interval: int = int(os.environ.get("METRICS_EXPORT_INTERVAL", 15))  # NOQA: E501
 
     # derived variables
     processed_dataset_name: Optional[str] = f"{dataset_name}_processed"  # NOQA: E501

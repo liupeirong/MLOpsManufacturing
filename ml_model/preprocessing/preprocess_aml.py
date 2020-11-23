@@ -26,8 +26,8 @@ POSSIBILITY OF SUCH DAMAGE.
 from azureml.core.run import Run
 import argparse
 import json
-from preprocess_images import resize_images
-from util.model_helper import get_or_register_dataset, get_aml_context
+from ml_model.preprocessing.preprocess_images import resize_images
+from ml_model.util.model_helper import get_or_register_dataset, get_aml_context
 from ml_service.util.logger.observability import Observability
 
 observability = Observability()
@@ -124,4 +124,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

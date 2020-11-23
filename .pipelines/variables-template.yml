@@ -4,7 +4,7 @@
 variables:
   # The directory containing the scripts for training, evaluating, and registering the model
   - name: SOURCES_DIR_TRAIN
-    value: ml_model
+    value: '.'
     
   # Azure ML Variables
   - name: EXPERIMENT_NAME
@@ -42,6 +42,8 @@ variables:
     value: flower_custom_preprocess_env
 
   # AML Compute Cluster Config
+  - name: AML_ENV_TRAIN_CONDA_DEP_FILE
+    value: "ml_model/conda_dependencies.yml"
   - name: AML_COMPUTE_CLUSTER_CPU_SKU
     value: STANDARD_DS2_V2
   - name: AML_COMPUTE_CLUSTER_NAME
@@ -52,6 +54,24 @@ variables:
     value: 0
   - name: AML_CLUSTER_MAX_NODES
     value: 4
+  - name: AML_CLUSTER_PRIORITY
+    value: lowpriority
+
+  # Observability related
+  - name: LOG_TO_CONSOLE
+    value: 'true'
+  - name: LOG_LEVEL
+    value: 'INFO' # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  - name: LOG_SAMPLING_RATE
+    value: '1.0' # Probability 0.0 -> 1.0
+  - name: TRACE_SAMPLING_RATE
+    value: '1.0' # Probability 0.0 -> 1.0
+  - name: METRICS_EXPORT_INTERVAL
+    value: '15' # Seconds
+
+  # The name for the (docker/webapp) scoring image
+  - name: IMAGE_NAME
+    value: "flowerclassifier"
 
   # AML pipelines can run outside of Azure DevOps, these parameters control AML pipeline behaviors
   - name: PREPROCESSING_PARAM

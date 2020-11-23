@@ -30,7 +30,7 @@ import argparse
 import traceback
 from azureml.core import Run
 from azureml.core.model import Model as AMLModel
-from util.model_helper import get_aml_context
+from ml_model.util.model_helper import get_aml_context
 
 
 def find_child_run(parent_run, child_run_id):

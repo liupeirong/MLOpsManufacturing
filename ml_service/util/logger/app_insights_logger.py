@@ -1,5 +1,4 @@
 import logging
-import uuid
 
 from opencensus.ext.azure import metrics_exporter
 from opencensus.ext.azure.log_exporter import AzureLogHandler
@@ -25,36 +24,37 @@ from ml_service.util.logger.logger_interface import (
 class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
     def __init__(self, run):
         self.env = Env()
-        self.run_id = self.get_run_id(run)
+        self.run_id = self.get_run_id_and_set_context(run)
 
         # Prepare integrations and log format
         config_integration.trace_integrations(['httplib', 'logging'])
         self.logger = logging.getLogger(__name__)
-        self.logger.level = getattr(logging, self.env.log_level.upper(), None)
+        self.logger.setLevel(
+            getattr(logging, self.env.log_level.upper(), "WARNING"))
         # initializes log exporter
         handler = AzureLogHandler(
             connection_string=self.env.app_insights_connection_string,
-            logging_sampling_rate=1.0,
+            logging_sampling_rate=self.env.log_sampling_rate,
         )
-        # handler.setFormatter(
-        #     logging.Formatter('%(asctime)s traceId=%(traceId)s '
-        #                       'spanId=%(spanId)s %(message)s'))
         handler.add_telemetry_processor(self.callback_function)
 
         self.logger.addHandler(handler)
         # initializes tracer
+        texporter = AzureExporter(connection_string=self.
+                                  env.app_insights_connection_string)
+        texporter.add_telemetry_processor(self.callback_function)
         self.tracer = Tracer(
-            exporter=AzureExporter(connection_string=self.
-                                   env.app_insights_connection_string),
-            sampler=ProbabilitySampler(1.0)
+            exporter=texporter,
+            sampler=ProbabilitySampler(self.env.trace_sampling_rate)
         )
         # initializes metric exporter
-        exporter = metrics_exporter.new_metrics_exporter(
+        mexporter = metrics_exporter.new_metrics_exporter(
             enable_standard_metrics=False,
+            export_interval=self.env.metrics_export_interval,
             connection_string=self.env.app_insights_connection_string,
         )
-        exporter.add_telemetry_processor(self.callback_function)
-        stats_module.stats.view_manager.register_exporter(exporter)
+        mexporter.add_telemetry_processor(self.callback_function)
+        stats_module.stats.view_manager.register_exporter(mexporter)
 
     def log_metric(
         self, name="", value="", description="", log_parent=False,
@@ -85,32 +85,23 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         """
 
         if severity == self.severity.DEBUG:
-            self.logger.debug(description)
+            self.logger.debug(description, extra=self.custom_dimensions)
         elif severity == self.severity.INFO:
-            self.logger.info(description)
+            self.logger.info(description, extra=self.custom_dimensions)
         elif severity == self.severity.WARNING:
-            self.logger.warning(description)
+            self.logger.warning(description, extra=self.custom_dimensions)
         elif severity == self.severity.ERROR:
-            self.logger.error(description)
+            self.logger.error(description, extra=self.custom_dimensions)
         elif severity == self.severity.CRITICAL:
-            self.logger.critical(description)
+            self.logger.critical(description, extra=self.custom_dimensions)
 
-    def get_run_id(self, run):
+    def exception(self, exception: Exception):
         """
-        gets the correlation ID by the in following order:
-        - If the script is running  in an Online run Context of AML --> run_id
-        - If the script is running where a build_id
-        environment variable  is set --> build_id
-        - Else --> generate a unique id
-        :param run:
-        :return: correlation_id
+        Sends the exception to App Insights
+        :param exception: Actual exception to be sent
+        :return:
         """
-        run_id = str(uuid.uuid1())
-        if not run.id.startswith(self.OFFLINE_RUN):
-            run_id = run.id
-        elif self.env.build_id:
-            run_id = self.env.build_id
-        return run_id
+        self.logger.exception(exception, extra=self.custom_dimensions)
 
     @staticmethod
     def set_view(metric, description, measure):

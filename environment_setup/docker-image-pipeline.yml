@@ -13,6 +13,7 @@ trigger:
   paths:
     include:
     - environment_setup/Dockerfile
+    - ml_model/ci_dependencies.yml
 
 variables:
 - group: devopsforai-aml-vg

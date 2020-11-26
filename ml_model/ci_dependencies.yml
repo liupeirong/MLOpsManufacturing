@@ -1,4 +1,4 @@
-name: mlopstensorflow_ci
+name: mlopmanufacturing_ci
 channels:
   - conda-forge
 dependencies:

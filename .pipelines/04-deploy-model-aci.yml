@@ -11,8 +11,8 @@ parameters:
 resources:
   containers:
   - container: mlops
-    image: public/mlops/tensorflow:latest
-    endpoint: mlopstensorflowacr
+    image: mlopsmanufacturing/build-agent:latest
+    endpoint: mlopsmanufacturingacr
   pipelines:
   - pipeline: model-train-ci
     source: 03-train-evaluate-register-model # Name of the triggering pipeline

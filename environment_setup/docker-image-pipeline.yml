@@ -13,13 +13,13 @@ trigger:
   paths:
     include:
     - environment_setup/Dockerfile
+    - ml_model/ci_dependencies.yml
 
 variables:
-- group: devopsforai-aml-vg
 - name: containerRegistry
-  value: $[coalesce(variables['acrServiceConnection'], 'acrconnection')]
+  value: mlopsmanufacturingacr
 - name: imageName
-  value: $[coalesce(variables['agentImageName'], 'public/mlops/tensorflow')]
+  value: mlopsmanufacturing/build-agent
         
 steps:
   - task: Docker@2

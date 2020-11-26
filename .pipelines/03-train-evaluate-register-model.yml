@@ -3,8 +3,8 @@
 resources:
   containers:
   - container: mlops
-    image: public/mlops/tensorflow:latest
-    endpoint: mlopstensorflowacr
+    image: mlopsmanufacturing/build-agent:latest
+    endpoint: mlopsmanufacturingacr
 
 pr: none
 trigger:

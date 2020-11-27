@@ -27,14 +27,17 @@ RUN mkdir /opt/azcliextensions
 ENV AZURE_EXTENSION_DIR /opt/azcliextensions
 RUN az extension add -n azure-cli-ml
 
-# add and activate user vsts 
+# precreate user vsts 
 RUN groupadd --gid 1001 vsts && \
     useradd -s /bin/bash --uid 1001 --gid 1001 -m vsts
 
 USER vsts
 
-# activate CI environment
+# precreate CI environment for user vsts
 COPY ml_model/ci_dependencies.yml /home/vsts/.
 
 RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci && \
     echo "source activate ci" >> ~/.bashrc
+
+# switch back to root
+USER root

@@ -27,14 +27,14 @@ RUN mkdir /opt/azcliextensions
 ENV AZURE_EXTENSION_DIR /opt/azcliextensions
 RUN az extension add -n azure-cli-ml
 
-# add and activate user buildagent 
-RUN groupadd --gid 1000 buildagent && \
-    useradd -s /bin/bash --uid 1000 --gid 1000 -m buildagent
+# add and activate user vsts 
+RUN groupadd --gid 1001 vsts && \
+    useradd -s /bin/bash --uid 1001 --gid 1001 -m vsts
 
-USER buildagent
+USER vsts
 
 # activate CI environment
-COPY ml_model/ci_dependencies.yml /home/buildagent/.
+COPY ml_model/ci_dependencies.yml /home/vsts/.
 
-RUN conda env create -f /home/buildagent/ci_dependencies.yml -n ci && \
+RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci && \
     echo "source activate ci" >> ~/.bashrc

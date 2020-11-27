@@ -36,8 +36,10 @@ USER vsts
 # precreate CI environment for user vsts
 COPY ml_model/ci_dependencies.yml /home/vsts/.
 
-RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci && \
-    echo "source activate ci" >> ~/.bashrc
+RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci
+
+# activate environment (Azure Pipelines won't use bash to execute)
+ENV PATH /home/vsts/.conda/envs/ci/bin:$PATH
 
 # switch back to root
 USER root

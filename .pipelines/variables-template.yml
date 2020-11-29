@@ -53,7 +53,7 @@ variables:
   - name: AML_CLUSTER_MAX_NODES
     value: 4
 
-  # AML pipelines can run outside of Azure DevOps, these parameters controls preprocessing behavior in AML pipeline
+  # AML pipelines can run outside of Azure DevOps, these parameters control AML pipeline behaviors
   - name: PREPROCESSING_PARAM
     value: '{\"image_size\": {\"x\": 128, \"y\": 128},\"batch_size\": 30}'
 

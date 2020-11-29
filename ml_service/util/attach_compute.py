@@ -6,7 +6,7 @@ from azureml.exceptions import ComputeTargetException
 from ml_service.util.env_variables import Env
 
 
-def get_compute(workspace: Workspace, compute_name: str, vm_size: str, for_batch_scoring: bool = False):  # NOQA E501
+def get_compute(workspace: Workspace, compute_name: str, vm_size: str):  # NOQA E501
     try:
         if compute_name in workspace.compute_targets:
             compute_target = workspace.compute_targets[compute_name]
@@ -16,9 +16,9 @@ def get_compute(workspace: Workspace, compute_name: str, vm_size: str, for_batch
             e = Env()
             compute_config = AmlCompute.provisioning_configuration(
                 vm_size=vm_size,
-                vm_priority=e.vm_priority if not for_batch_scoring else e.vm_priority_scoring,  # NOQA E501
-                min_nodes=e.min_nodes if not for_batch_scoring else e.min_nodes_scoring,  # NOQA E501
-                max_nodes=e.max_nodes if not for_batch_scoring else e.max_nodes_scoring,  # NOQA E501
+                vm_priority=e.vm_priority,
+                min_nodes=e.min_nodes,
+                max_nodes=e.max_nodes,
                 idle_seconds_before_scaledown="300"
                 #    #Uncomment the below lines for VNet support
                 #    vnet_resourcegroup_name=vnet_resourcegroup_name,

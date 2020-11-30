@@ -7,6 +7,11 @@ import argparse
 def main():
     parser = argparse.ArgumentParser("register")
     parser.add_argument(
+        "--aml_pipeline_name",
+        type=str,
+        help="Name of a the aml pipeline to retrieve ID from"
+    )
+    parser.add_argument(
         "--output_pipeline_id_file",
         type=str,
         default="preprocessing_pipeline_id.txt",
@@ -36,7 +41,7 @@ def main():
     latest_version = 0
     latest_pipe = None
     for p in pipelines:
-        if p.name == e.preprocessing_pipeline_name:
+        if p.name == args.aml_pipeline_name:
             if p.version == e.build_id:
                 matched_pipes.append(p)
             elif int(p.version) > latest_version:

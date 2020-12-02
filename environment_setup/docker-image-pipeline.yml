@@ -19,7 +19,7 @@ variables:
 - name: containerRegistry
   value: mlopsmanufacturingacr
 - name: imageName
-  value: mlopsmanufacturing/build-agent
+  value: mlopsmanufacturing/build-agent/tensorflow
         
 steps:
   - task: Docker@2

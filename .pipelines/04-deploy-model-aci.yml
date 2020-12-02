@@ -11,7 +11,7 @@ parameters:
 resources:
   containers:
   - container: mlops
-    image: mlopsmanufacturing/build-agent:latest
+    image: mlopsmanufacturing/build-agent/tensorflow:latest
     endpoint: mlopsmanufacturingacr
   pipelines:
   - pipeline: model-train-ci

@@ -3,8 +3,15 @@
 resources:
   containers:
   - container: mlops
-    image: public/mlops/tensorflow:latest
-    endpoint: mlopstensorflowacr
+    image: mlopsmanufacturing/build-agent/tensorflow:latest
+    endpoint: mlopsmanufacturingacr
+  pipelines:
+  - pipeline: model-train-ci
+    source: 02-processing-data # Name of the triggering pipeline
+    trigger:
+      branches:
+        include:
+        - main
 
 pr: none
 trigger:

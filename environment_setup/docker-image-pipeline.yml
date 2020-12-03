@@ -1,4 +1,4 @@
-# Pipeline that builds and pushes the microsoft/mlopspython image.
+# Pipeline that builds and pushes the build-agent image.
 resources:
 - repo: self
 
@@ -16,15 +16,18 @@ trigger:
     - ml_model/ci_dependencies.yml
 
 variables:
-- group: devopsforai-aml-vg
+- name: containerRegistry
+  value: mlopsmanufacturingacr
+- name: imageName
+  value: mlopsmanufacturing/build-agent/tensorflow
         
 steps:
   - task: Docker@2
     displayName: Build and Push
     inputs:
       command: buildAndPush
-      containerRegistry: '$(ACR_SVC_CONNECTION)'
-      repository: 'public/mlops/tensorflow'
+      containerRegistry: '$(containerRegistry)'
+      repository: '$(imageName)'
       tags: |
        ${{format('build-{0}', '$(Build.BuildNumber)')}}
        latest

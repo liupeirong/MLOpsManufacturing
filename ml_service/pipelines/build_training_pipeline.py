@@ -51,7 +51,7 @@ def main():
 
     train_step = PythonScriptStep(
         name="Train Model",
-        script_name=e.train_script_path,
+        script_name="training/train_aml.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         outputs=[pipeline_data],
@@ -69,7 +69,7 @@ def main():
 
     evaluate_step = PythonScriptStep(
         name="Evaluate Model ",
-        script_name=e.evaluate_script_path,
+        script_name="evaluate/evaluate_model.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         arguments=[
@@ -83,7 +83,7 @@ def main():
 
     register_step = PythonScriptStep(
         name="Register Model ",
-        script_name=e.register_script_path,
+        script_name="register/register_model.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         inputs=[pipeline_data],

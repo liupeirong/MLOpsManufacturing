@@ -30,7 +30,7 @@ def main():
         e.aml_preprocessing_custom_docker_env_name,
         create_new=e.rebuild_env,
         enable_docker=True,
-        dockerfile=e.aml_preprocessing_custom_dockerfile
+        dockerfile='ml_model/preprocessing/Dockerfile'
     )  #
     run_config = RunConfiguration()
     run_config.environment = environment
@@ -61,7 +61,7 @@ def main():
 
     preprocess_step = PythonScriptStep(
         name="Preprocess Data with OS cmd",
-        script_name=e.preprocessing_os_cmd_script_path,
+        script_name='preprocessing/preprocess_os_cmd.py',
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         arguments=[

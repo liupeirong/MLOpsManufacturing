@@ -1,4 +1,4 @@
-# Pipeline that builds and pushes the microsoft/mlopspython image.
+# Pipeline that builds and pushes the build-agent image.
 resources:
 - repo: self
 

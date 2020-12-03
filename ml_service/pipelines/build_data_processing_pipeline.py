@@ -61,7 +61,7 @@ def main():
 
     preprocess_step = PythonScriptStep(
         name="Preprocess Data",
-        script_name=e.preprocess_script_path,
+        script_name="preprocessing/preprocess_aml.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         arguments=[

@@ -51,7 +51,7 @@ def main():
 
     train_step = PythonScriptStep(
         name="Train Model",
-        script_name="training/train_aml.py",
+        script_name="ml_model/training/train_aml.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         outputs=[pipeline_data],

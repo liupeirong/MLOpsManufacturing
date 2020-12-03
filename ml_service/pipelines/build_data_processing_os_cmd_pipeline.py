@@ -61,7 +61,7 @@ def main():
 
     preprocess_step = PythonScriptStep(
         name="Preprocess Data with OS cmd",
-        script_name='preprocessing/preprocess_os_cmd.py',
+        script_name='ml_model/preprocessing/preprocess_os_cmd.py',
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         arguments=[

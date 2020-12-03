@@ -30,6 +30,7 @@ dependencies:
       - debugpy
 
       # Observability
+      - dataclasses==0.6
       - opencensus==0.7.11
       - opencensus-ext-httplib==0.7.3
       - opencensus-ext-logging==0.1.0

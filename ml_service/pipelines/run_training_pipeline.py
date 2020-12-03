@@ -2,9 +2,14 @@ from azureml.pipeline.core import PublishedPipeline
 from azureml.core import Experiment, Workspace
 import argparse
 from ml_service.util.env_variables import Env
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def main():
+    observability.start_span()
+
     parser = argparse.ArgumentParser("register")
     parser.add_argument(
         "--output_pipeline_id_file",
@@ -45,7 +50,7 @@ def main():
         raise KeyError(f"Unable to find a published pipeline for this build {e.build_id}")  # NOQA: E501
     else:
         published_pipeline = matched_pipes[0]
-        print("published pipeline id is", published_pipeline.id)
+        observability.log("published pipeline id is", published_pipeline.id)
 
         # Save the Pipeline ID for other AzDO jobs after script is complete
         if args.output_pipeline_id_file is not None:
@@ -65,8 +70,14 @@ def main():
                 tags=tags,
                 pipeline_parameters=pipeline_parameters)
 
-            print("Pipeline run initiated ", run.id)
+            observability.log("Pipeline run initiated ", run.id)
+
+    observability.end_span()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

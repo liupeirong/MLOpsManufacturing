@@ -43,6 +43,17 @@ class Loggers(ObservabilityAbstract):
 
 
 class Observability(LoggerInterface):
+    _instance = None
+
+    # Straightforward Singleton Pattern from
+    # https://python-patterns.guide/gang-of-four/singleton/
+    def __new__(cls):
+        if cls._instance is None:
+            print('Creating the object')
+            cls._instance = super(Observability, cls).__new__(cls)
+            # Put any initialization here.
+        return cls._instance
+
     def __init__(self) -> None:
         self._loggers = Loggers()
 

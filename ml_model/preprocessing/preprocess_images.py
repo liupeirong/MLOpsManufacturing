@@ -2,6 +2,9 @@ import os
 import shutil
 import numpy as np
 from PIL import Image
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def resize_image(img, size):
@@ -33,15 +36,15 @@ def resize_image(img, size):
 def resize_images(indir, outdir, preprocessing_args):
     size = (preprocessing_args['image_size']['x'],
             preprocessing_args['image_size']['y'])
-    print(f"indir: {indir}")
-    print(f"outdir: {outdir}")
+    observability.log(f"indir: {indir}")
+    observability.log(f"outdir: {outdir}")
     if (os.path.exists(indir)):
-        print("indir exists")
+        observability.log("indir exists")
     else:
-        print("indir doesn't exit")
+        observability.log("indir doesn't exit")
 
     if os.path.exists(outdir):
-        print("outdir exists, delete all files")
+        observability.log("outdir exists, delete all files")
         for filename in os.listdir(outdir):
             file_path = os.path.join(outdir, filename)
             if os.path.isfile(file_path):
@@ -52,7 +55,7 @@ def resize_images(indir, outdir, preprocessing_args):
     # Loop through each subfolder in the input dir
     for root, dirs, filenames in os.walk(indir):
         for d in dirs:
-            print('processing folder ' + d)
+            observability.log('processing folder ' + d)
             # Create a matching subfolder in the output dir
             saveFolder = os.path.join(outdir, d)
             if not os.path.exists(saveFolder):
@@ -62,16 +65,18 @@ def resize_images(indir, outdir, preprocessing_args):
             for f in files:
                 # Open the file
                 imgFile = os.path.join(root, d, f)
-                print("reading " + imgFile)
+                observability.log("reading " + imgFile)
                 img = Image.open(imgFile)
                 # Create a resized version and save it
                 proc_img = resize_image(img, size)
                 saveAs = os.path.join(saveFolder, f)
-                print("writing " + saveAs)
+                observability.log("writing " + saveAs)
                 proc_img.save(saveAs)
 
 
 def main():
+    observability.start_span()
+
     in_dir = 'data/gear_images/raw'
     out_dir = 'data/processed'
     preprocessing_args = {
@@ -80,6 +85,12 @@ def main():
     }
     resize_images(in_dir, out_dir, preprocessing_args)  # NOQA: E501
 
+    observability.end_span()
+
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

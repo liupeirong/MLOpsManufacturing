@@ -4,6 +4,9 @@ model_helper.py
 from azureml.core import Run
 from azureml.core import Workspace, Dataset, Datastore
 from azureml.core.model import Model as AMLModel
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def get_aml_context(run):
@@ -53,7 +56,8 @@ def get_model(
     None.
     """
     if aml_workspace is None:
-        print("No workspace defined - using current experiment workspace.")
+        observability.log("No workspace defined - "
+                          "using current experiment workspace.")
         aml_workspace, *_ = get_aml_context(Run.get_context(allow_offline=False))  # NOQA: E501
 
     tags = None
@@ -116,14 +120,15 @@ def get_or_register_dataset(
         raise Exception("Datset name can't be null")
 
     if aml_workspace is None:
-        print("No workspace defined - using current experiment workspace.")
+        observability.log("No workspace defined - "
+                          "using current experiment workspace.")
         aml_workspace, *_ = get_aml_context(Run.get_context())
 
     if data_file_path == "nopath":
-        print(f"get latest version of dataset: {dataset_name}")
+        observability.log(f"get latest version of dataset: {dataset_name}")
         dataset = Dataset.get_by_name(aml_workspace, dataset_name)
     else:
-        print(f"register a new dataset or new version: {dataset_name}, {datastore_name}, {data_file_path}")  # NOQA: E501
+        observability.log(f"register a new dataset or new version: {dataset_name}, {datastore_name}, {data_file_path}")  # NOQA: E501
         dataset = register_dataset(
             aml_workspace,
             dataset_name,

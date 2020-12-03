@@ -31,6 +31,9 @@ import traceback
 from azureml.core import Run
 from azureml.core.model import Model as AMLModel
 from ml_model.util.model_helper import get_aml_context
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def find_child_run(parent_run, child_run_id):
@@ -54,6 +57,8 @@ def find_run(experiment, run_id):
 
 
 def main():
+    observability.start_span()
+
     run = Run.get_context()
     ws, exp, run_id = get_aml_context(run)
 
@@ -84,11 +89,11 @@ def main():
     if (run_id == 'amlcompute'):
         run_id = run.parent.id
         run = run.parent
-    print(f"parent run_id is {run_id}")
+    observability.log(f"parent run_id is {run_id}")
     model_name = args.model_name
     model_path = args.step_input
 
-    print("Getting registration parameters")
+    observability.log("Getting registration parameters")
 
     # Load the registration parameters from the parameters file
     with open("parameters.json") as f:
@@ -96,7 +101,7 @@ def main():
     try:
         register_args = pars["registration"]
     except KeyError:
-        print("Could not load registration values from file")
+        observability.log("Could not load registration values from file")
         register_args = {"tags": []}
 
     model_tags = {}
@@ -105,23 +110,23 @@ def main():
             mtag = run.get_metrics()[tag]
             model_tags[tag] = mtag
         except KeyError:
-            print(f"Could not find {tag} metric on parent run.")
+            observability.log(f"Could not find {tag} metric on parent run.")
 
     parent_tags = run.get_tags()
     try:
         build_id = parent_tags["BuildId"]
     except KeyError:
         build_id = None
-        print("BuildId tag not found on parent run.")
-        print(f"Tags present: {parent_tags}")
+        observability.log("BuildId tag not found on parent run.")
+        observability.log(f"Tags present: {parent_tags}")
     try:
         build_uri = parent_tags["BuildUri"]
     except KeyError:
         build_uri = None
-        print("BuildUri tag not found on parent run.")
-        print(f"Tags present: {parent_tags}")
+        observability.log("BuildUri tag not found on parent run.")
+        observability.log(f"Tags present: {parent_tags}")
 
-    print(f"Loading training run_id from {model_path}")
+    observability.log(f"Loading training run_id from {model_path}")
     run_id_file = os.path.join(model_path, "run_id.txt")
     with open(run_id_file, "r") as text_file:
         training_run_id = text_file.read().replace('\n', '')
@@ -152,8 +157,11 @@ def main():
                 build_id,
                 build_uri)
     else:
-        print("Training run not found. Skipping model registration.")
+        observability.log("Training run not found."
+                          "Skipping model registration.")
         sys.exit(0)
+
+    observability.end_span()
 
 
 def model_already_registered(model_name, exp, run_id):
@@ -161,7 +169,7 @@ def model_already_registered(model_name, exp, run_id):
     if len(model_list) >= 1:
         raise Exception(f"Model name: {model_name} in workspace {exp.workspace} with run_id {run_id} is already registered.")  # NOQA: E501
     else:
-        print("Model is not registered for this run.")
+        observability.log("Model is not registered for this run.")
 
 
 def register_aml_model(
@@ -185,7 +193,7 @@ def register_aml_model(
             model_name=model_name,
             model_path=os.path.join("outputs", model_name),
             tags=tagsValue)
-        print(
+        observability.log(
             "Model registered: {} \nModel Description: {} "
             "\nModel Version: {}".format(
                 model.name, model.description, model.version
@@ -193,9 +201,13 @@ def register_aml_model(
         )
     except Exception:
         traceback.print_exc(limit=None, file=None, chain=True)
-        print("Model registration failed")
+        observability.log("Model registration failed")
         raise
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

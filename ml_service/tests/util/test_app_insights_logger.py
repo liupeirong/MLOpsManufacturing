@@ -1,6 +1,6 @@
 import logging
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from ml_service.util.logger.app_insights_logger import AppInsightsLogger
 
@@ -14,6 +14,9 @@ class RealAppInsightsLogger(AppInsightsLogger):
 class MockRun:
     def __init__(self, run_id):
         self.id = run_id
+        self.parent = MagicMock()
+        self.name = run_id
+        self.experiment = MagicMock()
 
 
 class MockEnv:
@@ -30,7 +33,8 @@ class TestObservability(unittest.TestCase):
     def test_get_run_id_having_online_context(self):
         expected = "FOO"
 
-        response = self.concert_app_insights_logger.get_run_id(MockRun("FOO"))
+        response = self.concert_app_insights_logger.\
+            get_run_id_and_set_context(MockRun("FOO"))
 
         self.assertEqual(expected, response)
 
@@ -38,7 +42,7 @@ class TestObservability(unittest.TestCase):
         self.concert_app_insights_logger.env.build_id = expected = "FOO"
 
         response = self.concert_app_insights_logger.\
-            get_run_id(MockRun("OfflineRun"))
+            get_run_id_and_set_context(MockRun("OfflineRun"))
 
         self.assertEqual(expected, response)
 
@@ -46,7 +50,7 @@ class TestObservability(unittest.TestCase):
         self.concert_app_insights_logger.env.build_id = ""
 
         response = self.concert_app_insights_logger.\
-            get_run_id(MockRun("OfflineRun"))
+            get_run_id_and_set_context(MockRun("OfflineRun"))
 
         self.assertIsNotNone(response)
 

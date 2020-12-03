@@ -25,8 +25,18 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}
     ~/miniconda/bin/conda clean -tipsy
 ENV PATH="/home/dockeruser/miniconda/bin/:${PATH}"
 
+USER root
+
+RUN apt-get update --fix-missing && \
+    apt-get install -y build-essential
+
+# Create conda environment for dockeruser user
+USER dockeruser
+
 RUN conda install -y conda=${CONDA_VERSION} python=${PYTHON_VERSION} && \
     pip install azureml-defaults==${AZUREML_SDK_VERSION} inference-schema==${INFERENCE_SCHEMA_VERSION} &&\
+    pip install python-dotenv==0.12.* dataclasses==0.6 opencensus==0.7.11 opencensus-ext-httplib==0.7.3 \
+    opencensus-ext-azure==1.0.5 opencensus-ext-logging==0.1.0 opencensus-context==0.1.2 && \
     conda clean -aqy && \
     rm -rf ~/miniconda/pkgs && \
     find ~/miniconda/ -type d -name __pycache__ -prune -exec rm -rf {} \;

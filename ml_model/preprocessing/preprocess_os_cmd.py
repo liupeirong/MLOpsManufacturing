@@ -4,11 +4,15 @@ Copyright (C) Microsoft Corporation. All rights reserved.​
 from azureml.core.run import Run
 import argparse
 import subprocess
-from util.model_helper import get_or_register_dataset, get_aml_context
+from ml_model.util.model_helper import get_or_register_dataset, get_aml_context
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def main():
-    print("Running preprocess_os_cmd.py")
+    observability.start_span()
+    observability.log("Running preprocess_os_cmd.py")
 
     parser = argparse.ArgumentParser("preprocess_os_cmd")
     parser.add_argument(
@@ -40,10 +44,10 @@ def main():
 
     args = parser.parse_args()
 
-    print("Argument [dataset_name]: %s" % args.dataset_name)
-    print("Argument [datastore_name]: %s" % args.datastore_name)
-    print("Argument [data_file_path]: %s" % args.data_file_path)
-    print("Argument [output_dataset]: %s" % args.output_dataset)
+    observability.log("Argument [dataset_name]: %s" % args.dataset_name)
+    observability.log("Argument [datastore_name]: %s" % args.datastore_name)
+    observability.log("Argument [data_file_path]: %s" % args.data_file_path)
+    observability.log("Argument [output_dataset]: %s" % args.output_dataset)
 
     data_file_path = args.data_file_path
     dataset_name = args.dataset_name
@@ -68,7 +72,7 @@ def main():
     # Process data
     mount_context = dataset.mount()
     mount_context.start()
-    print(f"mount_point is: {mount_context.mount_point}")
+    observability.log(f"mount_point is: {mount_context.mount_point}")
 
     ####
     # Execute something here just 'cp' from input to output folder
@@ -85,23 +89,29 @@ def main():
     # Check output
     while True:
         output = process.stdout.readline()
-        print(output.strip())
+        observability.log(output.strip())
         # Do something else
         return_code = process.poll()
         if return_code is not None:
-            print('RETURN CODE', return_code)
+            observability.log(f'RETURN CODE {return_code}')
             # Process has finished, read rest of the output
             for output in process.stdout.readlines():
-                print(output.strip())
+                observability.log(output.strip())
             break
 
     mount_context.stop()
 
     run.tag("run_type", value="preprocess_os_cmd")
-    print(f"tags now present for run: {run.tags}")
+    observability.log(f"tags now present for run: {run.tags}")
 
     run.complete()
 
+    observability.end_span()
+
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

@@ -29,6 +29,9 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Dropout, Flatten, Dense
 from keras import optimizers
 from keras.preprocessing.image import ImageDataGenerator
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 # Split the dataframe into test and train data
@@ -38,12 +41,12 @@ def split_data(data_folder, preprocessing_args):
         preprocessing_args['image_size']['y'])
     batch_size = preprocessing_args['batch_size']
 
-    print("Getting Data...")
+    observability.log("Getting Data...")
     datagen = ImageDataGenerator(
         rescale=1./255,  # normalize pixel values
         validation_split=0.3)  # hold back 30% of the images for validation
 
-    print("Preparing training dataset...")
+    observability.log("Preparing training dataset...")
     train_generator = datagen.flow_from_directory(
         data_folder,
         target_size=img_size,
@@ -51,7 +54,7 @@ def split_data(data_folder, preprocessing_args):
         class_mode='categorical',
         subset='training')  # set as training data
 
-    print("Preparing validation dataset...")
+    observability.log("Preparing validation dataset...")
     validation_generator = datagen.flow_from_directory(
         data_folder,
         target_size=img_size,
@@ -60,7 +63,7 @@ def split_data(data_folder, preprocessing_args):
         subset='validation')  # set as validation data
 
     classes = sorted(train_generator.class_indices.keys())
-    print("class names: ", classes)
+    observability.log("class names: ", classes)
 
     data = {"train": train_generator,
             "test": validation_generator,
@@ -138,7 +141,8 @@ def get_model_metrics(history):
 
 
 def main():
-    print("Running train.py")
+    observability.start_span()
+    observability.log("Running train.py")
 
     train_args = {"num_epochs": 10}
     preprocessing_args = {
@@ -151,8 +155,14 @@ def main():
 
     metrics = get_model_metrics(history)
     for (k, v) in metrics.items():
-        print(f"{k}: {v}")
+        observability.log(f"{k}: {v}")
+
+    observability.end_span()
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

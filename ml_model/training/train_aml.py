@@ -29,10 +29,14 @@ import argparse
 import json
 from ml_model.training.train import split_data, train_model, get_model_metrics
 from ml_model.util.model_helper import get_or_register_dataset
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def main():
-    print("Running train_aml.py")
+    observability.start_span()
+    observability.log("Running train_aml.py")
 
     parser = argparse.ArgumentParser("train")
     parser.add_argument(
@@ -69,11 +73,11 @@ def main():
     )
     args = parser.parse_args()
 
-    print("Argument [model_name]: %s" % args.model_name)
-    print("Argument [step_output]: %s" % args.step_output)
-    print("Argument [data_file_path]: %s" % args.data_file_path)
-    print("Argument [dataset_name]: %s" % args.dataset_name)
-    print("Argument [datastore_name]: %s" % args.datastore_name)
+    observability.log("Argument [model_name]: %s" % args.model_name)
+    observability.log("Argument [step_output]: %s" % args.step_output)
+    observability.log("Argument [data_file_path]: %s" % args.data_file_path)
+    observability.log("Argument [dataset_name]: %s" % args.dataset_name)
+    observability.log("Argument [datastore_name]: %s" % args.datastore_name)
 
     model_name = args.model_name
     step_output_path = args.step_output
@@ -83,7 +87,7 @@ def main():
 
     run = Run.get_context()
 
-    print("Getting training parameters")
+    observability.log("Getting training parameters")
 
     # Load the training parameters from the parameters file
     with open("parameters.json") as f:
@@ -92,16 +96,17 @@ def main():
         preprocessing_args = pars["preprocessing"]
         train_args = pars["training"]
     except KeyError:
-        print("Could not load preprocessing or training values from file")
+        observability.log("Could not load preprocessing or training values "
+                          "from file")
         train_args = {}
         preprocessing_args = {}
 
     # Log the training parameters
-    print(f"Parameters: {preprocessing_args}")
+    observability.log(f"Parameters: {preprocessing_args}")
     for (k, v) in preprocessing_args.items():
         run.log(k, v)
         run.parent.log(k, v)
-    print(f"Parameters: {train_args}")
+    observability.log(f"Parameters: {train_args}")
     for (k, v) in train_args.items():
         run.log(k, v)
         run.parent.log(k, v)
@@ -122,7 +127,7 @@ def main():
     # mount the dynamic version of the dataset, which can't be determined at pipeline publish time  # NOQA: E501
     mount_context = dataset.mount()
     mount_context.start()
-    print(f"mount_point is: {mount_context.mount_point}")
+    observability.log(f"mount_point is: {mount_context.mount_point}")
     data = split_data(mount_context.mount_point, preprocessing_args)
     model, history = train_model(data, train_args, preprocessing_args)
     mount_context.stop()
@@ -138,7 +143,7 @@ def main():
     model_output_path = os.path.join(step_output_path, model_name)
     model.save(model_output_path)
     with open(os.path.join(step_output_path, "run_id.txt"), "w") as text_file:
-        print(f"{run.id}", file=text_file)
+        observability.log(f"{run.id}", file=text_file)
 
     # Also upload model file to run outputs for history
     os.makedirs('outputs', exist_ok=True)
@@ -146,10 +151,16 @@ def main():
     model.save(output_path)
 
     run.tag("run_type", value="train")
-    print(f"tags now present for run: {run.tags}")
+    observability.log(f"tags now present for run: {run.tags}")
 
     run.complete()
 
+    observability.end_span()
+
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

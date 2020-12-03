@@ -6,9 +6,14 @@ from azureml.core.runconfig import RunConfiguration
 from ml_service.util.attach_compute import get_compute
 from ml_service.util.env_variables import Env
 from ml_service.util.manage_environment import get_environment
+from ml_service.util.logger.observability import Observability
+
+observability = Observability()
 
 
 def main():
+    observability.start_span()
+
     e = Env()
     # Get Azure machine learning workspace
     aml_workspace = Workspace.get(
@@ -16,12 +21,12 @@ def main():
         subscription_id=e.subscription_id,
         resource_group=e.resource_group,
     )
-    print(f"get_workspace:{aml_workspace}")
+    observability.log(f"get_workspace:{aml_workspace}")
 
     # Get Azure machine learning cluster
     aml_compute = get_compute(aml_workspace, e.compute_name, e.vm_size)
     if aml_compute is not None:
-        print(f"aml_compute:{aml_compute}")
+        observability.log(f"aml_compute:{aml_compute}")
 
     # Create a reusable Azure ML environment
     environment = get_environment(
@@ -32,6 +37,15 @@ def main():
     )  #
     run_config = RunConfiguration()
     run_config.environment = environment
+
+    # Activate AppInsights in Pipeline run:
+    # https://docs.microsoft.com/en-us/azure/machine-learning/how-to-log-pipelines-application-insights
+    # Add environment variable with Application Insights Connection String
+    # Replace the value with your own connection string
+    run_config.environment.environment_variables = {
+        "APPLICATIONINSIGHTS_CONNECTION_STRING":
+        e.app_insights_connection_string
+    }
 
     if e.datastore_name:
         datastore_name = e.datastore_name
@@ -65,11 +79,11 @@ def main():
         runconfig=run_config,
         allow_reuse=True,
     )
-    print("Step Train created")
+    observability.log("Step Train created")
 
     evaluate_step = PythonScriptStep(
         name="Evaluate Model ",
-        script_name="evaluate/evaluate_model.py",
+        script_name="ml_model/evaluate/evaluate_model.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         arguments=[
@@ -79,11 +93,11 @@ def main():
         runconfig=run_config,
         allow_reuse=False,
     )
-    print("Step Evaluate created")
+    observability.log("Step Evaluate created")
 
     register_step = PythonScriptStep(
         name="Register Model ",
-        script_name="register/register_model.py",
+        script_name="ml_model/register/register_model.py",
         compute_target=aml_compute,
         source_directory=e.sources_directory_train,
         inputs=[pipeline_data],
@@ -94,15 +108,16 @@ def main():
         runconfig=run_config,
         allow_reuse=False,
     )
-    print("Step Register created")
+    observability.log("Step Register created")
     # Check run_evaluation flag to include or exclude evaluation step.
     if (e.run_evaluation).lower() == "true":
-        print("Include evaluation step before register step.")
+        observability.log("Include evaluation step before register step.")
         evaluate_step.run_after(train_step)
         register_step.run_after(evaluate_step)
         steps = [train_step, evaluate_step, register_step]
     else:
-        print("Exclude evaluation step and directly run register step.")
+        observability.log("Exclude evaluation step "
+                          "and directly run register step.")
         register_step.run_after(train_step)
         steps = [train_step, register_step]
 
@@ -114,9 +129,14 @@ def main():
         description="Model training/retraining pipeline",
         version=e.build_id,
     )
-    print(f"Published pipeline: {published_pipeline.name}")
-    print(f"for build {published_pipeline.version}")
+    observability.log(f"Published pipeline: {published_pipeline.name}")
+    observability.log(f"for build {published_pipeline.version}")
+    observability.end_span()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception

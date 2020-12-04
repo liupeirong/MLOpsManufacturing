@@ -63,7 +63,7 @@ def split_data(data_folder, preprocessing_args):
         subset='validation')  # set as validation data
 
     classes = sorted(train_generator.class_indices.keys())
-    observability.log("class names: ", classes)
+    observability.log(f"class names: {classes}")
 
     data = {"train": train_generator,
             "test": validation_generator,

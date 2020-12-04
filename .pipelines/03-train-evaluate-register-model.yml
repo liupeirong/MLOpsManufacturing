@@ -75,6 +75,7 @@ stages:
     container: mlops
     timeoutInMinutes: 0
     steps:
+    - template: update-ci-dependencies.yml
     - task: AzureCLI@1
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'

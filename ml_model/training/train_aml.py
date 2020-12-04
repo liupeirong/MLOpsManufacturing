@@ -143,7 +143,7 @@ def main():
     model_output_path = os.path.join(step_output_path, model_name)
     model.save(model_output_path)
     with open(os.path.join(step_output_path, "run_id.txt"), "w") as text_file:
-        observability.log(f"{run.id}", file=text_file)
+        print(f"{run.id}", file=text_file)
 
     # Also upload model file to run outputs for history
     os.makedirs('outputs', exist_ok=True)

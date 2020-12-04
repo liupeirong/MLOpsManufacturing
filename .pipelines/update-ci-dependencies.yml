@@ -1,0 +1,5 @@
+steps:
+# This step ensures that the latest ci dependencies are applied to the build agent
+- script: |   
+    conda env update -f ml_model/ci_dependencies.yml -n ci
+    displayName: 'Update missing dependencies for current branch on build agent'

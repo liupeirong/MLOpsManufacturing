@@ -1,9 +1,6 @@
 # Pipeline template to run linting, unit tests with code coverage, and publish the results.
 steps:
-# This step ensures that the latest ci dependencies are applied to the build agent
-- script: |   
-   conda env update -f ml_model/ci_dependencies.yml -n ci
-  displayName: 'Update missing dependencies for current branch on build agent'
+- template: update-ci-dependencies.yml
 
 - script: |   
    flake8 --output-file=lint-testresults.xml --format junit-xml

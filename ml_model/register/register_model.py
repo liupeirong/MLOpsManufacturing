@@ -96,7 +96,7 @@ def main():
     observability.log("Getting registration parameters")
 
     # Load the registration parameters from the parameters file
-    with open("parameters.json") as f:
+    with open("ml_model/parameters.json") as f:
         pars = json.load(f)
     try:
         register_args = pars["registration"]

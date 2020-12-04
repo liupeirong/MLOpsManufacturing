@@ -90,7 +90,7 @@ def main():
     aml_workspace, *_ = get_aml_context(run)
 
     if preprocessing_param is None or preprocessing_param == "":
-        with open("parameters.json") as f:
+        with open("ml_model/parameters.json") as f:
             pars = json.load(f)
             preprocessing_args = pars["preprocessing"]
     else:

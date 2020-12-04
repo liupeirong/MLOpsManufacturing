@@ -93,7 +93,7 @@ if __name__ == "__main__":
     if len(image_urls) != len(image_classes):
         raise "number of urls is not same as number of classes"
 
-    with open("parameters.json") as f:
+    with open("ml_model/parameters.json") as f:
         pars = json.load(f)
         image_size = pars["preprocessing"]["image_size"]
         size = (image_size["x"], image_size["y"])

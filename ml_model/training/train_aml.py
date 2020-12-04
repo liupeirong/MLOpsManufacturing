@@ -90,7 +90,7 @@ def main():
     observability.log("Getting training parameters")
 
     # Load the training parameters from the parameters file
-    with open("parameters.json") as f:
+    with open("ml_model/parameters.json") as f:
         pars = json.load(f)
     try:
         preprocessing_args = pars["preprocessing"]

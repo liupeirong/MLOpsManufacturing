@@ -73,7 +73,7 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
 
         measure = measure_module.MeasureFloat(name, description)
         self.set_view(name, description, measure)
-        measurement_map.measure_float_put(measure, value)
+        measurement_map.measure_put_attachment(name, value)
         measurement_map.record(tag_map)
 
     def log(self, description="", severity=Severity.INFO):

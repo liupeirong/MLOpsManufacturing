@@ -31,9 +31,7 @@ import traceback
 from azureml.core import Run
 from azureml.core.model import Model as AMLModel
 from ml_model.util.model_helper import get_aml_context
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def find_child_run(parent_run, child_run_id):
@@ -57,7 +55,6 @@ def find_run(experiment, run_id):
 
 
 def main():
-    observability.start_span()
 
     run = Run.get_context()
     ws, exp, run_id = get_aml_context(run)
@@ -161,8 +158,6 @@ def main():
                           "Skipping model registration.")
         sys.exit(0)
 
-    observability.end_span()
-
 
 def model_already_registered(model_name, exp, run_id):
     model_list = AMLModel.list(exp.workspace, name=model_name, run_id=run_id)
@@ -206,8 +201,10 @@ def register_aml_model(
 
 
 if __name__ == '__main__':
+    observability.start_span('register_model')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

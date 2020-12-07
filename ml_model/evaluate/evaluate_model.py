@@ -26,6 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
 from azureml.core import Run
 import argparse
 from ml_model.util.model_helper import get_model
+from ml_service.util.logger.observability import observability
 
 
 def evaluate_model_performs_better(model, run):
@@ -37,13 +38,14 @@ def evaluate_model_performs_better(model, run):
     if (production_model_accuracy is None or new_model_accuracy is None):
         raise Exception(f"Unable to find {metric_eval} metrics, exiting evaluation")  # NOQA: E501
     else:
-        print(f"Current model accuracy: {production_model_accuracy}, new model accuracy: {new_model_accuracy}")  # NOQA: E501
+        observability.log(f"Current model accuracy: {production_model_accuracy}, new model accuracy: {new_model_accuracy}")  # NOQA: E501
 
     if (new_model_accuracy > production_model_accuracy):
-        print("New model performs better, register it")
+        observability.log("New model performs better, register it")
         return True
     else:
-        print("New model doesn't perform better, skip registration")
+        observability.log("New model doesn't perform better,"
+                          " skip registration")
         return False
 
 
@@ -91,8 +93,14 @@ def main():
         if(not should_register and (allow_run_cancel).lower() == 'true'):
             run.parent.cancel()
     else:
-        print("This is the first model, register it")
+        observability.log("This is the first model, register it")
 
 
 if __name__ == '__main__':
-    main()
+    observability.start_span('evaluate_model')
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception
+    observability.end_span()

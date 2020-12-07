@@ -2,14 +2,10 @@ from azureml.pipeline.core import PublishedPipeline
 from azureml.core import Experiment, Workspace
 import argparse
 from ml_service.util.env_variables import Env
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def main():
-    observability.start_span()
-
     parser = argparse.ArgumentParser("register")
     parser.add_argument(
         "--output_pipeline_id_file",
@@ -72,12 +68,12 @@ def main():
 
             observability.log(f"Pipeline run initiated {run.id}")
 
-    observability.end_span()
-
 
 if __name__ == "__main__":
+    observability.start_span('run_training_pipeline')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

@@ -65,7 +65,12 @@ class LoggerInterface(Tracer):
 
 class ObservabilityAbstract:
     OFFLINE_RUN = "OfflineRun"
+    CUSTOM_DIMENSIONS = "custom_dimensions"
     CORRELATION_ID = "correlation_id"
+    FILENAME = "fileName"
+    MODULE = "module"
+    PROCESS = "process"
+    LINENO = "lineNumber"
     severity = Severity()
     severity_map = {10: "DEBUG", 20: "INFO",
                     30: "WARNING", 40: "ERROR", 50: "CRITICAL"}
@@ -124,6 +129,24 @@ class ObservabilityAbstract:
             file_name = stack[stack_level + 1].filename.split("/")[-1]
             line_number = stack[stack_level + 1].lineno
             return "{}:{}".format(file_name, line_number)
+        except IndexError:
+            print("Index error, failed to log to AzureML")
+            return ""
+
+    @staticmethod
+    def get_callee_details(stack_level):
+        """
+        This method returns the callee details as a tuple,
+        tuple values ar all strings.
+        :param stack_level:
+        :return: (module_name, file_name, line_number)
+        """
+        try:
+            stack = inspect.stack()
+            file_name = stack[stack_level + 1].filename
+            line_number = stack[stack_level + 1].lineno
+            module_name = inspect.getmodulename(file_name)
+            return module_name, file_name, line_number
         except IndexError:
             print("Index error, failed to log to AzureML")
             return ""

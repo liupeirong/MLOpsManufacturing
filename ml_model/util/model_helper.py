@@ -1,12 +1,10 @@
 """
 model_helper.py
 """
+from ml_service.util.logger.observability import observability
 from azureml.core import Run
 from azureml.core import Workspace, Dataset, Datastore
 from azureml.core.model import Model as AMLModel
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
 
 
 def get_aml_context(run):

@@ -29,13 +29,10 @@ import argparse
 import json
 from ml_model.training.train import split_data, train_model, get_model_metrics
 from ml_model.util.model_helper import get_or_register_dataset
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def main():
-    observability.start_span()
     observability.log("Running train_aml.py")
 
     parser = argparse.ArgumentParser("train")
@@ -155,12 +152,12 @@ def main():
 
     run.complete()
 
-    observability.end_span()
-
 
 if __name__ == '__main__':
+    observability.start_span('train_aml')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

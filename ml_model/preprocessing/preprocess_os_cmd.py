@@ -5,13 +5,10 @@ from azureml.core.run import Run
 import argparse
 import subprocess
 from ml_model.util.model_helper import get_or_register_dataset, get_aml_context
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def main():
-    observability.start_span()
     observability.log("Running preprocess_os_cmd.py")
 
     parser = argparse.ArgumentParser("preprocess_os_cmd")
@@ -106,12 +103,12 @@ def main():
 
     run.complete()
 
-    observability.end_span()
-
 
 if __name__ == '__main__':
+    observability.start_span('preprocess_os_cmd_main')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

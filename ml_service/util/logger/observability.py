@@ -13,6 +13,7 @@ from ml_service.util.logger.logger_interface import (
 
 class Loggers(ObservabilityAbstract):
     def __init__(self) -> None:
+        print('Initializing the Loggers')
         self.loggers: LoggerInterface = []
         self.register_loggers()
 
@@ -49,13 +50,16 @@ class Observability(LoggerInterface):
     # https://python-patterns.guide/gang-of-four/singleton/
     def __new__(cls):
         if cls._instance is None:
-            print('Creating the object')
+            print('Creating the Observability Singleton')
             cls._instance = super(Observability, cls).__new__(cls)
-            # Put any initialization here.
+            cls._instance.__initialized = False
         return cls._instance
 
     def __init__(self) -> None:
-        self._loggers = Loggers()
+        if(not self.__initialized):
+            print('Initializing the Observability Singleton')
+            self.__initialized = True
+            self._loggers = Loggers()
 
     def log_metric(
             self, name="", value="", description="", log_parent=False,
@@ -151,3 +155,6 @@ class Observability(LoggerInterface):
         """List collected spans from first logger."""
         if len(self._loggers.loggers) > 0:
             return self._loggers.loggers[0].list_collected_spans()
+
+
+observability = Observability()

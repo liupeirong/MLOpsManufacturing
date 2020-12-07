@@ -29,9 +29,7 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Dropout, Flatten, Dense
 from keras import optimizers
 from keras.preprocessing.image import ImageDataGenerator
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 # Split the dataframe into test and train data
@@ -141,7 +139,6 @@ def get_model_metrics(history):
 
 
 def main():
-    observability.start_span()
     observability.log("Running train.py")
 
     train_args = {"num_epochs": 10}
@@ -157,12 +154,12 @@ def main():
     for (k, v) in metrics.items():
         observability.log(f"{k}: {v}")
 
-    observability.end_span()
-
 
 if __name__ == '__main__':
+    observability.start_span('train')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

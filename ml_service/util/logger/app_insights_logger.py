@@ -23,23 +23,12 @@ from ml_service.util.logger.logger_interface import (
 
 class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
     def __init__(self, run):
+        print('Initializing the AppInsightsLogger')
         self.env = Env()
         self.run_id = self.get_run_id_and_set_context(run)
 
-        # Prepare integrations and log format
+        # Prepare integrations and initialize tracer
         config_integration.trace_integrations(['httplib', 'logging'])
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(
-            getattr(logging, self.env.log_level.upper(), "WARNING"))
-        # initializes log exporter
-        handler = AzureLogHandler(
-            connection_string=self.env.app_insights_connection_string,
-            logging_sampling_rate=self.env.log_sampling_rate,
-        )
-        handler.add_telemetry_processor(self.callback_function)
-
-        self.logger.addHandler(handler)
-        # initializes tracer
         texporter = AzureExporter(connection_string=self.
                                   env.app_insights_connection_string)
         texporter.add_telemetry_processor(self.callback_function)
@@ -47,9 +36,21 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
             exporter=texporter,
             sampler=ProbabilitySampler(self.env.trace_sampling_rate)
         )
+
+        # Create AppInsights Handler and set log format
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(
+            getattr(logging, self.env.log_level.upper(), "WARNING"))
+        handler = AzureLogHandler(
+            connection_string=self.env.app_insights_connection_string,
+            logging_sampling_rate=self.env.log_sampling_rate,
+        )
+        handler.add_telemetry_processor(self.callback_function)
+        self.logger.addHandler(handler)
+
         # initializes metric exporter
         mexporter = metrics_exporter.new_metrics_exporter(
-            enable_standard_metrics=False,
+            enable_standard_metrics=True,
             export_interval=self.env.metrics_export_interval,
             connection_string=self.env.app_insights_connection_string,
         )
@@ -83,6 +84,17 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         :param severity: log severity
         :return:
         """
+        # Overwrite custom dimensions with caller data
+        modulename, filename, lineno = self.get_callee_details(2)
+        self.custom_dimensions[self.CUSTOM_DIMENSIONS][self.FILENAME] =\
+            filename
+        self.custom_dimensions[self.CUSTOM_DIMENSIONS][self.LINENO] =\
+            lineno
+        self.custom_dimensions[self.CUSTOM_DIMENSIONS][self.MODULE] =\
+            modulename
+        if self.current_span() is not None:
+            self.custom_dimensions[self.CUSTOM_DIMENSIONS][self.PROCESS] =\
+                self.current_span().name
 
         if severity == self.severity.DEBUG:
             self.logger.debug(description, extra=self.custom_dimensions)

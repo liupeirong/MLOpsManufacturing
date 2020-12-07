@@ -28,13 +28,10 @@ import argparse
 import json
 from ml_model.preprocessing.preprocess_images import resize_images
 from ml_model.util.model_helper import get_or_register_dataset, get_aml_context
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def main():
-    observability.start_span()
     observability.log("Running preprocess.py")
 
     parser = argparse.ArgumentParser("preprocess")
@@ -121,12 +118,12 @@ def main():
 
     run.complete()
 
-    observability.end_span()
-
 
 if __name__ == '__main__':
+    observability.start_span('preprocess_aml')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

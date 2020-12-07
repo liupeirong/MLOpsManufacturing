@@ -7,14 +7,10 @@ from azureml.data import OutputFileDatasetConfig
 from ml_service.util.attach_compute import get_compute
 from ml_service.util.env_variables import Env
 from ml_service.util.manage_environment import get_environment
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def main():
-    observability.start_span()
-
     e = Env()
     # Get Azure machine learning workspace
     aml_workspace = Workspace.get(
@@ -100,12 +96,13 @@ def main():
     )
     observability.log(f"Published pipeline: {published_pipeline.name}")
     observability.log(f"for build {published_pipeline.version}")
-    observability.end_span()
 
 
 if __name__ == "__main__":
+    observability.start_span('build_data_processing_pipeline')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

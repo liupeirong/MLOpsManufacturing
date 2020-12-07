@@ -2,9 +2,7 @@ import os
 import shutil
 import numpy as np
 from PIL import Image
-from ml_service.util.logger.observability import Observability
-
-observability = Observability()
+from ml_service.util.logger.observability import observability
 
 
 def resize_image(img, size):
@@ -75,8 +73,6 @@ def resize_images(indir, outdir, preprocessing_args):
 
 
 def main():
-    observability.start_span()
-
     in_dir = 'data/gear_images/raw'
     out_dir = 'data/processed'
     preprocessing_args = {
@@ -85,12 +81,12 @@ def main():
     }
     resize_images(in_dir, out_dir, preprocessing_args)  # NOQA: E501
 
-    observability.end_span()
-
 
 if __name__ == '__main__':
+    observability.start_span('preprocess_images')
     try:
         main()
     except Exception as exception:
         observability.exception(exception)
         raise exception
+    observability.end_span()

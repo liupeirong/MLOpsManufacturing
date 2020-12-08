@@ -90,6 +90,9 @@ stages:
           echo "##vso[task.setvariable variable=AMLPIPELINEID;isOutput=true]$AMLPIPELINEID"
       name: 'getpipelineid'
       displayName: 'Get Pipeline ID'
+      env:
+        APP_INSIGHTS_CONNECTION_STRING: $(APP_INSIGHTS_CONNECTION_STRING)
+
   - job: "Run_ML_Pipeline"
     dependsOn: "Get_Pipeline_ID"
     displayName: "Trigger ML Training Pipeline"

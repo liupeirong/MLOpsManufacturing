@@ -51,6 +51,8 @@ stages:
           # Invoke the Python building and publishing a data preprocessing pipeline
           python -m ml_service.pipelines.build_data_processing_os_cmd_pipeline
       displayName: 'Publish Data Preprocessing OS cmd Pipeline'
+      env:
+        APP_INSIGHTS_CONNECTION_STRING: $(APP_INSIGHTS_CONNECTION_STRING)
 
 # Trigger_Preprocessing_Pipeline
 - template: trigger-preprocessing-pipeline.yml

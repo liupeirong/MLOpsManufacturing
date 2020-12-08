@@ -59,7 +59,7 @@ variables:
 
   # Observability related
   - name: LOG_TO_CONSOLE
-    value: 'true'
+    value: 'false'
   - name: LOG_LEVEL
     value: 'INFO' # DEBUG, INFO, WARNING, ERROR, CRITICAL
   - name: LOG_SAMPLING_RATE

@@ -30,7 +30,7 @@ class Loggers(ObservabilityAbstract):
         Notes:
         - If the context of the Run object is offline,
         we do not create AzureMlLogger instance
-        - If APP_INSIGHTS_CONNECTION_STRING is notset
+        - If APPLICATIONINSIGHTS_CONNECTION_STRING is notset
         to ENV variable, we do not create AppInsightsLogger
         instance
         """

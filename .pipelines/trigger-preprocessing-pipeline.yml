@@ -32,7 +32,7 @@ stages:
       name: 'getpreprocessingpipelineid'
       displayName: 'Get Preprocessing Pipeline ID of ${{ parameters.aml_pipeline_name }}'
       env:
-        APP_INSIGHTS_CONNECTION_STRING: $(APP_INSIGHTS_CONNECTION_STRING)
+        APPLICATIONINSIGHTS_CONNECTION_STRING: $(APPLICATIONINSIGHTS_CONNECTION_STRING)
 
   - job: "Run_Data_Processing_Pipeline"
     dependsOn: "Get_Preprocessing_Pipeline_ID"

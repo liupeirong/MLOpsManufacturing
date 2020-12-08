@@ -68,4 +68,4 @@ stages:
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
           python -m ml_service.util.smoke_test_scoring_service --service "$(ACI_DEPLOYMENT_NAME)"
       env:
-        APP_INSIGHTS_CONNECTION_STRING: $(APP_INSIGHTS_CONNECTION_STRING)
+        APPLICATIONINSIGHTS_CONNECTION_STRING: $(APPLICATIONINSIGHTS_CONNECTION_STRING)

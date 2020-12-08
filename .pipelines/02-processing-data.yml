@@ -52,7 +52,7 @@ stages:
           python -m ml_service.pipelines.build_data_processing_pipeline
       displayName: 'Publish Data Preprocessing Pipeline'
       env:
-        APP_INSIGHTS_CONNECTION_STRING: $(APP_INSIGHTS_CONNECTION_STRING)
+        APPLICATIONINSIGHTS_CONNECTION_STRING: $(APPLICATIONINSIGHTS_CONNECTION_STRING)
 
 # Trigger_Preprocessing_Pipeline
 - template: trigger-preprocessing-pipeline.yml

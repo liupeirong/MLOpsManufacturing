@@ -40,7 +40,15 @@ def main():
     # Replace the value with your own connection string
     run_config.environment.environment_variables = {
         "APPLICATIONINSIGHTS_CONNECTION_STRING":
-        e.app_insights_connection_string
+        e.app_insights_connection_string,
+        "LOG_LEVEL":
+        e.log_level,
+        "LOG_SAMPLING_RATE":
+        e.log_sampling_rate,
+        "TRACE_SAMPLING_RATE":
+        e.trace_sampling_rate,
+        "METRICS_EXPORT_INTERVAL":
+        e.metrics_export_interval
     }
 
     if e.datastore_name:

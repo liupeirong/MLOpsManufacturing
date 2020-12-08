@@ -41,7 +41,6 @@ class Loggers(ObservabilityAbstract):
         if e.app_insights_connection_string:
             if "InstrumentationKey" in e.app_insights_connection_string:
                 self.loggers.append(AppInsightsLogger(run))
-            self.loggers.append(AppInsightsLogger(run))
         if e.log_to_console:
             self.loggers.append(ConsoleLogger(run))
 

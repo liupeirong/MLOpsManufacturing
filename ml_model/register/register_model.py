@@ -201,10 +201,10 @@ def register_aml_model(
 
 
 if __name__ == '__main__':
-    observability.start_span('register_model')
-    try:
-        main()
-    except Exception as exception:
-        observability.exception(exception)
-        raise exception
-    observability.end_span()
+    with observability.\
+         start_span('register_model'):
+        try:
+            main()
+        except Exception as exception:
+            observability.exception(exception)
+            raise exception

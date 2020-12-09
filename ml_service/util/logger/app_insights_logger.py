@@ -7,6 +7,8 @@ from opencensus.trace import config_integration
 from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 
+from opencensus.trace.span import SpanKind
+from opencensus.trace.status import Status
 from opencensus.stats import aggregation as aggregation_module
 from opencensus.stats import measure as measure_module
 from opencensus.stats import stats as stats_module
@@ -56,6 +58,14 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         )
         mexporter.add_telemetry_processor(self.callback_function)
         stats_module.stats.view_manager.register_exporter(mexporter)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        # Cleanup span if forgotten in logic (e.g. due to exception)
+        if self.current_span() is not None:
+            self.end_span()
 
     def log_metric(
         self, name="", value="", description="", log_parent=False,
@@ -114,6 +124,9 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         :return:
         """
         self.logger.exception(exception, extra=self.custom_dimensions)
+        # Mark current span/operation with internal error
+        self.current_span().status = Status(2, exception)
+        self.current_span().attributes['http.status_code'] = 500
 
     @staticmethod
     def set_view(metric, description, measure):
@@ -148,7 +161,7 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         :rtype: :class:`~opencensus.trace.span.Span`
         :returns: The Span object.
         """
-        return self.tracer.span(name)
+        return self.start_span(name)
 
     def start_span(self, name='span'):
         """Start a span.
@@ -157,7 +170,11 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         :rtype: :class:`~opencensus.trace.span.Span`
         :returns: The Span object.
         """
-        return self.tracer.start_span(name)
+        span = self.tracer.start_span(name)
+        span.span_kind = SpanKind.SERVER
+        span.attributes['http.method'] = 'START'
+        span.attributes['http.route'] = name
+        return span
 
     def end_span(self):
         """End a span. Remove the span from the span stack, and update the

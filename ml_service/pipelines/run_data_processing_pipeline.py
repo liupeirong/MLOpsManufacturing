@@ -82,10 +82,10 @@ def main():
 
 
 if __name__ == "__main__":
-    observability.start_span('run_data_processing_pipeline')
-    try:
-        main()
-    except Exception as exception:
-        observability.exception(exception)
-        raise exception
-    observability.end_span()
+    with observability.\
+         start_span('run_data_processing_pipeline'):
+        try:
+            main()
+        except Exception as exception:
+            observability.exception(exception)
+            raise exception

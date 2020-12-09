@@ -59,14 +59,6 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         mexporter.add_telemetry_processor(self.callback_function)
         stats_module.stats.view_manager.register_exporter(mexporter)
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        # Cleanup span if forgotten in logic (e.g. due to exception)
-        if self.current_span() is not None:
-            self.end_span()
-
     def log_metric(
         self, name="", value="", description="", log_parent=False,
     ):

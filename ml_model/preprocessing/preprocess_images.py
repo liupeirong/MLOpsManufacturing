@@ -83,10 +83,11 @@ def main():
 
 
 if __name__ == '__main__':
-    with observability.\
-         start_span('preprocess_images'):
-        try:
-            main()
-        except Exception as exception:
-            observability.exception(exception)
-            raise exception
+    observability.start_span('preprocess_images')
+    try:
+        main()
+    except Exception as exception:
+        observability.exception(exception)
+        raise exception
+    finally:
+        observability.end_span()

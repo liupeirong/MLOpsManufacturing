@@ -62,6 +62,8 @@ stages:
           # Invoke the Python building and publishing a training pipeline
           python -m ml_service.pipelines.build_training_pipeline
       displayName: 'Publish Azure Machine Learning Pipeline'
+      env:
+        APPLICATIONINSIGHTS_CONNECTION_STRING: $(APPLICATIONINSIGHTS_CONNECTION_STRING)
 
 - stage: 'Trigger_Training_Pipeline'
   displayName: 'Train and evaluate model'

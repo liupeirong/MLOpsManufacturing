@@ -24,7 +24,7 @@ trigger:
   paths:
     include:
     - samples/non-python-preprocess/ml_model/preprocessing/Dockerfile
-    - samples/non-python-preprocess/ml_model/preprocessing/preprocess_os_cmd.py
+    - samples/non-python-preprocess/ml_model/preprocessing/preprocess_os_cmd_aml.py
     - samples/non-python-preprocess/ml_service/pipelines/build_data_processing_os_cmd_pipeline.py
     - samples/non-python-preprocess/.pipelines/07-processing-data-os-cmd.yml
     - samples/non-python-preprocess/.pipelines/variables-template.yml

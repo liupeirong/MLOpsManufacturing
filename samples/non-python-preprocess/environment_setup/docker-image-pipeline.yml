@@ -1,4 +1,10 @@
 # Pipeline that builds and pushes the build-agent image.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
+
 resources:
 - repo: self
 
@@ -31,5 +37,5 @@ steps:
       tags: |
        ${{format('build-{0}', '$(Build.BuildNumber)')}}
        latest
-      buildContext: '$(Build.SourcesDirectory)' 
-      dockerFile: '$(Build.SourcesDirectory)/environment_setup/Dockerfile'
+      buildContext: '${{ parameters.workingDirectory }}' 
+      dockerFile: '${{ parameters.workingDirectory }}/environment_setup/Dockerfile'

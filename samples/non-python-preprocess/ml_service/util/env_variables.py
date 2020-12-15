@@ -33,8 +33,8 @@ class Env:
     vm_priority: Optional[str] = os.environ.get("AML_CLUSTER_PRIORITY", "lowpriority")  # NOQA: E501
     min_nodes: int = int(os.environ.get("AML_CLUSTER_MIN_NODES", 0))
     max_nodes: int = int(os.environ.get("AML_CLUSTER_MAX_NODES", 4))
-    aml_preprocessing_custom_docker_env_name: Optional[str] = os.environ.get("AML_PREPROCESSING_CUSTOM_DOCKER_ENV_NAME")  # NOQA: E501
-    preprocessing_os_cmd_pipeline_name: Optional[str] = os.environ.get("PREPROCESSING_OS_CMD_PIPELINE_NAME")  # NOQA: E501
+    aml_env_name: Optional[str] = os.environ.get("AML_ENV_NAME")  # NOQA: E501
+    preprocessing_pipeline_name: Optional[str] = os.environ.get("PREPROCESSING_PIPELINE_NAME")  # NOQA: E501
 
     # derived variables
     processed_dataset_name: Optional[str] = f"{dataset_name}_processed"  # NOQA: E501

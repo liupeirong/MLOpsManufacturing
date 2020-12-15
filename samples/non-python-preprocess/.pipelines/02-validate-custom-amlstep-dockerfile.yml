@@ -1,4 +1,10 @@
 # For build validation of custom preprocessing aml pipeline step compatible Dockerfile
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
+
 pr:
   branches:
     include:
@@ -14,5 +20,5 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
     - script: docker build -f Dockerfile .
-      workingDirectory: $(Build.SourcesDirectory)/ml_model/preprocessing/
+      workingDirectory: ${{ parameters.workingDirectory }}/ml_model/preprocessing/
       displayName: 'Docker build validation aml pipeline compatible step'

@@ -1,4 +1,9 @@
 # Continuous Integration (CI) pipeline that orchestrates the training, evaluation, and registration of the model.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
 
 resources:
   containers:
@@ -26,7 +31,7 @@ trigger:
 
 variables:
 - template: variables-template.yml
-- group: devopsforai-aml-vg
+- group: nonpython-preprocess-aml-vg
 
 pool:
   vmImage: ubuntu-latest
@@ -46,7 +51,7 @@ stages:
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
+        workingDirectory: ${{ parameters.workingDirectory }}
         inlineScript: |
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)

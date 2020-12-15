@@ -24,7 +24,7 @@ container: mlops
 
 variables:
 - template: variables-template.yml
-- group: devopsforai-aml-vg
+- group: nonpython-preprocess-aml-vg
 
 steps:
 - template: code-quality-template.yml

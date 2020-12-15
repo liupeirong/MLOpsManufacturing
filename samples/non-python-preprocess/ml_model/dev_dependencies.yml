@@ -19,6 +19,7 @@ dependencies:
       # Additional pip dependencies for the CI environment.
       - pytest==5.4.*
       - pytest-cov==2.8.*
+      - pytest-mock==3.3.*
       - requests==2.23.*
       - python-dotenv==0.12.*
       - flake8==3.7.*

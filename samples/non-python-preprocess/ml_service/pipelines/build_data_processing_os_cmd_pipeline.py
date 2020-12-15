@@ -27,7 +27,7 @@ def main():
     # Create a reusable Azure ML environment
     environment = get_environment(
         aml_workspace,
-        e.aml_preprocessing_custom_docker_env_name,
+        e.aml_env_name,
         create_new=e.rebuild_env,
         enable_docker=True,
         dockerfile='ml_model/preprocessing/Dockerfile'
@@ -80,7 +80,7 @@ def main():
     preprocess_pipeline._set_experiment_name
     preprocess_pipeline.validate()
     published_pipeline = preprocess_pipeline.publish(
-        name=e.preprocessing_os_cmd_pipeline_name,
+        name=e.preprocessing_pipeline_name,
         description="Data preprocessing OS cmd pipeline",
         version=e.build_id,
     )

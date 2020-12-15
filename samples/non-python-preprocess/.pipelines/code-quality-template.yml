@@ -1,11 +1,19 @@
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
+
 # Pipeline template to run linting, unit tests with code coverage, and publish the results.
 steps:
 - script: |   
    flake8 --output-file=lint-testresults.xml --format junit-xml
+  workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'Run lint tests'
 
 - script: |   
-   python -m pytest . --cov=ml_model --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
+   python -m pytest . --cov=. --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
+  workingDirectory: ${{ parameters.workingDirectory }}
   condition: succeededOrFailed()
   displayName: 'Run unit tests'
 

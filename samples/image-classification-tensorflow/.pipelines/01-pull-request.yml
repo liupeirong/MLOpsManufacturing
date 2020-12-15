@@ -1,0 +1,38 @@
+# Pipeline to run basic code quality tests as part of pull requests to the main branch.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/image-classification-tensorflow
+
+resources:
+  containers:
+  - container: mlops
+    image: mlopsmanufacturing/build-agent/tensorflow:latest
+    endpoint: mlopsmanufacturingacr 
+
+trigger: none
+
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - samples/image-classification-tensorflow/.env.example
+    - README.md
+    - LICENSE
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+container: mlops
+
+variables:
+- template: variables-template.yml
+- group: devopsforai-aml-vg
+
+steps:
+- template: code-quality-template.yml
+  parameters:
+    workingDirectory: ${{ parameters.workingDirectory }}

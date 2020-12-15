@@ -2,7 +2,7 @@
 FROM ubuntu:18.04
 
 # Path to current sample
-ARG  SAMPLE_PATH=samples/non-python-preprocess
+ARG  SAMPLE_PATH=samples/image-classification-tensorflow
 
 ENV DEBIAN_FRONTEND=noninteractive
 

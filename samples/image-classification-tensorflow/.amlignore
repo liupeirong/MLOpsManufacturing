@@ -1,0 +1,11 @@
+.ipynb_checkpoints
+azureml-logs
+.azureml
+.git
+outputs
+azureml-setup
+docs
+environment_setup
+.pipelines
+.devcontainer
+.devcontainer.json

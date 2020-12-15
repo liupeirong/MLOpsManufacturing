@@ -6,7 +6,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-- group: devopsforai-aml-vg
+- group: nonpython-preprocess-aml-vg
 
 
 steps:

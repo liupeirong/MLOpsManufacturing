@@ -1,24 +1,30 @@
 # CI/PR Pipeline that deploys an ARM template to create or update the resources needed by the other pipelines.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
+
 trigger:
   branches:
     include:
       - main
   paths:
     include:
-      - environment_setup/arm-templates/*
+      - samples/non-python-preprocess/environment_setup/arm-templates/*
 pr:
   branches:
     include:
       - main
   paths:
     include:
-      - environment_setup/arm-templates/*
+      - samples/non-python-preprocess/environment_setup/arm-templates/*
 
 pool:
   vmImage: "ubuntu-latest"
 
 variables:
-  - group: devopsforai-aml-vg
+  - group: nonpython-preprocess-aml-vg
   - name: WORKSPACE_SKU # https://docs.microsoft.com/en-us/azure/machine-learning/overview-what-is-azure-ml#sku
     value: basic
 
@@ -30,7 +36,7 @@ steps:
       resourceGroupName: "$(RESOURCE_GROUP)"
       location: $(LOCATION)
       templateLocation: "Linked artifact"
-      csmFile: "$(Build.SourcesDirectory)/environment_setup/arm-templates/cloud-environment.json"
+      csmFile: "${{ parameters.workingDirectory }}/environment_setup/arm-templates/cloud-environment.json"
       overrideParameters: "-baseName $(BASE_NAME) -location $(LOCATION) -workspace $(WORKSPACE_NAME) -sku $(WORKSPACE_SKU)"
       deploymentMode: "Incremental"
     displayName: "Deploy MLOps resources to Azure"

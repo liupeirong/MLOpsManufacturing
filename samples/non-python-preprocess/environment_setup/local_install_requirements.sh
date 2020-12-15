@@ -26,6 +26,6 @@
 
 set -eux
 
-conda env create -f ml_model/ci_dependencies.yml
+conda env create -f ../ml_model/dev_dependencies.yml
 
-conda activate mlopstensorflow_ci
+conda activate nonpythonpreprocess_dev

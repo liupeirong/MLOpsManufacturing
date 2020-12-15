@@ -20,7 +20,7 @@ steps:
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:
-    testResultsFiles: '*-testresults.xml'
+    testResultsFiles: '**/*-testresults.xml'
     testRunTitle: 'Linting & Unit tests'
     failTaskOnFailedTests: true
   displayName: 'Publish test results'
@@ -30,6 +30,6 @@ steps:
   condition: succeededOrFailed()
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: 'coverage.xml'
-    reportDirectory: 'htmlcov'
+    summaryFileLocation: '**/coverage.xml'
+    reportDirectory: '**/htmlcov'
     failIfCoverageEmpty: true

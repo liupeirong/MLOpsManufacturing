@@ -1,4 +1,9 @@
 # Pipeline to run basic code quality tests as part of pull requests to the main branch.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
 
 resources:
   containers:
@@ -28,3 +33,5 @@ variables:
 
 steps:
 - template: code-quality-template.yml
+  parameters:
+    workingDirectory: ${{ parameters.workingDirectory }}

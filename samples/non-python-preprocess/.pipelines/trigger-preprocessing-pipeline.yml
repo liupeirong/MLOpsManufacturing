@@ -2,6 +2,9 @@ parameters:
   - name: aml_pipeline_name
     displayName: AML Pipeline Name to trigger
     type: string
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
 
 stages:
 - stage: 'Trigger_Preprocessing_Pipeline'
@@ -20,7 +23,7 @@ stages:
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
+        workingDirectory: ${{ parameters.workingDirectory }}
         inlineScript: |
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
@@ -30,6 +33,7 @@ stages:
           echo "##vso[task.setvariable variable=PREPROCESSPIPELINEID;isOutput=true]$PREPROCESSPIPELINEID"
       name: 'getpreprocessingpipelineid'
       displayName: 'Get Preprocessing Pipeline ID of ${{ parameters.aml_pipeline_name }}'
+
   - job: "Run_Data_Processing_Pipeline"
     dependsOn: "Get_Preprocessing_Pipeline_ID"
     displayName: "Trigger Preprocessing Pipeline ${{ parameters.aml_pipeline_name }}"
@@ -44,4 +48,4 @@ stages:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         PipelineId: '$(PREPROCESSPIPELINE_ID)'
         ExperimentName: '$(EXPERIMENT_NAME)_preprocess'
-        PipelineParameters: '"ParameterAssignments": {"data_file_path": "$(RAW_DATAFILE_PATH)", "preprocessing_param": "$(PREPROCESSING_PARAM)"}, "tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'
+        PipelineParameters: '"ParameterAssignments": {"data_file_path": "$(RAW_DATAFILE_PATH)"}, "tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'

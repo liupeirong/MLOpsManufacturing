@@ -2,7 +2,6 @@ parameters:
   - name: workingDirectory
     displayName: Working Directory for sample
     type: string
-    default: samples/non-python-preprocess
 
 # Pipeline template to run linting, unit tests with code coverage, and publish the results.
 steps:

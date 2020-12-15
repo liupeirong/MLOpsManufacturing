@@ -9,13 +9,16 @@ variables:
   # Azure ML Variables
   - name: EXPERIMENT_NAME
     value: flower_custom_preprocess
+  - name: PREPROCESSING_PIPELINE_NAME
+    value: flower-custom-preprocessing-pipeline
   - name: DATASET_NAME
     value: flower_dataset
   # Uncomment DATASTORE_NAME if you have configured non default datastore to point to your data
   # - name: DATASTORE_NAME
   #   value: datablobstore
-  - name: PREPROCESSING_PIPELINE_NAME
-    value: flower-custom-preprocessing-pipeline
+  # which data folder do we want to train on
+  - name: RAW_DATAFILE_PATH
+    value: flower_dataset
 
   # Set to false to disable the evaluation step in the ML pipeline and register the newly trained model unconditionally.
   # - name: RUN_EVALUATION

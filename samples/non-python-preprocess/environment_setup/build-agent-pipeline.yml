@@ -19,8 +19,8 @@ trigger:
     - main
   paths:
     include:
-    - ${{ parameters.workingDirectory }}/environment_setup/Dockerfile
-    - ${{ parameters.workingDirectory }}/ml_model/ci_dependencies.yml
+    - samples/non-python-preprocess/environment_setup/Dockerfile
+    - samples/non-python-preprocess/ml_model/ci_dependencies.yml
 
 variables:
 - name: containerRegistry

@@ -65,7 +65,7 @@ stages:
 - template: trigger-preprocessing-pipeline.yml
   parameters:
     # Template parameters can not be expanded, hard coded here
-    aml_pipeline_name: $[PREPROCESSING_PIPELINE_NAME]
+    aml_pipeline_name: $[variables.PREPROCESSING_PIPELINE_NAME]
     workingDirectory: ${{ parameters.workingDirectory }}
     # aml_pipeline_name: ${{ variable.PREPROCESSING_OS_CMD_PIPELINE_NAME }}
     # aml_pipeline_name: $(PREPROCESSING_OS_CMD_PIPELINE_NAME)

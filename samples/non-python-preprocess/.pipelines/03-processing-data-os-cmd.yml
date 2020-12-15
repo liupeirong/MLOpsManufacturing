@@ -16,6 +16,7 @@ resources:
     endpoint: mlopsmanufacturingacr
 
 pr: none
+
 trigger:
   branches:
     include:
@@ -29,8 +30,6 @@ trigger:
     - samples/non-python-preprocess/.pipelines/variables-template.yml
     - samples/non-python-preprocess/.pipelines/code-quality-template.yml
     - samples/non-python-preprocess/.pipelines/trigger-preprocessing-pipeline.yml
-    exclude:
-    - '*'
 
 
 variables:

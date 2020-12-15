@@ -5,6 +5,14 @@ parameters:
     type: string
     default: samples/non-python-preprocess
 
+trigger:
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - samples/non-python-preprocess/ml_model/preprocessing/Dockerfile
+
 pr:
   branches:
     include:

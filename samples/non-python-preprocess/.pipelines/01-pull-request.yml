@@ -11,6 +11,15 @@ resources:
     image: mlopsmanufacturing/build-agent/nonpython:latest
     endpoint: mlopsmanufacturingacr 
 
+trigger:
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - samples/non-python-preprocess/ml_model
+    - samples/non-python-preprocess/ml_service
+
 pr:
   branches:
     include:
@@ -19,8 +28,6 @@ pr:
     include:
     - samples/non-python-preprocess/ml_model
     - samples/non-python-preprocess/ml_service
-    exclude:
-    - '*'
 
 pool:
   vmImage: 'ubuntu-latest'

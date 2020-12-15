@@ -5,7 +5,7 @@ Azure Machine Learning Pipelines.
 
 ## Explaining data preprocessing with non-python tooling for AML
 
-The [wrapper script](./preprocess_os_cmd.py) calls the command line command.
+The [wrapper script](./preprocess_os_cmd_aml.py) calls the command line command.
 In the basic sample it is just a `cp` to move data from
 the input folder to the output folder of it's AML pipeline step.
 
@@ -92,7 +92,7 @@ python -m ml_service.pipelines.build_data_processing_os_cmd_pipeline
 ```
 
 ```bash
-python -m ml_service.pipelines.run_data_processing_pipeline --aml_pipeline_name "custom-data-processing-pipeline"
+python -m ml_service.pipelines.run_data_processing_pipeline --aml_pipeline_name "flower-custom-preprocessing-pipeline"
 ```
 
 For stage and production you have to check in the code and run through

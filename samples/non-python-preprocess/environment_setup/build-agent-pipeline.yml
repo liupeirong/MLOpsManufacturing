@@ -12,14 +12,15 @@ pool:
   vmImage: 'ubuntu-latest'
 
 pr: none
+
 trigger:
   branches:
     include:
     - main
   paths:
     include:
-    - environment_setup/Dockerfile
-    - ml_model/ci_dependencies.yml
+    - ${{ parameters.workingDirectory }}/environment_setup/Dockerfile
+    - ${{ parameters.workingDirectory }}/ml_model/ci_dependencies.yml
 
 variables:
 - name: containerRegistry

@@ -12,7 +12,7 @@ parameters:
 resources:
   containers:
   - container: mlops
-    image: mlopsmanufacturing/build-agent/tensorflow:latest
+    image: mlopsmanufacturing/build-agent/tensorflow:build-20201203.1
     endpoint: mlopsmanufacturingacr
 
 pr: none

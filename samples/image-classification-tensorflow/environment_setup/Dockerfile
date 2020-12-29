@@ -17,7 +17,7 @@ RUN apt-get update && \
     AZ_REPO=$(lsb_release -cs) && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | tee /etc/apt/sources.list.d/azure-cli.list && \
     apt-get update && \
-    apt-get install azure-cli -y && \
+    apt-get install azure-cli=2.15 -y && \
     az --version
 
 # az cli extension defaults to $HOME/.azure/cliextensions
@@ -25,7 +25,7 @@ RUN apt-get update && \
 # a new user vsts_azpcontainer
 RUN mkdir /opt/azcliextensions 
 ENV AZURE_EXTENSION_DIR /opt/azcliextensions
-RUN az extension add -n azure-cli-ml
+RUN az extension add -n azure-cli-ml=1.18
 
 # precreate user vsts 
 RUN groupadd --gid 1001 vsts && \

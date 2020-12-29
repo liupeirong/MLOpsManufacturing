@@ -25,7 +25,7 @@ RUN apt-get update && \
 # a new user vsts_azpcontainer
 RUN mkdir /opt/azcliextensions 
 ENV AZURE_EXTENSION_DIR /opt/azcliextensions
-RUN az extension add -n azure-cli-ml
+RUN az extension add --source https://azurecliext.blob.core.windows.net/release/azure_cli_ml-1.18.0-py3-none-any.whl
 
 # precreate user vsts 
 RUN groupadd --gid 1001 vsts && \

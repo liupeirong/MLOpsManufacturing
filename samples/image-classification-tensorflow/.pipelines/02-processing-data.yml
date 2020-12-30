@@ -50,6 +50,7 @@ stages:
     - template: code-quality-template.yml
       parameters:
         workingDirectory: ${{ parameters.workingDirectory }}
+        targetDirectory: 'ml_model/preprocessing'
     - task: AzureCLI@1
       enabled: true
       inputs:

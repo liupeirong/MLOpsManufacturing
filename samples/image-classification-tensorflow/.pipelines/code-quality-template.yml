@@ -2,16 +2,20 @@ parameters:
   - name: workingDirectory
     displayName: Working Directory for sample
     type: string
+  - name: targetDirectory
+    displayName: Target directory to run lint and test against
+    type: string
+    default: '.'
 
 # Pipeline template to run linting, unit tests with code coverage, and publish the results.
 steps:
 - script: |   
-   flake8 --output-file=lint-testresults.xml --format junit-xml
+   flake8 ${{ parameters.targetDirectory }} --output-file=lint-testresults.xml --format junit-xml
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'Run lint tests'
 
 - script: |   
-   python -m pytest . --cov=ml_model --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
+   python -m pytest ${{ parameters.targetDirectory }} --cov=ml_model --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
   workingDirectory: ${{ parameters.workingDirectory }}
   condition: succeededOrFailed()
   displayName: 'Run unit tests'

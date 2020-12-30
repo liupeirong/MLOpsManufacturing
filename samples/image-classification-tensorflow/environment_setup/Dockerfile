@@ -41,6 +41,7 @@ RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci
 # activate environment (Azure Pipelines won't use bash to execute)
 ENV PATH /home/vsts/.conda/envs/ci/bin:$PATH
 
+# Issue with PyJWT change in 2.0 from 1.7.  Install msal 1.6 effectively installs PyJWT 1.7
 RUN yes | pip uninstall msal && yes | pip install msal==1.6.0
 
 # switch back to root

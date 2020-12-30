@@ -40,10 +40,10 @@ def evaluate_model_performs_better(model, run):
         print(f"Current model accuracy: {production_model_accuracy}, new model accuracy: {new_model_accuracy}")  # NOQA: E501
 
     if (new_model_accuracy > production_model_accuracy):
-        print("New model performs better, register it")
+        print("New model performs better")
         return True
     else:
-        print("New model doesn't perform better, skip registration")
+        print("New model doesn't perform better")
         return False
 
 

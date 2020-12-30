@@ -41,7 +41,6 @@ stages:
     container: mlops
     timeoutInMinutes: 0
     steps:
-    - download: none
     - template: get-model-id-artifact-template.yml
       parameters:
         projectId: '$(resources.pipeline.model-train-ci.projectID)'

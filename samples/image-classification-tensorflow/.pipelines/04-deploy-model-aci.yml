@@ -9,6 +9,7 @@ parameters:
 - name: workingDirectory
   displayName: Working Directory for sample
   type: string
+  default: samples/image-classification-tensorflow
 
 # Trigger this pipeline on model-train pipeline completion
 resources:

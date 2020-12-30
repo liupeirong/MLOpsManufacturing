@@ -18,7 +18,7 @@ resources:
     image: mlopsmanufacturing/build-agent/tensorflow:latest
     endpoint: mlopsmanufacturingacr
   pipelines:
-  - pipeline: model-train-evaluate-register-ci
+  - pipeline: model-train-ci
     source: 03-train-evaluate-register-model # Name of the triggering pipeline
     trigger:
       branches:
@@ -44,8 +44,8 @@ stages:
     steps:
     - template: get-model-id-artifact-template.yml
       parameters:
-        projectId: '$(resources.pipeline.model-train-evaluate-register-ci.projectID)'
-        pipelineId: '$(resources.pipeline.model-train-evaluate-register-ci.pipelineID)'
+        projectId: '$(resources.pipeline.model-train-ci.projectID)'
+        pipelineId: '$(resources.pipeline.model-train-ci.pipelineID)'
         artifactBuildId: ${{ parameters.artifactBuildId }}
     - task: AzureCLI@1
       displayName: "Deploy to ACI (CLI)"

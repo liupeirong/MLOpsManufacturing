@@ -11,8 +11,8 @@ resources:
     image: mlopsmanufacturing/build-agent/tensorflow:latest
     endpoint: mlopsmanufacturingacr
   pipelines:
-  - pipeline: model-train-ci
-    source: 03-train-evaluate-register-model # Name of the triggering pipeline
+  - pipeline: model-test-deploy-ci
+    source: 04-deploy-model-aci # Name of the triggering pipeline
     trigger:
       branches:
         include:
@@ -33,8 +33,8 @@ variables:
 steps:
 - template: get-model-id-artifact-template.yml
   parameters:
-    projectId: '$(resources.pipeline.model-train-ci.projectID)'
-    pipelineId: '$(resources.pipeline.model-train-ci.pipelineID)'
+    projectId: '$(resources.pipeline.model-test-deploy-ci.projectID)'
+    pipelineId: '$(resources.pipeline.model-test-deploy-ci.pipelineID)'
     artifactBuildId: ${{ parameters.artifactBuildId }}
 - template: package-model-template.yml
   parameters:

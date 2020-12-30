@@ -16,7 +16,7 @@ resources:
     endpoint: mlopsmanufacturingacr
   pipelines:
   - pipeline: model-train-ci
-    source: 02-processing-data # Name of the triggering pipeline
+    source: 02-preprocess-data # Name of the triggering pipeline
     trigger:
       branches:
         include:

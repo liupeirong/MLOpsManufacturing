@@ -25,7 +25,7 @@ trigger:
     - samples/image-classification-tensorflow/ml_model/preprocessing/
     - samples/image-classification-tensorflow/ml_model/parameters.json
     - samples/image-classification-tensorflow/ml_service/pipelines/build_data_processing_pipeline.py
-    - samples/image-classification-tensorflow/.pipelines/02-processing-data.yml
+    - samples/image-classification-tensorflow/.pipelines/02-preprocess-data.yml
     - samples/image-classification-tensorflow/.pipelines/variables-template.yml
     - samples/image-classification-tensorflow/.pipelines/code-quality-template.yml
     - samples/image-classification-tensorflow/.pipelines/trigger-preprocessing-pipeline.yml

@@ -41,5 +41,7 @@ RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci
 # activate environment (Azure Pipelines won't use bash to execute)
 ENV PATH /home/vsts/.conda/envs/ci/bin:$PATH
 
+RUN yes | pip uninstall msal && yes | pip install msal==1.6.0
+
 # switch back to root
 USER root

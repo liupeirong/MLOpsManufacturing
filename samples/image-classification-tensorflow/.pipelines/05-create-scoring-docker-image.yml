@@ -4,6 +4,10 @@ parameters:
   displayName: Model Train CI Build ID. Default is 'latest'.
   type: string
   default: latest
+- name: workingDirectory
+  displayName: Working Directory for sample
+  type: string
+  default: samples/image-classification-tensorflow
 
 resources:
   containers:
@@ -43,4 +47,3 @@ steps:
     condaFilePath: '$(Build.SourcesDirectory)/$(SOURCES_DIR_TRAIN)/conda_dependencies.yml'
     imageName: $(MODEL_NAME).$(get_model.MODEL_VERSION)
     workingDirectory: ${{ parameters.workingDirectory }}
-

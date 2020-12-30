@@ -15,7 +15,7 @@ steps:
   displayName: 'Run lint tests'
 
 - script: |   
-   python -m pytest ${{ parameters.targetDirectory }} --cov=ml_model --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
+   python -m pytest ${{ parameters.targetDirectory }} --cov=ml_model --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml; ret=$?; [ $ret = 5 ] && exit 0 || exit $ret
   workingDirectory: ${{ parameters.workingDirectory }}
   condition: succeededOrFailed()
   displayName: 'Run unit tests'

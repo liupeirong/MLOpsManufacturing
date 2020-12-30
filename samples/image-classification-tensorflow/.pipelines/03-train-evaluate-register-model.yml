@@ -62,6 +62,7 @@ stages:
     - template: code-quality-template.yml
       parameters:
         workingDirectory: ${{ parameters.workingDirectory }}
+        targetDirectory: 'ml_model'
     - task: AzureCLI@1
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'

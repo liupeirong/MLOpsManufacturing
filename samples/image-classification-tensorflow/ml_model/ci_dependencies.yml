@@ -23,7 +23,7 @@ dependencies:
       - python-dotenv==0.12.*
       - flake8==3.7.*
       - flake8_formatter_junit_xml==0.0.*
-      # - tensorflow==2.3.*
-      # - keras==2.4.*
+      - tensorflow==2.3.*
+      - keras==2.4.*
 
 

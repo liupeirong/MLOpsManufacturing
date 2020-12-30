@@ -12,7 +12,6 @@ parameters:
   default: latest
   
 steps:
-  - download: none
   - task: DownloadPipelineArtifact@2
     displayName: Download Pipeline Artifacts
     inputs:

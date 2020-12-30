@@ -15,7 +15,7 @@ resources:
     image: mlopsmanufacturing/build-agent/tensorflow:latest
     endpoint: mlopsmanufacturingacr
   pipelines:
-  - pipeline: model-train-ci
+  - pipeline: preprocess-ci
     source: 02-preprocess-data # Name of the triggering pipeline
     trigger:
       branches:

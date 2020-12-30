@@ -8,31 +8,25 @@ variables:
     
   # Azure ML Variables
   - name: EXPERIMENT_NAME
-    value: flower_custom_preprocess
+    value: nonpython_preprocess
   - name: PREPROCESSING_PIPELINE_NAME
-    value: flower-custom-preprocessing-pipeline
+    value: nonpython-data-processing-pipeline
   - name: DATASET_NAME
-    value: flower_dataset
+    value: nonpython_dataset
   # Uncomment DATASTORE_NAME if you have configured non default datastore to point to your data
   # - name: DATASTORE_NAME
   #   value: datablobstore
   # which data folder do we want to train on
   - name: RAW_DATAFILE_PATH
-    value: flower_dataset
+    value: flower_dataset_small/tulips/
 
-  # Set to false to disable the evaluation step in the ML pipeline and register the newly trained model unconditionally.
-  # - name: RUN_EVALUATION
-  #   value: "true"
-  # Set to false to register the model regardless of the outcome of the evaluation step in the ML pipeline.
-  - name: ALLOW_RUN_CANCEL
-    value: "false"
   # Flag to allow rebuilding the AML Environment after it was built for the first time. This enables dependency updates from conda_dependencies.yaml.
   # - name: AML_REBUILD_ENVIRONMENT
   #  value: "false"
 
   # AML Environment Config
   - name: AML_ENV_NAME
-    value: flower_custom_preprocess_env
+    value: nonpython_preprocess_env
 
   # AML Compute Cluster Config
   - name: AML_COMPUTE_CLUSTER_CPU_SKU
@@ -44,4 +38,4 @@ variables:
   - name: AML_CLUSTER_MIN_NODES
     value: 0
   - name: AML_CLUSTER_MAX_NODES
-    value: 4
+    value: 2

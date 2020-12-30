@@ -25,8 +25,6 @@ class Env:
     experiment_name: Optional[str] = os.environ.get("EXPERIMENT_NAME")  # NOQA: E501
     dataset_name: Optional[str] = os.environ.get("DATASET_NAME")
     datastore_name: Optional[str] = os.environ.get("DATASTORE_NAME")  # NOQA: E501
-    run_evaluation: Optional[str] = os.environ.get("RUN_EVALUATION", "true")  # NOQA: E501
-    allow_run_cancel: Optional[str] = os.environ.get("ALLOW_RUN_CANCEL", "true")  # NOQA: E501
     rebuild_env: Optional[bool] = os.environ.get("AML_REBUILD_ENVIRONMENT", "false").lower().strip() == "true"  # NOQA: E501
     vm_size: Optional[str] = os.environ.get("AML_COMPUTE_CLUSTER_CPU_SKU")
     compute_name: Optional[str] = os.environ.get("AML_COMPUTE_CLUSTER_NAME")

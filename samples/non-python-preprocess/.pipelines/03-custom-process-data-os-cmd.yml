@@ -3,7 +3,7 @@ parameters:
   - name: aml_pipeline_name
     displayName: AML Pipeline Name to trigger
     type: string
-    default: flower-custom-preprocessing-pipeline
+    default: nonpython-data-processing-pipeline
   - name: workingDirectory
     displayName: Working Directory for sample
     type: string

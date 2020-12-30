@@ -92,7 +92,7 @@ python -m ml_service.pipelines.build_data_processing_os_cmd_pipeline
 ```
 
 ```bash
-python -m ml_service.pipelines.run_data_processing_pipeline --aml_pipeline_name "flower-custom-preprocessing-pipeline"
+python -m ml_service.pipelines.run_data_processing_pipeline --aml_pipeline_name "nonpython-data-preprocessing-pipeline"
 ```
 
 For stage and production you have to check in the code and run through

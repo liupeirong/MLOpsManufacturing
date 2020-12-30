@@ -24,11 +24,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THE SOFTWARE CODE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
 
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers import Dropout, Flatten, Dense
-from keras import optimizers
-from keras.preprocessing.image import ImageDataGenerator
+# set numpy random seed to get consistent keras results
+import numpy as np
+np.random.seed(7)
+from keras.models import Sequential  # noqa: E402
+from keras.layers import Conv2D, MaxPooling2D  # noqa: E402
+from keras.layers import Dropout, Flatten, Dense  # noqa: E402
+from keras import optimizers  # noqa: E402
+from keras.preprocessing.image import ImageDataGenerator  # noqa: E402
 
 
 # Split the dataframe into test and train data
@@ -49,7 +52,8 @@ def split_data(data_folder, preprocessing_args):
         target_size=img_size,
         batch_size=batch_size,
         class_mode='categorical',
-        subset='training')  # set as training data
+        subset='training',
+        seed=7)  # set as training data
 
     print("Preparing validation dataset...")
     validation_generator = datagen.flow_from_directory(
@@ -57,7 +61,8 @@ def split_data(data_folder, preprocessing_args):
         target_size=img_size,
         batch_size=batch_size,
         class_mode='categorical',
-        subset='validation')  # set as validation data
+        subset='validation',
+        seed=7)  # set as validation data
 
     classes = sorted(train_generator.class_indices.keys())
     print("class names: ", classes)

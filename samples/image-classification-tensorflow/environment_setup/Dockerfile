@@ -17,7 +17,7 @@ RUN apt-get update && \
     AZ_REPO=$(lsb_release -cs) && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | tee /etc/apt/sources.list.d/azure-cli.list && \
     apt-get update && \
-    apt-get install azure-cli=2.15.* -y && \
+    apt-get install azure-cli -y && \
     az --version
 
 # az cli extension defaults to $HOME/.azure/cliextensions
@@ -25,7 +25,7 @@ RUN apt-get update && \
 # a new user vsts_azpcontainer
 RUN mkdir /opt/azcliextensions 
 ENV AZURE_EXTENSION_DIR /opt/azcliextensions
-RUN az extension add --source https://azurecliext.blob.core.windows.net/release/azure_cli_ml-1.18.0-py3-none-any.whl -y
+RUN az extension add -n azure-cli-ml
 
 # precreate user vsts 
 RUN groupadd --gid 1001 vsts && \
@@ -36,10 +36,12 @@ USER vsts
 # precreate CI environment for user vsts
 COPY ml_model/ci_dependencies.yml /home/vsts/.
 
-RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci
+RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci 
 
 # activate environment (Azure Pipelines won't use bash to execute)
 ENV PATH /home/vsts/.conda/envs/ci/bin:$PATH
+
+RUN yes | pip uninstall msal && yes | pip install msal==1.6.0
 
 # switch back to root
 USER root

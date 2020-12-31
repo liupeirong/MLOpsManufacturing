@@ -1,8 +1,8 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json
 {
   "name": "Non Python Preprocess",
-  "context": "../../",
-  "dockerFile": ".devcontainer/image/Dockerfile",
+  "context": "../../../",
+  "dockerFile": "./image/Dockerfile",
   "workspaceMount": "source=${localWorkspaceFolder}/../..,target=/workspace,type=bind,consistency=cached",
   "workspaceFolder": "/workspace/samples/non-python-preprocess",
   // Set *default* container specific settings.json values on container create.
@@ -37,7 +37,7 @@
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'initializeCommand' to run command string or list of command arguments to run on the local machine before the container is created. 
-  "initializeCommand": "/bin/sh ${localWorkspaceFolder}/.devcontainer/image/dockergid.sh ${localWorkspaceFolder}/.devcontainer",
+  "initializeCommand": "/bin/sh ${localWorkspaceFolder}/local_development/.devcontainer/image/dockergid.sh ${localWorkspaceFolder}/local_development/.devcontainer",
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "",
   // "postAttachCommand": "",

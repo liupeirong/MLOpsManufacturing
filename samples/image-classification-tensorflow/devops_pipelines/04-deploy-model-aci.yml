@@ -52,7 +52,7 @@ stages:
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
-        workingDirectory: ${{ parameters.workingDirectory }}/$(SOURCES_DIR_TRAIN)/scoring
+        workingDirectory: ${{ parameters.workingDirectory }}/$(SOURCES_DIR_TRAIN)/score
         inlineScript: |
           set -e # fail on error
           
@@ -70,4 +70,4 @@ stages:
         inlineScript: |
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          python -m ml_service.util.smoke_test_scoring_service --service "$(ACI_DEPLOYMENT_NAME)"
+          python -m ml_model.score.smoke_test_scoring_service --service "$(ACI_DEPLOYMENT_NAME)"

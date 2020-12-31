@@ -74,7 +74,7 @@ def main():
     # Execute something here just 'cp' from input to output folder
     #   cp /tmp/. /tmp2 -r
     # Prepackage any command line tools needed,
-    # in the docker image (ml_model/preprocessing/Dockerfile)
+    # in the docker image (ml_model/preprocess/Dockerfile)
     process = subprocess.Popen(['cp',
                                 '{0}/.'.format(mount_context.mount_point),
                                 output_dataset_path,

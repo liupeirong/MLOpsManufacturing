@@ -29,7 +29,7 @@ trigger:
     - main
   paths:
     include:
-    - samples/image-classification-tensorflow/ml_model/training/
+    - samples/image-classification-tensorflow/ml_model/train/
     - samples/image-classification-tensorflow/ml_model/evaluate/
     - samples/image-classification-tensorflow/ml_model/register/
     - samples/image-classification-tensorflow/ml_model/util/

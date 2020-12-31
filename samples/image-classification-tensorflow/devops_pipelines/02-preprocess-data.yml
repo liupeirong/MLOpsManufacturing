@@ -3,38 +3,37 @@ parameters:
   - name: aml_pipeline_name
     displayName: AML Pipeline Name to trigger
     type: string
-    default: nonpython-data-processing-pipeline
+    default: flower-preprocessing-pipeline
   - name: workingDirectory
     displayName: Working Directory for sample
     type: string
-    default: samples/non-python-preprocess
+    default: samples/image-classification-tensorflow
 
 resources:
   containers:
   - container: mlops
-    image: mlopsmanufacturing/build-agent/nonpython:latest
+    image: mlopsmanufacturing/build-agent/tensorflow:latest
     endpoint: mlopsmanufacturingacr
 
 pr: none
-
 trigger:
   branches:
     include:
     - main
   paths:
     include:
-    - samples/non-python-preprocess/ml_model/preprocessing/Dockerfile
-    - samples/non-python-preprocess/ml_model/preprocessing/preprocess_os_cmd_aml.py
-    - samples/non-python-preprocess/ml_service/pipelines/build_data_processing_os_cmd_pipeline.py
-    - samples/non-python-preprocess/.pipelines/03-custom-process-data-os-cmd.yml
-    - samples/non-python-preprocess/.pipelines/variables-template.yml
-    - samples/non-python-preprocess/.pipelines/code-quality-template.yml
-    - samples/non-python-preprocess/.pipelines/trigger-preprocessing-pipeline.yml
+    - samples/image-classification-tensorflow/ml_model/preprocess/
+    - samples/image-classification-tensorflow/ml_model/parameters.json
+    - samples/image-classification-tensorflow/ml_service/pipelines/build_data_processing_pipeline.py
+    - samples/image-classification-tensorflow/.pipelines/02-preprocess-data.yml
+    - samples/image-classification-tensorflow/.pipelines/variables-template.yml
+    - samples/image-classification-tensorflow/.pipelines/code-quality-template.yml
+    - samples/image-classification-tensorflow/.pipelines/trigger-preprocessing-pipeline.yml
 
 
 variables:
 - template: variables-template.yml
-- group: nonpython-preprocess-aml-vg
+- group: devopsforai-aml-vg
 
 pool:
   vmImage: ubuntu-latest
@@ -51,6 +50,7 @@ stages:
     - template: code-quality-template.yml
       parameters:
         workingDirectory: ${{ parameters.workingDirectory }}
+        targetDirectory: 'ml_model/preprocess'
     - task: AzureCLI@1
       enabled: true
       inputs:
@@ -61,8 +61,8 @@ stages:
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
           # Invoke the Python building and publishing a data preprocessing pipeline
-          python -m ml_service.pipelines.build_data_processing_os_cmd_pipeline
-      displayName: 'Publish Data Preprocessing OS cmd Pipeline'
+          python -m ml_service.pipelines.build_data_processing_pipeline
+      displayName: 'Publish Data Preprocessing Pipeline'
 
 # Trigger_Preprocessing_Pipeline
 - template: trigger-preprocessing-pipeline.yml
@@ -70,7 +70,7 @@ stages:
     # Template parameters can not be expanded, hard coded here
     aml_pipeline_name: ${{ parameters.aml_pipeline_name }}
     workingDirectory: ${{ parameters.workingDirectory }}
-    # aml_pipeline_name: ${{ variable.PREPROCESSING_OS_CMD_PIPELINE_NAME }}
-    # aml_pipeline_name: $(PREPROCESSING_OS_CMD_PIPELINE_NAME)
+    # aml_pipeline_name: ${{ variable.PREPROCESSING_PIPELINE_NAME }}
+    # aml_pipeline_name: $(PREPROCESSING_PIPELINE_NAME)
     # Variable expanding for Parameters is not always possible:
     # https://developercommunity.visualstudio.com/content/problem/429990/azure-pipelines-passing-a-variable-as-a-parameter.html

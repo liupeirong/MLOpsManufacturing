@@ -80,7 +80,7 @@ if __name__ == "__main__":
     import requests
     from io import BytesIO
     from PIL import Image
-    from preprocessing.preprocess_images import resize_image
+    from preprocess.preprocess_images import resize_image
     from dotenv import load_dotenv
     import os
 

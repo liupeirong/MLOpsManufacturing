@@ -6,7 +6,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-- group: nonpython-preprocess-aml-vg
+- group: iac-aml-vg
 
 
 steps:

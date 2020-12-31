@@ -54,7 +54,7 @@ def call_web_app(url, headers, body):
 def main():
     from io import BytesIO
     from PIL import Image
-    from ml_model.preprocessing.preprocess_images import resize_image
+    from ml_model.preprocess.preprocess_images import resize_image
     import numpy as np
 
     parser = argparse.ArgumentParser("smoke_test_scoring_service.py")

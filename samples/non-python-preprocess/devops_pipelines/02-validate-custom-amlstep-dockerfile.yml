@@ -11,7 +11,7 @@ trigger:
     - '*'
   paths:
     include:
-    - samples/non-python-preprocess/ml_model/preprocessing/Dockerfile
+    - samples/non-python-preprocess/ml_model/preprocess/Dockerfile
 
 pr:
   branches:
@@ -19,7 +19,7 @@ pr:
     - main
   paths:
     include:
-    - samples/non-python-preprocess/ml_model/preprocessing/Dockerfile
+    - samples/non-python-preprocess/ml_model/preprocess/Dockerfile
     
 jobs:
   - job: buildAmlPipelineCompContainer
@@ -28,5 +28,5 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
     - script: docker build -f Dockerfile .
-      workingDirectory: ${{ parameters.workingDirectory }}/ml_model/preprocessing/
+      workingDirectory: ${{ parameters.workingDirectory }}/ml_model/preprocess/
       displayName: 'Docker build validation aml pipeline compatible step'

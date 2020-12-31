@@ -26,7 +26,7 @@ The current devcontainer **won't build and/or run correctly** if the repo is clo
 * local machine Linux/WSL user's `~/.ssh` folder is mounted so `Personal SSH keys` can be used
 * Docker CLI in container will use local machine's docker service
 (images pulled or created are persisted on local machine's storage)
-* Conda environment with `ml_model/dev_dependencies.yml` is pre-activated
+* Conda environment with `dev_dependencies.yml` is pre-activated
 * Azure CLI
 * Python Extension, including linting (flake8) and testing (pytest) setup and ready to use
 * Life Share Extension for pair programming

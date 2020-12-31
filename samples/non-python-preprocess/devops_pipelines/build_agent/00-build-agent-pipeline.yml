@@ -3,7 +3,7 @@ parameters:
   - name: workingDirectory
     displayName: Working Directory for sample
     type: string
-    default: samples/image-classification-tensorflow
+    default: samples/non-python-preprocess
 
 resources:
 - repo: self
@@ -17,8 +17,8 @@ pr:
     - main
   paths:
     include:
-    - samples/image-classification-tensorflow/environment_setup/Dockerfile
-    - samples/image-classification-tensorflow/ml_model/ci_dependencies.yml
+    - samples/non-python-preprocess/.pipelines/Dockerfile_build_agent
+    - samples/non-python-preprocess/ml_model/ci_dependencies.yml
 
 trigger:
   branches:
@@ -26,14 +26,14 @@ trigger:
     - main
   paths:
     include:
-    - samples/image-classification-tensorflow/environment_setup/Dockerfile
-    - samples/image-classification-tensorflow/ml_model/ci_dependencies.yml
+    - samples/non-python-preprocess/.pipelines/Dockerfile_build_agent
+    - samples/non-python-preprocess/ml_model/ci_dependencies.yml
 
 variables:
 - name: containerRegistry
   value: mlopsmanufacturingacr
 - name: imageName
-  value: mlopsmanufacturing/build-agent/tensorflow
+  value: mlopsmanufacturing/build-agent/nonpython
         
 steps:
   - task: Docker@2
@@ -46,4 +46,4 @@ steps:
        ${{format('build-{0}', '$(Build.BuildNumber)')}}
        latest
       buildContext: '${{ parameters.workingDirectory }}' 
-      dockerFile: '${{ parameters.workingDirectory }}/environment_setup/Dockerfile'
+      dockerFile: '${{ parameters.workingDirectory }}/.pipelines/Dockerfile'_build_agent

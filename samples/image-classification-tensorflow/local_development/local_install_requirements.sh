@@ -26,6 +26,6 @@
 
 set -eux
 
-conda env create -f ../ml_model/ci_dependencies.yml
+conda env create -f dev_dependencies.yml
 
-conda activate mlopmanufacturing_ci
+conda activate tensorflow_dev

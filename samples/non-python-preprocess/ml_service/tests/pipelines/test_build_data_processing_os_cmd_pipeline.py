@@ -45,7 +45,7 @@ def test_build_data_processing_os_cmd_pipeline_happy_path(mocker: MockFixture,
                                 runconfig=ANY,
                                 arguments=ANY,
                                 source_directory=e.sources_directory_train,
-                                script_name="preprocessing/"
+                                script_name="preprocess/"
                                             "preprocess_os_cmd_aml.py",
                                 name="Preprocess Data with OS cmd",
                                 compute_target=ANY)
@@ -124,7 +124,7 @@ def test_build_data_processing_os_cmd_pipeline_default_datastore(
                                 runconfig=ANY,
                                 arguments=ANY,
                                 source_directory=e.sources_directory_train,
-                                script_name="preprocessing/"
+                                script_name="preprocess/"
                                             "preprocess_os_cmd_aml.py",
                                 name="Preprocess Data with OS cmd",
                                 compute_target=ANY)
@@ -197,7 +197,7 @@ def test_build_data_processing_os_cmd_pipeline_exception_handling(
                                 runconfig=ANY,
                                 arguments=ANY,
                                 source_directory=e.sources_directory_train,
-                                script_name="preprocessing/"
+                                script_name="preprocess/"
                                             "preprocess_os_cmd_aml.py",
                                 name="Preprocess Data with OS cmd",
                                 compute_target=ANY)

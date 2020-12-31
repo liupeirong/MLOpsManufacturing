@@ -108,7 +108,7 @@ ENV DEBIAN_FRONTEND=dialog
 
 # Copy conda dependencies
 WORKDIR /tmp
-COPY ${SAMPLE_PATH}/ml_model/dev_dependencies.yml .
+COPY ${SAMPLE_PATH}/local_development/dev_dependencies.yml .
 
 # Create conda environment for vscode user
 USER vscode

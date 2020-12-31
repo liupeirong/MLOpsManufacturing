@@ -17,8 +17,8 @@ pr:
     - main
   paths:
     include:
-    - samples/non-python-preprocess/.pipelines/Dockerfile_build_agent
-    - samples/non-python-preprocess/ml_model/ci_dependencies.yml
+    - samples/non-python-preprocess/devops_pipelines/Dockerfile_build_agent
+    - samples/non-python-preprocess/devops_pipelines/ci_dependencies.yml
 
 trigger:
   branches:
@@ -26,8 +26,8 @@ trigger:
     - main
   paths:
     include:
-    - samples/non-python-preprocess/.pipelines/Dockerfile_build_agent
-    - samples/non-python-preprocess/ml_model/ci_dependencies.yml
+    - samples/non-python-preprocess/devops_pipelines/Dockerfile_build_agent
+    - samples/non-python-preprocess/devops_pipelines/ci_dependencies.yml
 
 variables:
 - name: containerRegistry
@@ -46,4 +46,4 @@ steps:
        ${{format('build-{0}', '$(Build.BuildNumber)')}}
        latest
       buildContext: '${{ parameters.workingDirectory }}' 
-      dockerFile: '${{ parameters.workingDirectory }}/.pipelines/Dockerfile'_build_agent
+      dockerFile: '${{ parameters.workingDirectory }}/devops_pipelines/Dockerfile_build_agent'

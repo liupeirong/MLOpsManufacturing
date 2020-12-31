@@ -25,10 +25,10 @@ trigger:
     - samples/image-classification-tensorflow/ml_model/preprocess/
     - samples/image-classification-tensorflow/ml_model/parameters.json
     - samples/image-classification-tensorflow/ml_service/pipelines/build_data_processing_pipeline.py
-    - samples/image-classification-tensorflow/.pipelines/02-preprocess-data.yml
-    - samples/image-classification-tensorflow/.pipelines/variables-template.yml
-    - samples/image-classification-tensorflow/.pipelines/code-quality-template.yml
-    - samples/image-classification-tensorflow/.pipelines/trigger-preprocessing-pipeline.yml
+    - samples/image-classification-tensorflow/devops_pipelines/02-preprocess-data.yml
+    - samples/image-classification-tensorflow/devops_pipelines/variables-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/code-quality-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/trigger-preprocessing-pipeline.yml
 
 
 variables:

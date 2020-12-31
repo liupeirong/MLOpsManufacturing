@@ -6,6 +6,7 @@ outputs
 azureml-setup
 docs
 environment_setup
-.pipelines
+devops_pipelines
+pipelines
 .devcontainer
 .devcontainer.json

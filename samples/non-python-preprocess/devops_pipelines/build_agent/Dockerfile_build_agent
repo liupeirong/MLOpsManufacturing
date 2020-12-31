@@ -34,7 +34,7 @@ RUN groupadd --gid 1001 vsts && \
 USER vsts
 
 # precreate CI environment for user vsts
-COPY ml_model/ci_dependencies.yml /home/vsts/.
+COPY devops_pipelines/build_agent/ci_dependencies.yml /home/vsts/.
 
 RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci
 

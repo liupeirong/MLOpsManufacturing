@@ -26,10 +26,10 @@ trigger:
     - samples/non-python-preprocess/ml_model/preprocess/Dockerfile
     - samples/non-python-preprocess/ml_model/preprocess/preprocess_os_cmd_aml.py
     - samples/non-python-preprocess/ml_service/pipelines/build_data_processing_os_cmd_pipeline.py
-    - samples/non-python-preprocess/.pipelines/03-custom-process-data-os-cmd.yml
-    - samples/non-python-preprocess/.pipelines/variables-template.yml
-    - samples/non-python-preprocess/.pipelines/code-quality-template.yml
-    - samples/non-python-preprocess/.pipelines/trigger-preprocessing-pipeline.yml
+    - samples/non-python-preprocess/devops_pipelines/03-custom-process-data-os-cmd.yml
+    - samples/non-python-preprocess/devops_pipelines/variables-template.yml
+    - samples/non-python-preprocess/devops_pipelines/code-quality-template.yml
+    - samples/non-python-preprocess/devops_pipelines/trigger-preprocessing-pipeline.yml
 
 
 variables:

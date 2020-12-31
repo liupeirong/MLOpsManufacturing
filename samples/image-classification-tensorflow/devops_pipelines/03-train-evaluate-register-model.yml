@@ -36,11 +36,11 @@ trigger:
     - samples/image-classification-tensorflow/ml_model/conda_dependencies.yml
     - samples/image-classification-tensorflow/ml_model/parameters.json
     - samples/image-classification-tensorflow/ml_service/pipelines/build_training_pipeline.py
-    - samples/image-classification-tensorflow/.pipelines/03-train-evaluate-register-model.yml
-    - samples/image-classification-tensorflow/.pipelines/get-model-id-artifact-template.yml
-    - samples/image-classification-tensorflow/.pipelines/publish-model-artifact-template.yml
-    - samples/image-classification-tensorflow/.pipelines/variables-template.yml
-    - samples/image-classification-tensorflow/.pipelines/code-quality-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml
+    - samples/image-classification-tensorflow/devops_pipelines/get-model-id-artifact-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/publish-model-artifact-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/variables-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/code-quality-template.yml
 
 
 variables:

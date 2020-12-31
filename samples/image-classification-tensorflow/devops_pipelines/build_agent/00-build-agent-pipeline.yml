@@ -46,4 +46,4 @@ steps:
        ${{format('build-{0}', '$(Build.BuildNumber)')}}
        latest
       buildContext: '${{ parameters.workingDirectory }}' 
-      dockerFile: '${{ parameters.workingDirectory }}/devops_pipelines/build_agent/Dockerfile
+      dockerFile: '${{ parameters.workingDirectory }}/devops_pipelines/build_agent/Dockerfile'

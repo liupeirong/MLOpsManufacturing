@@ -1,0 +1,1 @@
+[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/non-python-preprocess/03-custom-process-data-os-cmd?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=38&branchName=main)

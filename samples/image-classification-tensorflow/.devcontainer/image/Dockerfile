@@ -2,7 +2,7 @@
 FROM ubuntu:18.04
 
 # Path to current sample
-ARG  SAMPLE_PATH=samples/non-python-preprocess
+ARG  SAMPLE_PATH=samples/image-classification-tensorflow
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -32,7 +32,7 @@ RUN apt-get update \
     netcat
 
 # Map local machines Docker GID (retrieved by dockergid.sh) to enable non-root user to use docker on local machine
-COPY dockergid /tmp
+COPY .devcontainer/dockergid /tmp
 RUN DOCKER_GID=`cat /tmp/dockergid` \
     && groupadd --gid $DOCKER_GID docker
 RUN rm /tmp/dockergid
@@ -54,7 +54,7 @@ RUN apt-get autoremove -y \
 
 # set up git-prompt.sh
 WORKDIR /usr/local/bin
-COPY ${SAMPLE_PATH}/.devcontainer/image/git-prompt.sh .
+COPY .devcontainer/image/git-prompt.sh .
 RUN echo "source /usr/local/bin/git-prompt.sh" >> ~/.bashrc
 RUN echo "PROMPT_COMMAND='__posh_git_ps1 \"\u@\h:\w \" \"\\\$ \";'$PROMPT_COMMAND" >> ~/.bashrc
 
@@ -73,7 +73,7 @@ ENV PATH /opt/conda/bin/:$PATH
 RUN conda update conda
 
 # Add ssh-agent/ssh-add to .bashrc
-COPY samples/non-python-preprocess/.devcontainer/image/ssh-agent.sh /tmp
+COPY .devcontainer/image/ssh-agent.sh /tmp
 RUN cat /tmp/ssh-agent.sh >> ~/.bashrc \
     && rm /tmp/ssh-agent.sh
 
@@ -108,7 +108,7 @@ ENV DEBIAN_FRONTEND=dialog
 
 # Copy conda dependencies
 WORKDIR /tmp
-COPY ${SAMPLE_PATH}/local_development/dev_dependencies.yml .
+COPY local_development/dev_dependencies.yml .
 
 # Create conda environment for vscode user
 USER vscode

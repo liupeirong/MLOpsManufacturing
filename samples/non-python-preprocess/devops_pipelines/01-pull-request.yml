@@ -1,0 +1,44 @@
+# Pipeline to run basic code quality tests as part of pull requests to the main branch.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/non-python-preprocess
+
+resources:
+  containers:
+  - container: mlops
+    image: mlopsmanufacturing/build-agent/nonpython:latest
+    endpoint: mlopsmanufacturingacr 
+
+trigger:
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - samples/non-python-preprocess/ml_model
+    - samples/non-python-preprocess/ml_service
+
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - samples/non-python-preprocess/ml_model
+    - samples/non-python-preprocess/ml_service
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+container: mlops
+
+variables:
+- template: variables-template.yml
+- group: nonpython-preprocess-aml-vg
+
+steps:
+- template: code-quality-template.yml
+  parameters:
+    workingDirectory: ${{ parameters.workingDirectory }}

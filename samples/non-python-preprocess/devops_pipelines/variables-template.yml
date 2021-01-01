@@ -1,0 +1,41 @@
+# Variables in this file determine _how_ the project runs.
+# When this file is placed before a variable group in Azure DevOps pipeline yml,
+# the values defined in the variable group overwrite the value defined here.
+variables:
+  # The directory containing the scripts for training, evaluating, and registering the model
+  - name: SOURCES_DIR_TRAIN
+    value: ml_model
+    
+  # Azure ML Variables
+  - name: EXPERIMENT_NAME
+    value: nonpython_preprocess
+  - name: PREPROCESSING_PIPELINE_NAME
+    value: nonpython-data-processing-pipeline
+  - name: DATASET_NAME
+    value: nonpython_dataset
+  # Uncomment DATASTORE_NAME if you have configured non default datastore to point to your data
+  # - name: DATASTORE_NAME
+  #   value: datablobstore
+  # which data folder do we want to train on
+  - name: RAW_DATAFILE_PATH
+    value: flower_dataset_small/tulips/
+
+  # Flag to allow rebuilding the AML Environment after it was built for the first time. This enables dependency updates from conda_dependencies.yaml.
+  # - name: AML_REBUILD_ENVIRONMENT
+  #  value: "false"
+
+  # AML Environment Config
+  - name: AML_ENV_NAME
+    value: nonpython_preprocess_env
+
+  # AML Compute Cluster Config
+  - name: AML_COMPUTE_CLUSTER_CPU_SKU
+    value: STANDARD_DS2_V2
+  - name: AML_COMPUTE_CLUSTER_NAME
+    value: train-cluster
+  - name: AML_CLUSTER_PRIORITY
+    value: lowpriority
+  - name: AML_CLUSTER_MIN_NODES
+    value: 0
+  - name: AML_CLUSTER_MAX_NODES
+    value: 2

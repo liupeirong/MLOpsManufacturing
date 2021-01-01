@@ -5,3 +5,8 @@ azureml-logs
 outputs
 azureml-setup
 docs
+environment_setup
+devops_pipelines
+pipelines
+.devcontainer
+.devcontainer.json

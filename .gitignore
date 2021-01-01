@@ -72,6 +72,9 @@ docs/_build/
 # PyBuilder
 target/
 
+# Backup Folder for refactoring
+.backup
+
 # Jupyter Notebook
 .ipynb_checkpoints
 

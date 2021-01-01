@@ -1,0 +1,130 @@
+# Continuous Integration (CI) pipeline that orchestrates the training, evaluation, and registration of the model.
+parameters:
+  - name: aml_pipeline_name
+    displayName: AML Pipeline Name to trigger
+    type: string
+    default: flower-preprocessing-pipeline
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+    default: samples/image-classification-tensorflow
+
+resources:
+  containers:
+  - container: mlops
+    image: mlopsmanufacturing/build-agent/tensorflow:latest
+    endpoint: mlopsmanufacturingacr
+  pipelines:
+  - pipeline: preprocess-ci
+    source: 02-preprocess-data # Name of the triggering pipeline
+    trigger:
+      branches:
+        include:
+        - main
+
+pr: none
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - samples/image-classification-tensorflow/ml_model/train/
+    - samples/image-classification-tensorflow/ml_model/evaluate/
+    - samples/image-classification-tensorflow/ml_model/register/
+    - samples/image-classification-tensorflow/ml_model/util/
+    - samples/image-classification-tensorflow/ml_model/conda_dependencies.yml
+    - samples/image-classification-tensorflow/ml_model/parameters.json
+    - samples/image-classification-tensorflow/ml_service/pipelines/build_training_pipeline.py
+    - samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml
+    - samples/image-classification-tensorflow/devops_pipelines/get-model-id-artifact-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/publish-model-artifact-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/variables-template.yml
+    - samples/image-classification-tensorflow/devops_pipelines/code-quality-template.yml
+
+
+variables:
+- template: variables-template.yml
+- group: devopsforai-aml-vg
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: 'Model_CI'
+  displayName: 'Model CI'
+  jobs:
+  - job: "Model_CI_Pipeline"
+    displayName: "Model CI Pipeline"
+    container: mlops
+    timeoutInMinutes: 0
+    steps:
+    - template: code-quality-template.yml
+      parameters:
+        workingDirectory: ${{ parameters.workingDirectory }}
+        targetDirectory: 'ml_model'
+    - task: AzureCLI@1
+      inputs:
+        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
+        scriptLocation: inlineScript
+        workingDirectory: ${{ parameters.workingDirectory }}
+        inlineScript: |
+          set -e # fail on error
+          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          # Invoke the Python building and publishing a training pipeline
+          python -m ml_service.pipelines.build_training_pipeline
+      displayName: 'Publish Azure Machine Learning Pipeline'
+
+- stage: 'Trigger_Training_Pipeline'
+  displayName: 'Train and evaluate model'
+  condition: succeeded()
+  variables:
+    BUILD_URI: '$(SYSTEM.COLLECTIONURI)$(SYSTEM.TEAMPROJECT)/_build/results?buildId=$(BUILD.BUILDID)'
+  jobs:
+  - job: "Get_Pipeline_ID"
+    condition: and(succeeded(), eq(coalesce(variables['auto-trigger-training'], 'true'), 'true'))
+    displayName: "Get Pipeline ID for execution"
+    container: mlops
+    timeoutInMinutes: 0
+    steps:
+    - task: AzureCLI@1
+      inputs:
+        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
+        scriptLocation: inlineScript
+        workingDirectory: ${{ parameters.workingDirectory }}
+        inlineScript: |
+          set -e # fail on error
+          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          python -m ml_service.pipelines.run_training_pipeline --output_pipeline_id_file "pipeline_id.txt" --skip_train_execution
+          # Set AMLPIPELINEID variable for next AML Pipeline task in next job
+          AMLPIPELINEID="$(cat pipeline_id.txt)"
+          echo "##vso[task.setvariable variable=AMLPIPELINEID;isOutput=true]$AMLPIPELINEID"
+      name: 'getpipelineid'
+      displayName: 'Get Pipeline ID'
+
+  - job: "Run_ML_Pipeline"
+    dependsOn: "Get_Pipeline_ID"
+    displayName: "Trigger ML Training Pipeline"
+    timeoutInMinutes: 0
+    pool: server
+    variables:
+      AMLPIPELINE_ID: $[ dependencies.Get_Pipeline_ID.outputs['getpipelineid.AMLPIPELINEID'] ]
+    steps:
+    - task: ms-air-aiagility.vss-services-azureml.azureml-restApi-task.MLPublishedPipelineRestAPITask@0
+      displayName: 'Invoke ML pipeline'
+      inputs:
+        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
+        PipelineId: '$(AMLPIPELINE_ID)'
+        ExperimentName: '$(EXPERIMENT_NAME)'
+        PipelineParameters: '"ParameterAssignments": {"model_name": "$(MODEL_NAME)"}, "tags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}, "StepTags": {"BuildId": "$(Build.BuildId)", "BuildUri": "$(BUILD_URI)"}'
+  
+  - job: "Training_Run_Report"
+    dependsOn: "Run_ML_Pipeline"
+    container: mlops
+    condition: always()
+    displayName: "Publish artifact if new model was registered"
+    timeoutInMinutes: 0
+    steps:
+    - template: publish-model-artifact-template.yml
+      parameters:
+        workingDirectory: ${{ parameters.workingDirectory }}

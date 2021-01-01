@@ -1,0 +1,38 @@
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for sample
+    type: string
+  - name: targetDirectory
+    displayName: Target directory to run lint and test against
+    type: string
+    default: '.'
+
+# Pipeline template to run linting, unit tests with code coverage, and publish the results.
+steps:
+- script: |   
+   flake8 ${{ parameters.targetDirectory }} --output-file=lint-testresults.xml --format junit-xml
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'Run lint tests'
+
+- script: |   
+   python -m pytest ${{ parameters.targetDirectory }} --cov=ml_model --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
+  workingDirectory: ${{ parameters.workingDirectory }}
+  condition: succeededOrFailed()
+  displayName: 'Run unit tests'
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '**/*-testresults.xml'
+    testRunTitle: 'Linting & Unit tests'
+    failTaskOnFailedTests: true
+  displayName: 'Publish test results'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish coverage report'
+  condition: succeededOrFailed()
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '**/coverage.xml'
+    reportDirectory: '**/htmlcov'
+    failIfCoverageEmpty: true

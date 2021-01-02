@@ -21,10 +21,10 @@ An ML `model` comes from a training `experiment` which consists of multipl `runs
 
 `model -> experiment -> pipeline run -> step runs -> datasets and devops build`
 
-![model](REAME_imgs/00_model_to_run.png)
-![pipeline](REAME_imgs/01_pipeline_to_build.png)
-![step](REAME_imgs/02_step_to_dataset.png)
-![dataset](REAME_imgs/03_preprocess_dataset.png)
+![model](README_imgs/00_model_to_run.png)
+![pipeline](README_imgs/01_pipeline_to_build.png)
+![step](README_imgs/02_step_to_dataset.png)
+![dataset](README_imgs/03_preprocess_dataset.png)
 
 ## Dependency Management
 

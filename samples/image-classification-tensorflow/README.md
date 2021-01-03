@@ -1,6 +1,6 @@
 Data processing[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/image-classification-tensorflow/02-preprocess-data?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=33&branchName=main)
 Model training[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/image-classification-tensorflow/03-train-evaluate-register-model?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=37&branchName=main)
-Deploy and smoke test[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/image-classification-tensorflow/04-deploy-model-aci?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=39&branchName=main)
+Deploying and smoke testing[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/image-classification-tensorflow/04-deploy-model-aci?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=39&branchName=main)
 
 # Overview
 
@@ -52,10 +52,54 @@ When new data arrives, there's no code change, so retraining the model should ha
 
 # Getting Started
 
-1. create build agent
-
-## Running in Azure DevOps
-variable group, variable template.yml precedence
+## Prerequisite 
+1. Whether you run this project locally or CI/CD pipelines in Azure DevOps, create Azure resources as documented [here](../../common/infrastructure/README.md). 
+2. Review the folder structure explained [here]().
 
 ## Running locally
-.env
+1. Make a copy of [.env.example](local_development/.env.example), place it in the root of this sample and rename it to `.env`. 
+2. Install Anaconda or Mini Conda and create a Conda envrionment by running [local_install_requirements.sh](local_development/local_install_requirements.sh).
+3. In VSCode, open the root folder of this sample, select the Conda environment created above as the Python interpretor.
+4. Most of the code you'd want to run locally is in [ml_model](ml_model) folder. For code that doesn't depend on Azure ML, for example, [preprocess_images.py](ml_model/preprocess/preprocess_images.py), you can debug as usual. For code that depends on Azure ML, you don't the context Azure ML provides when running locally, such as access to Azure ML Dataset. In such cases, you'll need to write different code for local vs. remote runs. For example, to debug [preprocess_aml.py](ml_model/preprocess/preprocess_aml.py), do the following: 
+    * open a terminal, navigate to `ml_model` folder of this sample, and run:
+    ```bash
+    image-classification-tensorflow/ml_model$ python -m debugpy --listen 5678 --wait-for-client preprocess/preprocess_aml.py --dataset_name flower_dataset --data_file_path /path/to/local/raw/images --output_dataset /path/to/processed/images
+    ```
+    * in VSCode, create a launch configuration to attach to the debugger, and F5:
+    ```json
+    "configurations": [
+      {
+        "name": "Python: Attach",
+        "cwd": "${workspaceFolder}/samples/image-classification-tensorflow/ml_model",
+        "type": "python",
+        "request": "attach",
+        "connect": {
+          "host": "localhost",
+          "port": 5678
+        },
+      }
+    ]
+    ```
+
+## CI/CD in Azure DevOps
+
+1. Create an Azure DevOps variable group that contains the following variables:
+
+| name | description |
+| --- | ---------- |
+| ACR_SVC_CONNECTION | Service Connection to a Docker Container registry to store and retrieve Docker containers |
+| AML_COMPUTE_CLUSTER_NAME | Azure ML compute cluster used for training |
+| RESOURCE_GROUP | Azure resource group where the Azure ML workspace is located |
+| WORKSPACE_NAME | Azure ML workspace name |
+| WORKSPACE_SVC_CONNECTION | Service Connection to Azure ML workspace |
+| ACI_DEPLOYMENT_NAME | Azure ML deployment name to Azure Container Instance |
+| TEST_IMAGE_CLASSES | a comma separated list of image classification class names of images for smoke testing |
+| TEST_IMAGE_URLS | a comma separated publicly accessible URLs of images for smoke testing |
+
+> Note that you can also overwrite the variables defined in [variables-template.yml](samples/image-classification-tensorflow/devops_pipelines/variables-template.yml) with the ones defined in this variable group. Variables defined in the variable group takes precedence over variables-template.yml because of [how they are defined in Azure DevOps pipelines](devops_pipelines/03-train-evaluate-register-model.yml#L46). 
+
+2. Create build agent pipeline
+The build agent needs to run linting, unit tests, and call Azure ML SDK to publish Azure ML pipelines so that models can be trained, evaluated, and deployed in Azure ML pipelines. To create a Docker image for the build agent, create and run [00-build-agent-pipeline.yml](devops_pipelines/build_agent/00-build-agent-pipeline.yml).
+
+3. Create other pipelines
+Create the remaining CI/CD pipelines defined in [devops_pipelines](devops_pipelines) folder. Verify or adjust their triggers if needed. By default, they are configured to trigger on pull requests, merging to main, or as dependent pipelines completes.

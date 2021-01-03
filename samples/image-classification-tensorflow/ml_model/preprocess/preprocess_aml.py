@@ -82,6 +82,7 @@ def main():
     preprocessing_param = args.preprocessing_param
 
     run = Run.get_context()
+    is_local_run = run.id.startswith('OfflineRun')
     aml_workspace, *_ = get_aml_context(run)
 
     if preprocessing_param is None or preprocessing_param == "":
@@ -93,7 +94,13 @@ def main():
     print(f"preprocessing parameters {preprocessing_args}")
     for (k, v) in preprocessing_args.items():
         run.log(k, v)
-        run.parent.log(k, v)
+        if not is_local_run:
+            run.parent.log(k, v)
+
+    if is_local_run:
+        resize_images(data_file_path, output_dataset, preprocessing_args)  # NOQA: E501
+        run.complete()
+        return
 
     dataset = get_or_register_dataset(
         dataset_name,

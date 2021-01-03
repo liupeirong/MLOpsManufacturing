@@ -72,8 +72,8 @@ def resize_images(indir, outdir, preprocessing_args):
 
 
 def main():
-    in_dir = 'data/gear_images/raw'
-    out_dir = 'data/processed'
+    in_dir = '/path/to/local/image_files'
+    out_dir = '/path/to/processed/image_files'
     preprocessing_args = {
         'image_size': {'x': 128, 'y': 128},
         'batch_size': 30

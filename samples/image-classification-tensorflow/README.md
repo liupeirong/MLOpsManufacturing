@@ -54,7 +54,7 @@ When new data arrives, there's no code change, so retraining the model should ha
 
 ## Prerequisite 
 1. Whether you run this project locally or in Azure DevOps CI/CD pipelines, the code needs to get Azure ML context for remote or offline runs. Create Azure resources as documented [here](../../common/infrastructure/README.md). 
-2. Review the folder structure explained [here](../../readme#repo-structure).
+2. Review the folder structure explained [here](../../README.md#repo-structure).
 
 ## Running locally
 1. Make a copy of [.env.example](local_development/.env.example), place it in the root of this sample and rename it to `.env`. 

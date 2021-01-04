@@ -1,17 +1,50 @@
-Data Processing: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/02-preprocess-data?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=17&branchName=main)
-Model Training: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/03-train-evaluate-register-model?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=18&branchName=main)
-Deployment: [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_apis/build/status/04-deploy-model-aci?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsTensorflow/_build/latest?definitionId=19&branchName=main)
-
 # Overview
 
-This project is based on and inspired by [MLOpsPython](https://github.com/microsoft/MLOpsPython).  It differs from MLOpsPython in the following ways:
+This repo contains samples of machine learning (ML) projects we have often seen in the manufacturing industry. For example, using image classification or object detection for quality control and safety monitoring. The code here isn't specific to manufacturing, rather we are just using these samples to showcase how to build, deploy, and operationalize ML projects in production with good engineering practices such as unit testing, CI/CD, model experimentation tracking, and observability in model training and inferencing.
 
-* It supports image data instead of tabular data.
-* It uses Tensorflow/Keras for model training instead of scikit learn.
-* It has a separate data processing pipeline from the model training pipeline.
-* It doesn't have batch scoring, A/B testing, or canary deployment.
+Samples in this project leverage the basic ideas used in [MLOpsPython](https://github.com/microsoft/MLOpsPython). While MLOpsPython lays the foundation for operationalizing ML, we aim to provide representative samples and docs to 
+- provide a sounding startpoint to build a production quality ML solution of certain frameworks such as Tensorflow or Yolo.
+- demonstrate approaches and techniques for cross-cutting concerns such as unit testing and logging.
+- document how to solve some of the challenges encountered in building ML solutions, such as security, data management, local vs. cloud based development and more. 
 
-# Dataset Management
-* The data processing pipeline uses a pre-registered dataset name and datastore name.
-* To allow the pipeline to run on updated data without any code change, and to track the version of the data during each run, it takes a folder name as its parameter. The folder name can't be determined at pipeline publishing time. It must be determined during a run.
-* When the folder name parameter is specified for a run, a new version of the dataset is registered and the folder is mounted. When this parameter is empty, the latest version of the dataset is used.
+## Repo Structure
+
+This repo contains sample code and definition of Azure DevOps pipelines for CI/CD. These pipelines run in [this Azure DevOps project](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build?view=folders). ML pipelines run in the Azure environment deployed using the Azure DevOps pipelines.
+
+The folders are structured as following - 
+```
+- common # contains code common across samples
+    - infrastructure # code to provision Azure resources to run the samples
+- docs # how-tos and best practices
+- samples # each sample may have different folders, below is a typical example
+    - <sample 1>
+        - .devcontainer # VSCode dev container you can optionally use for development
+        - devops_pipelines # Azure DevOps CI/CD pipeline definition
+        - local_development # scripts for creating a local dev environment without having to have a VSCode dev container
+        - ml_model # code for building the ML model
+        - ml_service # code for building ML pipelines
+        - README.md # explains what the sample is demonstrating and how to run it
+    - <sample 2>
+    - ...
+```
+
+## Samples
+
+- [Image classification with Tensorflow and Keras](samples/image-classification-tensorflow) demonstrates how to use Azure DevOps and Azure ML to build, train, evaluate, and track models, including how to retrain on new data. 
+- [Run non-Python code as a step in ML Pipeline](samples/non-python-preprocess) demonstrates how to run non Python custom code as a step in Azure ML pipelines. We've seen many cases where companies already have custom code they use to preprocess data before training a ML model. This sample also demonstrates how to use PyTest to mock Azure ML SDK for unit testing.
+
+## Getting Started
+
+1. Clone the repo.
+2. If you are only interested in one sample,
+    * if your dev machine is capable of running [VSCode dev container](https://code.visualstudio.com/docs/remote/containers-tutorial), you can open the folder of the sample in VSCode, and reopen in a container as VSCode prompts you. Once VSCode builds the container, you can do all the development inside that container from that point on.
+    * if you don't want to develop in a container, you can go to the samples's `local_development` folder and run a script to create a conda environment for development. Refer to each sample's README for details.
+3. You can also open the entire project in VSCode. Refer to the README of the sample you are interested in, create a conda environment, and pick the Python interpreter from the environment in VSCode.
+4. Set up an Azure DevOps project to connect to your source repository. Configure the pipelines using their yaml definitions in this repo:
+    * start with [common/infrastructure](common/infrastructure/README.md) to create an Azure environment to run the samples.
+    * follow README of the sample of interest to create the Azure DevOps pipelines. The pipelines are configured for continuous integration by default, so they automatically kick off for pull request validations and merging into the main branch.
+    * if a pipeline is triggered after a dependent pipeline, the dependent pipeline must be named unique in the entire Azure DevOps project, not just in a pipeline folder.
+
+## Contributing
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

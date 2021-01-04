@@ -181,9 +181,13 @@ def register_aml_model(
             if (build_uri is not None):
                 tagsValue["BuildUri"] = build_uri
 
+        datasets = run.get_details()['inputDatasets']
+        ds_list = [('training', ds['dataset']) for ds in datasets]
+
         model = run.register_model(
             model_name=model_name,
             model_path=os.path.join("outputs", model_name),
+            datasets=ds_list,
             tags=tagsValue)
         print(
             "Model registered: {} \nModel Description: {} "

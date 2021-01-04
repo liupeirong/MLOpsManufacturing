@@ -4,14 +4,14 @@ Deploying and smoke testing[![Build Status](https://dev.azure.com/cse-manufactur
 
 # Overview
 
-__What does this sample focus on demonstrating__:
+__What does this sample demonstrate__:
 
 * Track ML experimentation and model performance in Azure ML, and trace back to the source code build version and training dataset version.
 * Manage dependencies in CI/CD, training, inferencing, and local development for an image classification model based on Tensorflow and Keras.
 * Use Azure ML input/output file datasets when training on image data.
 * Manage datasets and retrain on new data.
 
-__What doesn't this sample focus on demonstrating__:
+__What doesn't this sample demonstrate__:
 
 * Comprehensive unit and integration tests - this sample doesn't have the level of unit tests or integration tests adequate for production deployment yet. Refer to [this sample](../non-python-preprocess/ml_service/tests/pipelines) to learn how to mock Azure ML SDK and build a rich set of tests.
 * Production scale inferencing - this sample stops at deploying the model to Azure Container Instance for smoke testing.

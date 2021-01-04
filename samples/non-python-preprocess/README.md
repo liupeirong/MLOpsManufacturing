@@ -2,18 +2,18 @@
 
 # Overview
 
-__What does this sample focus on demonstrating__:
+__What does this sample demonstrate__:
 
-* Run non Python code to process Azure ML Datasets as a step in Azure ML pipeline, check its return code and capture its stdout. 
+* Run non Python tool to process Azure ML Datasets as a step in Azure ML pipeline, check return code and capture stdout. 
 * Create tests by mocking Azure ML SDK.
 
-__What doesn't this sample focus on demonstrating__:
+__What doesn't this sample demonstrate__:
 
 * ML model training or deployment.
 
 ## Run non Python tools to preprocess data as a step in Azure ML pipeline
 
-The [wrapper script](ml_model/preprocess/preprocess_os_cmd_aml.py) calls the command line command. In the basic sample it is just a `cp` to move data from the input folder to the output folder of it's AML pipeline step.
+This [wrapper script](ml_model/preprocess/preprocess_os_cmd_aml.py) calls the command line command. In the basic sample it is just a `cp` to move data from the input folder to the output folder of its AML pipeline step.
 
 ```python
 process = subprocess.Popen(['cp',
@@ -25,7 +25,7 @@ process = subprocess.Popen(['cp',
 
 So it is possible to call any tool or program which can be executed on a ubuntu linux (which is the base image for AML pipeline steps). The tool(s) need to be installed in the [custom container image](ml_model/preprocess/Dockerfile). This Dockerfile is [used to build a Docker image in the Azure ML pipeline](ml_service/pipelines/build_data_processing_os_cmd_pipeline.py#L33).
 
-Important to know is that the input folder is getting mounted within the wrapper script here, so you can only work on the data after this code:
+It's important to know that the input folder is getting mounted within the wrapper script, so you can only work on the data after this code:
 
 ```python
 mount_context = dataset.mount()
@@ -33,7 +33,7 @@ mount_context.start()
 print(f"mount_point is: {mount_context.mount_point}")
 ```
 
-The mount point or folder is stored in this attribute `mount_context.mount_point` and can be used in the command line call. As well as the output folder path for this step which is stored in `step_output_path`.
+The mount point or folder is stored in this attribute `mount_context.mount_point` and can be used in the command line call. Similarly the output folder for this step is stored in `step_output_path`.
 
 ### Example: Setup image preprocessing with ImageMagick
 
@@ -58,7 +58,7 @@ RUN apt-get update --fix-missing && \
 
 __Change the command line call in the Wrapper script__
 
->Assumption: Input pictures are all jpg and output pictures should be 100x100. Input dataset is <http://download.tensorflow.org/example_images/flower_photos.tgz>, only convert the subfolder daisy will be resized.
+>Assumption: Input pictures are all jpg and output pictures should be 100x100. Input dataset is <http://download.tensorflow.org/example_images/flower_photos.tgz>, only the subfolder `daisy` will be resized.
 
 Changing the command to:
 

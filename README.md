@@ -43,6 +43,7 @@ The folders are structured as following -
 4. Set up an Azure DevOps project to connect to your source repository. Configure the pipelines using their yaml definitions in this repo:
     * start with [common/infrastructure](common/infrastructure/README.md) to create an Azure environment to run the samples.
     * follow README of the sample of interest to create the Azure DevOps pipelines. The pipelines are configured for continuous integration by default, so they automatically kick off for pull request validations and merging into the main branch.
+    * if a pipeline is triggered after a dependent pipeline, the dependent pipeline must be named unique in the entire Azure DevOps project, not just in a pipeline folder.
 
 ## Contributing
 

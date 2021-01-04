@@ -33,7 +33,7 @@ The folders are structured as following -
 - [Image classification with Tensorflow and Keras](samples/image-classification-tensorflow) demonstrates how to use Azure DevOps and Azure ML to build, train, evaluate, and track models, including how to retrain on new data. 
 - [Run non-Python code as a step in ML Pipeline](samples/non-python-preprocess) demonstrates how to run non Python custom code as a step in Azure ML pipelines. We've seen many cases where companies already have custom code they use to preprocess data before training a ML model. This sample also demonstrates how to use PyTest to mock Azure ML SDK for unit testing.
 
-## How to Get Started
+## Getting Started
 
 1. Clone the repo.
 2. If you are only interested in one sample,

@@ -57,15 +57,18 @@ When new data arrives, there's no code change, so retraining the model should ha
 2. Review the folder structure explained [here](../../README.md#repo-structure).
 
 ## Running locally
-1. Make a copy of [.env.example](local_development/.env.example), place it in the root of this sample and rename it to `.env`. 
+1. Make a copy of [.env.example](local_development/.env.example), place it in the root of this sample, configure the variables, and rename the file to `.env`. 
 2. Install Anaconda or Mini Conda and create a Conda envrionment by running [local_install_requirements.sh](local_development/local_install_requirements.sh).
 3. In VSCode, open the root folder of this sample, select the Conda environment created above as the Python interpretor.
 4. Most of the code you'd want to run locally is in [ml_model](ml_model) folder. For code that doesn't depend on Azure ML, for example, [preprocess_images.py](ml_model/preprocess/preprocess_images.py), you can debug as usual. For code that depends on Azure ML, you don't have access to Azure ML resources such as Datasets. You'll need to write different code for local vs. remote runs. For example, to debug [preprocess_aml.py](ml_model/preprocess/preprocess_aml.py), do the following: 
-    * open a terminal, activate the proper Conda environment, navigate to `ml_model` folder of this sample, and run:
+    * Open a terminal, activate the Conda environment for this sample, nativate to the root folder of this sample, and run `pytest`. 
+
+    * In the terminal, navigate to `ml_model` folder of this sample, and run:
     ```bash
     image-classification-tensorflow/ml_model$ python -m debugpy --listen 5678 --wait-for-client preprocess/preprocess_aml.py --dataset_name flower_dataset --data_file_path /path/to/local/raw/images --output_dataset /path/to/processed/images
     ```
-    * in VSCode, create a launch configuration to attach to the debugger, and F5:
+
+    * In VSCode, create a launch configuration to attach to the debugger, and F5:
     ```json
     "configurations": [
       {

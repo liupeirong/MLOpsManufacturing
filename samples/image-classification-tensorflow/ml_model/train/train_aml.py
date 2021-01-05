@@ -32,7 +32,7 @@ from util.model_helper import get_or_register_dataset
 
 
 def parse_ml_params(run, ml_params):
-    if ml_params is None or ml_params == "":
+    if ml_params is None or ml_params == "default":
         with open("parameters.json") as f:
             pars = json.load(f)
     else:

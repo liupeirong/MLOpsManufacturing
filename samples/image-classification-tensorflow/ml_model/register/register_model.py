@@ -54,16 +54,13 @@ def find_run(experiment, run_id):
 
 
 def parse_ml_params(run, ml_params):
-    if ml_params is None or ml_params == "":
+    if ml_params is None or ml_params == "default":
         with open("parameters.json") as f:
             pars = json.load(f)
     else:
         pars = json.loads(ml_params)
     registration_args = pars["registration"]
     print(f"registration parameters {registration_args}")
-    for (k, v) in registration_args.items():
-        run.log(k, v)
-        run.parent.log(k, v)
 
     return registration_args
 

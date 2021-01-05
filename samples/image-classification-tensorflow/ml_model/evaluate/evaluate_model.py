@@ -49,7 +49,7 @@ def evaluate_model_performs_better(model, run):
 
 
 def parse_ml_params(run, ml_params):
-    if ml_params is None or ml_params == "":
+    if ml_params is None or ml_params == "default":
         with open("parameters.json") as f:
             pars = json.load(f)
     else:

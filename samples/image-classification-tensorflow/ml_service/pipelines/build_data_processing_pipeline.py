@@ -41,8 +41,9 @@ def main():
     run_config.environment.environment_variables["DATASTORE_NAME"] = datastore_name  # NOQA: E501
 
     datastore = Datastore(aml_workspace, name=datastore_name)
+    # Note that AML pipeline parameters don't take empty string as default, "" won't work  # NOQA: E501
     data_file_path_param = PipelineParameter(name="data_file_path", default_value=e.dataset_name)  # NOQA: E501
-    preprocessing_param = PipelineParameter(name="preprocessing_param", default_value="")  # NOQA: E501
+    preprocessing_param = PipelineParameter(name="preprocessing_param", default_value="default")  # NOQA: E501
 
     # The version of the input/output dataset can't be determined at pipeline publish time, only run time.  # NOQA: E501
     # Options to store output data:

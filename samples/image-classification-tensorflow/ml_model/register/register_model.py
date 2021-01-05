@@ -53,6 +53,21 @@ def find_run(experiment, run_id):
     return found_run
 
 
+def parse_ml_params(run, ml_params):
+    if ml_params is None or ml_params == "":
+        with open("parameters.json") as f:
+            pars = json.load(f)
+    else:
+        pars = json.loads(ml_params)
+    registration_args = pars["registration"]
+    print(f"registration parameters {registration_args}")
+    for (k, v) in registration_args.items():
+        run.log(k, v)
+        run.parent.log(k, v)
+
+    return registration_args
+
+
 def main():
     run = Run.get_context()
     ws, exp, run_id = get_aml_context(run)
@@ -77,6 +92,12 @@ def main():
         help=("input from previous steps")
     )
 
+    parser.add_argument(
+        "--ml_params",
+        type=str,
+        help="Parameters for ML pipelne in json format with defaults defined in parameters.json",  # NOQA: E501
+    )
+
     args = parser.parse_args()
     if (args.run_id is not None):
         run_id = args.run_id
@@ -90,14 +111,7 @@ def main():
 
     print("Getting registration parameters")
 
-    # Load the registration parameters from the parameters file
-    with open("parameters.json") as f:
-        pars = json.load(f)
-    try:
-        register_args = pars["registration"]
-    except KeyError:
-        print("Could not load registration values from file")
-        register_args = {"tags": []}
+    register_args = parse_ml_params(run, args.ml_params)
 
     model_tags = {}
     for tag in register_args["tags"]:

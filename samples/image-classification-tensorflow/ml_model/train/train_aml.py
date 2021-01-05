@@ -31,6 +31,27 @@ from train import split_data, train_model, get_model_metrics
 from util.model_helper import get_or_register_dataset
 
 
+def parse_ml_params(run, ml_params):
+    if ml_params is None or ml_params == "":
+        with open("parameters.json") as f:
+            pars = json.load(f)
+    else:
+        pars = json.loads(ml_params)
+    preprocessing_args = pars["preprocessing"]
+    training_args = pars["training"]
+
+    print(f"preprocessing parameters: {preprocessing_args}")
+    for (k, v) in preprocessing_args.items():
+        run.log(k, v)
+        run.parent.log(k, v)
+    print(f"training parameters: {training_args}")
+    for (k, v) in training_args.items():
+        run.log(k, v)
+        run.parent.log(k, v)
+
+    return training_args, preprocessing_args
+
+
 def main():
     print("Running train_aml.py")
 
@@ -67,6 +88,12 @@ def main():
         type=str,
         help=("Datastore name.")
     )
+
+    parser.add_argument(
+        "--ml_params",
+        type=str,
+        help="Parameters for ML pipelne in json format with defaults defined in parameters.json",  # NOQA: E501
+    )
     args = parser.parse_args()
 
     print("Argument [model_name]: %s" % args.model_name)
@@ -74,6 +101,7 @@ def main():
     print("Argument [data_file_path]: %s" % args.data_file_path)
     print("Argument [dataset_name]: %s" % args.dataset_name)
     print("Argument [datastore_name]: %s" % args.datastore_name)
+    print("Argument [ml_params]: %s" % args.ml_params)
 
     model_name = args.model_name
     step_output_path = args.step_output
@@ -82,29 +110,7 @@ def main():
     datastore_name = args.datastore_name
 
     run = Run.get_context()
-
-    print("Getting training parameters")
-
-    # Load the training parameters from the parameters file
-    with open("parameters.json") as f:
-        pars = json.load(f)
-    try:
-        preprocessing_args = pars["preprocessing"]
-        train_args = pars["training"]
-    except KeyError:
-        print("Could not load preprocessing or training values from file")
-        train_args = {}
-        preprocessing_args = {}
-
-    # Log the training parameters
-    print(f"Parameters: {preprocessing_args}")
-    for (k, v) in preprocessing_args.items():
-        run.log(k, v)
-        run.parent.log(k, v)
-    print(f"Parameters: {train_args}")
-    for (k, v) in train_args.items():
-        run.log(k, v)
-        run.parent.log(k, v)
+    training_args, preprocessing_args = parse_ml_params(run, args.ml_params)
 
     # Get the dataset
     dataset = get_or_register_dataset(
@@ -124,7 +130,7 @@ def main():
     mount_context.start()
     print(f"mount_point is: {mount_context.mount_point}")
     data = split_data(mount_context.mount_point, preprocessing_args)
-    model, history = train_model(data, train_args, preprocessing_args)
+    model, history = train_model(data, training_args, preprocessing_args)
     mount_context.stop()
 
     # Evaluate and log the metrics returned from the train function

@@ -10,7 +10,7 @@
     },
     "evaluation":
     {
-
+        "cancel_if_perform_worse": "true"
     },
     "registration":
     {

@@ -23,12 +23,6 @@ variables:
     value: "flower-training-Pipeline"
   - name: MODEL_NAME
     value: flower_classifier
-  # Set to false to disable the evaluation step in the ML pipeline and register the newly trained model unconditionally.
-  # - name: RUN_EVALUATION
-  #   value: "true"
-  # Set to false to register the model regardless of the outcome of the evaluation step in the ML pipeline.
-  - name: ALLOW_RUN_CANCEL
-    value: "false"
   # Flag to allow rebuilding the AML Environment after it was built for the first time. This enables dependency updates from conda_dependencies.yaml.
   # - name: AML_REBUILD_ENVIRONMENT
   #  value: "false"

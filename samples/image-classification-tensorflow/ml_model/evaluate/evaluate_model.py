@@ -25,7 +25,8 @@ POSSIBILITY OF SUCH DAMAGE.
 """
 from azureml.core import Run
 import argparse
-from util.model_helper import get_model
+import json
+from util.model_helper import get_model, get_aml_context
 
 
 def evaluate_model_performs_better(model, run):
@@ -47,11 +48,26 @@ def evaluate_model_performs_better(model, run):
         return False
 
 
+def parse_ml_params(run, ml_params):
+    if ml_params is None or ml_params == "":
+        with open("parameters.json") as f:
+            pars = json.load(f)
+    else:
+        pars = json.loads(ml_params)
+    evaluate_args = pars["evaluation"]
+    print(f"evaluation parameters {evaluate_args}")
+    for (k, v) in evaluate_args.items():
+        run.log(k, v)
+        run.parent.log(k, v)
+
+    cancel_if_perform_worse = \
+        evaluate_args['cancel_if_perform_worse'].lower() == 'true'
+    return cancel_if_perform_worse
+
+
 def main():
-    run = Run.get_context(allow_offline=False)
-    exp = run.experiment
-    ws = run.experiment.workspace
-    run_id = 'amlcompute'
+    run = Run.get_context()
+    ws, exp, run_id = get_aml_context(run)
 
     parser = argparse.ArgumentParser("evaluate")
     parser.add_argument(
@@ -65,10 +81,9 @@ def main():
         help="Name of the Model"
     )
     parser.add_argument(
-        "--allow_run_cancel",
+        "--ml_params",
         type=str,
-        help="Set this to false to avoid evaluation step from cancelling run after an unsuccessful evaluation",  # NOQA: E501
-        default="true",
+        help="Parameters for ML pipelne in json format with defaults defined in parameters.json",  # NOQA: E501
     )
 
     args = parser.parse_args()
@@ -77,8 +92,9 @@ def main():
     if (run_id == 'amlcompute'):
         run_id = run.parent.id
     model_name = args.model_name
-    allow_run_cancel = args.allow_run_cancel
     tag_name = 'experiment_name'
+
+    cancel_if_perform_worse = parse_ml_params(run, args.ml_params)
 
     model = get_model(
                 model_name=model_name,
@@ -88,7 +104,7 @@ def main():
 
     if (model is not None):
         should_register = evaluate_model_performs_better(model, run)
-        if(not should_register and (allow_run_cancel).lower() == 'true'):
+        if((not should_register) and cancel_if_perform_worse):
             run.parent.cancel()
     else:
         print("This is the first model, register it")

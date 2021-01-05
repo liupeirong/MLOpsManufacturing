@@ -28,8 +28,6 @@ class Env:
     preprocessing_pipeline_name: Optional[str] = os.environ.get("PREPROCESSING_PIPELINE_NAME")  # NOQA: E501
     training_pipeline_name: Optional[str] = os.environ.get("TRAINING_PIPELINE_NAME")  # NOQA: E501
     model_name: Optional[str] = os.environ.get("MODEL_NAME")
-    run_evaluation: Optional[str] = os.environ.get("RUN_EVALUATION", "true")  # NOQA: E501
-    allow_run_cancel: Optional[str] = os.environ.get("ALLOW_RUN_CANCEL", "true")  # NOQA: E501
     rebuild_env: Optional[bool] = os.environ.get("AML_REBUILD_ENVIRONMENT", "false").lower().strip() == "true"  # NOQA: E501
     aml_env_name: Optional[str] = os.environ.get("AML_ENV_NAME")  # NOQA: E501
     aml_env_train_conda_dep_file: Optional[str] = os.environ.get("AML_ENV_TRAIN_CONDA_DEP_FILE", "conda_dependencies.yml")  # NOQA: E501

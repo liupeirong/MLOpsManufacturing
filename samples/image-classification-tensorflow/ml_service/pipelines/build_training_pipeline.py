@@ -43,6 +43,7 @@ def main():
     # data_file_path can be specified for registering new versions of dataset
     model_name_param = PipelineParameter(name="model_name", default_value=e.model_name)  # NOQA: E501
     data_file_path_param = PipelineParameter(name="data_file_path", default_value="nopath")  # NOQA: E501
+    ml_params = PipelineParameter(name="ml_params", default_value="")  # NOQA: E501
 
     # Create a PipelineData to pass data between steps
     pipeline_data = PipelineData(
@@ -61,6 +62,7 @@ def main():
             "--data_file_path", data_file_path_param,
             "--dataset_name", e.processed_dataset_name,
             "--datastore_name", datastore_name,
+            "--ml_params", ml_params,
         ],
         runconfig=run_config,
         allow_reuse=True,
@@ -74,7 +76,7 @@ def main():
         source_directory=e.sources_directory_train,
         arguments=[
             "--model_name", model_name_param,
-            "--allow_run_cancel", e.allow_run_cancel,
+            "--ml_params", ml_params,
         ],
         runconfig=run_config,
         allow_reuse=False,
@@ -90,21 +92,16 @@ def main():
         arguments=[
             "--model_name", model_name_param,
             "--step_input", pipeline_data,
+            "--ml_params", ml_params,
         ],
         runconfig=run_config,
         allow_reuse=False,
     )
     print("Step Register created")
-    # Check run_evaluation flag to include or exclude evaluation step.
-    if (e.run_evaluation).lower() == "true":
-        print("Include evaluation step before register step.")
-        evaluate_step.run_after(train_step)
-        register_step.run_after(evaluate_step)
-        steps = [train_step, evaluate_step, register_step]
-    else:
-        print("Exclude evaluation step and directly run register step.")
-        register_step.run_after(train_step)
-        steps = [train_step, register_step]
+
+    evaluate_step.run_after(train_step)
+    register_step.run_after(evaluate_step)
+    steps = [train_step, evaluate_step, register_step]
 
     train_pipeline = Pipeline(workspace=aml_workspace, steps=steps)
     train_pipeline._set_experiment_name

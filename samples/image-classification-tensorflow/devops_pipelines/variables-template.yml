@@ -43,10 +43,6 @@ variables:
   - name: AML_CLUSTER_MAX_NODES
     value: 4
 
-  # AML pipelines can run outside of Azure DevOps, these parameters control AML pipeline behaviors
-  - name: PREPROCESSING_PARAM
-    value: '{\"image_size\": {\"x\": 128, \"y\": 128},\"batch_size\": 30}'
-
   # Data used for smoke testing deployed service, comma separated
   # - name: TEST_IMAGE_URLS
   #   value: url_to_sunflower_jpg,url_to_daisy_jpg

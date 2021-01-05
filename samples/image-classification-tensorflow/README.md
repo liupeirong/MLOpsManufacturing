@@ -107,4 +107,4 @@ The build agent needs to run linting, unit tests, and call Azure ML SDK to publi
 
 3. Create other pipelines
 
-Create the remaining CI/CD pipelines defined in [devops_pipelines](devops_pipelines) folder. Verify or adjust their triggers if needed. By default, they are configured to trigger on pull requests, merging to main, or as dependent pipelines complete.
+Create the remaining CI/CD pipelines defined in [devops_pipelines](devops_pipelines) folder. Verify or adjust their triggers if needed. By default, only linting and unit tests are triggered for pull request validation. Data processing and model training are only triggered on merging to main.

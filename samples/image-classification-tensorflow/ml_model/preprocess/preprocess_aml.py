@@ -85,7 +85,7 @@ def main():
     is_local_run = run.id.startswith('OfflineRun')
     aml_workspace, *_ = get_aml_context(run)
 
-    if preprocessing_param is None or preprocessing_param == "":
+    if preprocessing_param is None or preprocessing_param == "default":
         with open("parameters.json") as f:
             pars = json.load(f)
             preprocessing_args = pars["preprocessing"]

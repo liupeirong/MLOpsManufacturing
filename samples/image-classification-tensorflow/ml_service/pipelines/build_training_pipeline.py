@@ -41,9 +41,10 @@ def main():
 
     # datastore and dataset names are fixed for this pipeline, however
     # data_file_path can be specified for registering new versions of dataset
+    # Note that AML pipeline parameters don't take empty string as default, "" won't work  # NOQA: E501
     model_name_param = PipelineParameter(name="model_name", default_value=e.model_name)  # NOQA: E501
     data_file_path_param = PipelineParameter(name="data_file_path", default_value="nopath")  # NOQA: E501
-    ml_params = PipelineParameter(name="ml_params", default_value="")  # NOQA: E501
+    ml_params = PipelineParameter(name="ml_params", default_value="default")  # NOQA: E501
 
     # Create a PipelineData to pass data between steps
     pipeline_data = PipelineData(

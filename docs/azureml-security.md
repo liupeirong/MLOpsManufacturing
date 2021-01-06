@@ -63,7 +63,7 @@ Take the following measures to secure your network and endpoints. You don’t ha
         * To manage the data in AML owned storage containers, you can set [lifecycle actions based on the age](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-lifecycle-management-concepts?tabs=template#rule-actions) of data, ex. N days after modification or creation or access.
     * [Enforce security policy on AML](https://github.com/Azure/azure-policy/tree/master/built-in-policies/policyDefinitions/Machine%20Learning)
 
-    <img src="imgs/azureml-security/04_AML_Security_Policy.png" width="80%">
+    <img src="imgs/azureml-security/04_AML_Security_Policy.png" width="50%">
  
     * Enable [Azure Storage diagnostics](https://docs.microsoft.com/en-us/azure/storage/blobs/monitor-blob-storage?tabs=azure-portal#creating-a-diagnostic-setting) to audit storage access. This is what [a sample log entry](https://docs.microsoft.com/en-us/azure/storage/blobs/monitor-blob-storage-reference#fields-that-describe-the-operation) looks like.
 

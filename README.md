@@ -2,7 +2,7 @@
 
 This repo contains samples of machine learning (ML) projects we have often seen in the manufacturing industry. For example, using image classification or object detection for quality control and safety monitoring. The code here isn't specific to manufacturing, rather we are just using these samples to showcase how to build, deploy, and operationalize ML projects in production with good engineering practices such as unit testing, CI/CD, model experimentation tracking, and observability in model training and inferencing.
 
-Samples in this project leverage the basic ideas used in [MLOpsPython](https://github.com/microsoft/MLOpsPython). While MLOpsPython lays the foundation for operationalizing ML, we aim to provide representative samples and docs to 
+[Samples](samples) in this project leverage the basic ideas used in [MLOpsPython](https://github.com/microsoft/MLOpsPython). While MLOpsPython lays the foundation for operationalizing ML, we aim to provide representative samples and docs to 
 - provide a sounding startpoint to build a production quality ML solution of certain frameworks such as Tensorflow or Yolo.
 - demonstrate approaches and techniques for cross-cutting concerns such as unit testing and logging.
 - document how to solve some of the challenges encountered in building ML solutions, such as security, data management, local vs. cloud based development and more. 
@@ -28,12 +28,9 @@ The folders are structured as following -
     - ...
 ```
 
-## Samples
-
-- [Image classification with Tensorflow and Keras](samples/image-classification-tensorflow) demonstrates how to use Azure DevOps and Azure ML to build, train, evaluate, and track models, including how to retrain on new data. 
-- [Run non-Python code as a step in ML Pipeline](samples/non-python-preprocess) demonstrates how to run non Python custom code as a step in Azure ML pipelines. We've seen many cases where companies already have custom code they use to preprocess data before training a ML model. This sample also demonstrates how to use PyTest to mock Azure ML SDK for unit testing.
-
 ## Getting Started
+
+Check out the [samples](./samples) and the [docs](./docs). Once you are ready to run the code, follow these steps:
 
 1. Clone the repo.
 2. If you are only interested in one sample,

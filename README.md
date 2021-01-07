@@ -2,7 +2,7 @@
 
 This repo contains samples of machine learning (ML) projects we have often seen in the manufacturing industry. For example, using image classification or object detection for quality control and safety monitoring. The code here isn't specific to manufacturing, rather we are just using these samples to showcase how to build, deploy, and operationalize ML projects in production with good engineering practices such as unit testing, CI/CD, model experimentation tracking, and observability in model training and inferencing.
 
-[Samples](./Samples) in this project leverage the basic ideas used in [MLOpsPython](https://github.com/microsoft/MLOpsPython). While MLOpsPython lays the foundation for operationalizing ML, we aim to provide representative samples and docs to 
+[Samples](samples) in this project leverage the basic ideas used in [MLOpsPython](https://github.com/microsoft/MLOpsPython). While MLOpsPython lays the foundation for operationalizing ML, we aim to provide representative samples and docs to 
 - provide a sounding startpoint to build a production quality ML solution of certain frameworks such as Tensorflow or Yolo.
 - demonstrate approaches and techniques for cross-cutting concerns such as unit testing and logging.
 - document how to solve some of the challenges encountered in building ML solutions, such as security, data management, local vs. cloud based development and more. 

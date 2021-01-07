@@ -1,6 +1,6 @@
 # Overview
 
-The samples in this project are intended to provide a starting point for building ML solutions with MLOps practices. They are meant to represent different frameworks such as Tensorflow or Yolo, different scenarios such as model training in the cloud or influencing on the edge, or how certain technologies are used such as mocking Azure ML SDK for unit testing or leveraging observability library to send logs and metrics to different destinations.  
+The samples in this project are intended for providing a starting point for building ML solutions with MLOps practices. They are meant to represent different frameworks such as Tensorflow or Yolo, different scenarios such as model training in the cloud or influencing on the edge, or how certain technologies are used such as mocking Azure ML SDK for unit testing or leveraging observability library to send logs and metrics to different destinations.  
 
 Each sample has a README that details what it's meant to demonstrate. Below is a quick index -
 

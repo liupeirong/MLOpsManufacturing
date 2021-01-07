@@ -11,13 +11,13 @@ For example, in the `image-classification-tensorflow` sample, [train.py](../samp
 You could still debug code that has remote dependency as [documented for that sample](../samples/image-classification-tensorflow#running-locally). However, if the code doesn't fully support local run, it will run into errors that don't happen in remote run.
 
 # Scenario 2: Run AML experiment locally to train models with Azure ML SDK - Offline Run
-Azure ML supports [local compute target for both training and inferencing](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-attach-compute-targets#local). Here is [an example](https://github.com/Azure/MachineLearningNotebooks/blob/master/how-to-use-azureml/training/train-on-local/train.py) to train a scikit-learn model locally using Azure ML SDK. Most of the code remain common for both local and remote training. However, local runs have limitations, for example:
+Azure ML supports [local compute target for both training and inferencing](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-attach-compute-targets#local). Here is [an example](https://github.com/Azure/MachineLearningNotebooks/blob/master/how-to-use-azureml/training/train-on-local) to train a scikit-learn model locally using Azure ML SDK. Most of the code remain common for both local and remote training. However, local runs have limitations, for example:
 1. can't run AML pipelines locally
 2. can't mount AML Datastore or Datasets locally
 3. local run doesn't have context such as a parent or child
 
 # Scenario 3: Trigger AML experiment or pipeline runs in a remote cluster from local machine
-You can trigger an AML experiment to run remotely from a local machine, or you can trigger an AML pipeline which only runs in AML compute cluster. For example, to publish the data preprocessing pipeline in the `image-classification-tensorflow` sample:
+You can trigger an AML experiment to run remotely from a local machine, or you can trigger an AML pipeline which only runs in AML compute cluster. In this case, the training code runs in the remote cluster, but you can still debug the code before submitting the run and after it returns. For example, to publish the data preprocessing pipeline in the `image-classification-tensorflow` sample:
 1. In a terminal, activate the Conda environment and go to the root directory of the sample
 2. Ensure the variables for AML are set correctly in your local `.env`
 3. Place a breakpoint in [build_data_processing_pipeline.py](../samples/image-classification-tensorflow/ml_service/pipelines/build_data_processing_pipeline.py), run
@@ -39,14 +39,14 @@ You can trigger an AML experiment to run remotely from a local machine, or you c
       }
     ]
     ```
-5. Place a breakpoint in [run_data_processing_pipeline.py](../samples/image-classification-tensorflow/ml_service/pipelines/run_data_processing_pipeline.py), run
+5. Place a breakpoint in [run_data_processing_pipeline.py](../samples/image-classification-tensorflow/ml_service/pipelines/run_data_processing_pipeline.py), replacing the `aml_pipeline_name` parameter with your own: 
     ```bash
     python -m debugpy --listen 5678 --wait-for-client ml_service/pipelines/run_data_processing_pipeline.py --aml_pipeline_name flower-data-processing-pipeline
     ```
 
 You can modify the code to supply additional AML pipeline parameters as shown in [this example](../samples/image-classification-tensorflow/ml_service/pipelines/run_training_pipeline.py#L56). 
 
-# Scenario 4: Use a dev VM as AML compute cluster for training to shorten startup time
+# Scenario 4: Attach your own VM in AML for training to shorten startup time
 This scenario is not about local debugging, however, it could also help to make development more productive. When you train remotely in an AML compute cluster, the cluster automatically scales down when idle, it might take a while for the cluster to spin up everytime you submit a run. You can reduce this spin up time by [attaching your own VM](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-attach-compute-targets). If you use a VM for development, it's already running anyways, saving cost and time.
 
 If you attach your own VM, you probably want to configure Conda and Docker to store environments and images on an attached data disk rather than OS disk because the OS disk is typically small. Additionally, AML pulls down environments in `~/.azureml`, link this directory to a data disk as well.

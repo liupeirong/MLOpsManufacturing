@@ -42,6 +42,7 @@ Take the following measures to secure your network and endpoints. You don’t ha
     * Assign permissions to users or teams at [organization](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#organization-level-permissions), [project](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#project-level-permissions), and [repository](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#git-repository-object-level) levels
     * [Add users to a role for role based access](https://docs.microsoft.com/en-us/azure/devops/organizations/security/about-security-roles?view=azure-devops) such as Service Connection, Variable Groups, and Agent Pools
     * Avoid having secrets as much as possible. Nothing is more secure than no secrets at all. If you must, store secret variables in Azure Key Vault instead of Azure DevOps.  Not only it's more secure, ML pipelines can also be triggered outside Azure DevOps by users who have access to secrets, for example, from their dev machines.
+    * Run [Microsoft Security Code Analysis](https://secdevtools.azurewebsites.net/) in Azure DevOps.
 
 # Information Protection
 * Enable [Container Registry Vulnerability Scanning](https://docs.microsoft.com/en-us/azure/security-center/defender-for-container-registries-introduction) to ensure Docker images are clear of malicious components

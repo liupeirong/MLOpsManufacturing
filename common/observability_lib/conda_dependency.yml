@@ -1,0 +1,20 @@
+name: observability_env
+dependencies:
+  # The python interpreter version.
+  # Currently Azure ML Workbench only supports 3.5.2 and later.
+  - python=3.7.*
+  - pip
+
+  - pip:
+    - python-dotenv==0.12.*
+    - dataclasses==0.6
+    - opencensus==0.7.11
+    - opencensus-ext-httplib==0.7.3
+    - opencensus-ext-logging==0.1.0
+    - opencensus-context==0.1.2
+    - opencensus-ext-azure==1.0.5
+    - pytest==6.2.*
+    - pytest-cov==2.10.*
+    - pytest-mock==3.5.*
+    - flake8==3.8.*
+    - flake8_formatter_junit_xml==0.0.*

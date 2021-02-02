@@ -1,15 +1,15 @@
 import unittest
 from unittest.mock import patch
 
-from ..src.observability import Observability
-from ..src.logger_interface import Severity
+from src.observability import Observability
+from src.logger_interface import Severity
 
 
 class ObservabilityMock(Observability):
-    @patch("ml_service.util.logger.app_insights_logger.AppInsightsLogger")
-    @patch("ml_service.util.logger.azure_ml_logger.AzureMlLogger")
-    @patch("ml_service.util.logger.console_logger.ConsoleLogger")
-    @patch("ml_service.util.logger.observability.Loggers")
+    @patch("src.app_insights_logger.AppInsightsLogger")
+    @patch("src.azure_ml_logger.AzureMlLogger")
+    @patch("src.console_logger.ConsoleLogger")
+    @patch("src.observability.Loggers")
     def __init__(self, mock_loggers, mock_console_logger, mock_aml_logger,
                  mock_app_insight_logger):
         mock_loggers.loggers = [mock_console_logger, mock_aml_logger,
@@ -18,9 +18,9 @@ class ObservabilityMock(Observability):
 
 
 class TestObservability(unittest.TestCase):
-    @patch("ml_service.util.logger.observability.Observability")
-    def setUp(cls, mock_observability):
-        cls.observability = mock_observability
+    @patch("src.observability.Observability")
+    def setUp(self, mock_observability):
+        self.observability = mock_observability
 
     def test_log_metric_called_with_parameters(self):
         self.observability.log_metric("FOO", "BAZ", "BAR")

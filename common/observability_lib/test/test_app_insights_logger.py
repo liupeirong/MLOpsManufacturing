@@ -2,7 +2,7 @@ import logging
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ..src.app_insights_logger import AppInsightsLogger
+from src.app_insights_logger import AppInsightsLogger
 
 
 class RealAppInsightsLogger(AppInsightsLogger):
@@ -25,10 +25,10 @@ class MockEnv:
 
 
 class TestObservability(unittest.TestCase):
-    @patch("ml_service.util.logger.app_insights_logger.AppInsightsLogger")
-    def setUp(cls, mock_app_insights_logger):
-        cls.concert_app_insights_logger = RealAppInsightsLogger()
-        cls.mock_app_insights_logger = mock_app_insights_logger
+    @patch("src.app_insights_logger.AppInsightsLogger")
+    def setUp(self, mock_app_insights_logger):
+        self.concert_app_insights_logger = RealAppInsightsLogger()
+        self.mock_app_insights_logger = mock_app_insights_logger
 
     def test_get_run_id_having_online_context(self):
         expected = "FOO"
@@ -65,6 +65,11 @@ class TestObservability(unittest.TestCase):
         self.mock_app_insights_logger.log_metric.assert_called_with(
             "FOO", "BAZ", "BAR", False
         )
+
+    def test_exception_called_with_parameters(self):
+        self.mock_app_insights_logger.exception("FOO")
+
+        self.mock_app_insights_logger.exception.assert_called_with("FOO")
 
     def test_set_view_is_called_with_parameters(self):
         self.mock_app_insights_logger.set_view("FOO", "BAR", "BAZ")

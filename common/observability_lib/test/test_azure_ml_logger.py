@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch
 
-from ..src.azure_ml_logger import AzureMlLogger
+from src.azure_ml_logger import AzureMlLogger
 
 
 class TestObservability(unittest.TestCase):
-    @patch("ml_service.util.logger.azure_ml_logger.AzureMlLogger")
-    def setUp(cls, mock_azure_ml_logger):
-        cls.azure_ml_logger = mock_azure_ml_logger
+    @patch("src.azure_ml_logger.AzureMlLogger")
+    def setUp(self, mock_azure_ml_logger):
+        self.azure_ml_logger = mock_azure_ml_logger
 
     def test_log_called_with_parameters(self):
         self.azure_ml_logger.log("FOO", "BAZ")

@@ -1,6 +1,8 @@
 import logging
 import unittest
 from unittest.mock import MagicMock, patch
+from opencensus.trace.span import SpanKind
+from opencensus.trace.tracer import Tracer
 
 from src.app_insights_logger import AppInsightsLogger
 
@@ -9,6 +11,7 @@ class RealAppInsightsLogger(AppInsightsLogger):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.env = MockEnv("")
+        self.tracer = Tracer()
 
 
 class MockRun:
@@ -22,6 +25,12 @@ class MockRun:
 class MockEnv:
     def __init__(self, run_id):
         self.build_id = run_id
+
+
+class MockSpan:
+    def __init__(self, name):
+        self.span_kind = None
+        self.attributes = {}
 
 
 class TestObservability(unittest.TestCase):
@@ -75,6 +84,16 @@ class TestObservability(unittest.TestCase):
         self.mock_app_insights_logger.set_view("FOO", "BAR", "BAZ")
         self.mock_app_insights_logger.set_view.\
             assert_called_with("FOO", "BAR", "BAZ")
+
+    @patch.object(Tracer, "start_span")
+    def test_start_span_having_online_context(self, mock_tracer):
+        name = "foo"
+        mock_tracer.return_value = MockSpan(name)
+        test_span = self.concert_app_insights_logger.start_span(name)
+        mock_tracer.assert_called_with(name)
+        self.assertEqual(test_span.span_kind, SpanKind.SERVER)
+        self.assertEqual(test_span.attributes['http.method'], 'START')
+        self.assertEqual(test_span.attributes['http.route'], name)
 
 
 if __name__ == "__main__":

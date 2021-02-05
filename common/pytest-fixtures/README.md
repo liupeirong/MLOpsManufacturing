@@ -20,35 +20,45 @@ Sets mocks for AML SDK related to AML Pipeline build scripts:
 * Environment
 
 ### How to use
-
-1. Import libraries which helps AML mocking
-    ```python3
-    from pytest_mock import MockFixture
-    from unittest.mock import ANY
-    from ml_service.tests.pipelines.test_aml_mock_fixtures_env import environment_vars, aml_pipeline_mocks  # NOQA: F401, E501
-    from ml_service.util.env_variables import Env
+1. Import predefined fixture to your test method
     ```
-
-1. Create a test function with MockFixture, aml_pipeline_mocks
+    from test_aml_mock_fixtures_env import environment_vars, aml_pipeline_mocks
     ```
-    def test_build_data_processing_os_cmd_pipeline_happy_path(mocker: MockFixture,
-                                                            aml_pipeline_mocks):
+    > Note: Depending on the location you are referencing 'test_aml_mock_fixtures_env', the path may need to be different.
+
+2. Pass 'aml_pipeline_mocks' as parameter to your unit test method
+    ```
+    [Example]
+    def test_build_data_processing_os_cmd_pipeline(aml_pipeline_mocks):
     ```
 
-1. Load mocks using fixture
+3. Load mocks from fixture using tuple 
     ```
-        # Load mocks from fixture
-        # (workspace, aml_compute, mock_workspace_get, mock_pipeline_publish) =\
-        #     aml_pipeline_mocks
+    (workspace, aml_compute, mock_workspace_get, mock_pipeline_publish) =\
+    aml_pipeline_mocks
+    ```
+    
+4. [Optional] Use "spy" to write tests in more detail
+
+    ```
+    [Example]
+    # Create a spy
+    spy_pythonscriptstep_create =\
+        mocker.patch('azureml.pipeline.steps.PythonScriptStep',wraps=PythonScriptStep)
+
+    # Check if PythonScriptStep instantiation was called correctly
+    spy_pythonscriptstep_create.\
+        assert_called_once_with(allow_reuse=False,
+                                runconfig=ANY,
+                                arguments=ANY,
+                                source_directory=e.sources_directory_train,
+                                script_name="preprocess/"
+                                            "preprocess_os_cmd_aml.py",
+                                name="Preprocess Data with OS cmd",
+                                compute_target=ANY)
     ```
 
-1. Run main method usig runpy 
-    ```
-        # run as module (start from if __name__ == "__main__")
-        runpy.run_module('ml_service.pipelines.'
-                        'build_data_processing_os_cmd_pipeline',
-                        run_name='__main__')
-    ```
+The full unit test code can be found at [test_build_data_processing_os_cmd_pipeline.py](/samples/non-python-preprocess/ml_service/tests/pipelines/test_build_data_processing_os_cmd_pipeline.py).
 
 ## Fixture for mocking AML SDK with Env util
 

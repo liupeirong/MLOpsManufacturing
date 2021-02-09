@@ -6,8 +6,7 @@ This repo contains sample code and definition of Azure DevOps pipelines for CI/C
 
 ```bash
 ├─ common # contains code common across samples
-│    ├─ infrastructure # code to provision Azure resources to run the samples
-│    └─ pipeline-trigger
+│    └─ infrastructure # code to provision Azure resources to run the samples
 │
 ├─ docs # how-tos and best practices
 │ 

@@ -1,20 +1,11 @@
-import pytest
 from src.azure_ml_logger import AzureMlLogger
 from src.logger_interface import Severity
-
-
-@pytest.fixture
-def mock_run(mocker):
-    class RunFactory(object):
-        def get(self):
-            return mocker.patch('azureml.core.Run')
-    return RunFactory()
 
 
 def test_get_callee_returns_callee_file_with_line_number():
     # arrange
     logger = AzureMlLogger()
-    expected = "test_azure_ml_logger.py:20"
+    expected = "test_azure_ml_logger.py:11"
 
     # act
     actual = logger.get_callee(0)
@@ -23,12 +14,12 @@ def test_get_callee_returns_callee_file_with_line_number():
     assert expected == actual
 
 
-def test_get_callee_details_returns_module_callee_file_with_line_number(): # noqa E501
+def test_get_callee_details_returns_callee_module_file_with_line_number(): # noqa E501
     # arrange
     logger = AzureMlLogger()
     expected_module = "test_azure_ml_logger"
     expected_file_name = "test_azure_ml_logger.py"
-    expected_line_number = 34
+    expected_line_number = 25
 
     # act
     actual = logger.get_callee_details(0)
@@ -39,10 +30,10 @@ def test_get_callee_details_returns_module_callee_file_with_line_number(): # noq
     assert actual[2] == expected_line_number
 
 
-def test_log_metric(mocker, mock_run):
+def test_log_metric_calls_log(mocker):
     # arrange
-    mocked_run = mock_run.get()
-    mocked_run.parent = mock_run.get()
+    mocked_run = mocker.MagicMock()
+    mocked_run.parent = mocker.MagicMock()
     logger = AzureMlLogger(mocked_run)
 
     # act - don't log parent
@@ -60,10 +51,10 @@ def test_log_metric(mocker, mock_run):
     mocked_run.parent.log.assert_called_once_with('FOO', 1, 'BAR')
 
 
-def test_log_metric_log_nothing_when_metric_name_empty(mocker, mock_run):
+def test_log_metric_logs_nothing_when_metric_name_empty(mocker):
     # arrange
-    mocked_run = mock_run.get()
-    mocked_run.parent = mock_run.get()
+    mocked_run = mocker.MagicMock()
+    mocked_run.parent = mocker.MagicMock()
     logger = AzureMlLogger(mocked_run)
 
     # act - don't log parent
@@ -81,7 +72,7 @@ def test_log_metric_log_nothing_when_metric_name_empty(mocker, mock_run):
     mocked_run.parent.log.assert_not_called()
 
 
-def test_log(capsys):
+def test_log_honors_severity(capsys):
     # arrange
     logger = AzureMlLogger()
 
@@ -102,7 +93,7 @@ def test_log(capsys):
     assert captured.out == ""
 
 
-def test_except(mocker):
+def test_except_sets_severity(mocker):
     # arrange
     mock_log = mocker.patch('src.azure_ml_logger.AzureMlLogger.log')
     logger = AzureMlLogger()

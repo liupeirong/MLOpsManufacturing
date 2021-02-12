@@ -1,6 +1,6 @@
 import pytest
-from src.console_logger import ConsoleLogger
-from src.logger_interface import Severity
+from azureml_appinsights_logger.console_logger import ConsoleLogger
+from azureml_appinsights_logger.logger_interface import Severity
 
 
 @pytest.fixture

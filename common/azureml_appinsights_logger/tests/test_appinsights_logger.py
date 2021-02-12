@@ -1,4 +1,5 @@
-from src.app_insights_logger import AppInsightsLogger, logging
+from azureml_appinsights_logger.appinsights_logger \
+    import AppInsightsLogger, logging
 import uuid
 from opencensus.trace.span import SpanKind
 
@@ -39,7 +40,7 @@ def test_get_run_id_should_use_buildid_in_offline_run(mocker):
     mock_run.id = 'OfflineRun'
     expected_run_id = "BAR"
     mocker.patch(
-        'src.app_insights_logger.Env.build_id',
+        'azureml_appinsights_logger.appinsights_logger.Env.build_id',
         new_callable=mocker.PropertyMock,
         return_value=expected_run_id
     )
@@ -67,7 +68,7 @@ def test_get_run_id_should_use_uuid_in_offline_run_when_no_buildid(mocker):
     mock_run.id = 'OfflineRun'
     expected_run_id = "BAR"
     mocker.patch(
-        'src.app_insights_logger.Env.build_id',
+        'azureml_appinsights_logger.appinsights_logger.Env.build_id',
         new_callable=mocker.PropertyMock,
         return_value=None
     )
@@ -95,30 +96,36 @@ def test_opencensus_init_with_env_vars(mocker):
     mock_run = mocker.MagicMock()
     mock_run.id = 'OfflineRun'
     mock_exporter = mocker.patch(
-        'src.app_insights_logger.AzureExporter', autospec=True)
+        'azureml_appinsights_logger.appinsights_logger.AzureExporter',
+        autospec=True)
     expected_connection_string = 'FOO'
     mock_sampler = mocker.patch(
-        'src.app_insights_logger.ProbabilitySampler', autospec=True)
+        'azureml_appinsights_logger.appinsights_logger.ProbabilitySampler',
+        autospec=True)
     expected_sampling_rate = 0.7
     mock_logger = mocker.patch.object(logging, 'getLogger')
     mock_setLevel = mock_logger.return_value.setLevel
     expected_log_level_string = 'ERROR'
     expected_log_level = getattr(logging, expected_log_level_string)
 
-    mocker.patch('src.app_insights_logger.AzureLogHandler', autospec=True)
-    mocker.patch('src.app_insights_logger.metrics_exporter', autospec=True)
     mocker.patch(
-        'src.app_insights_logger.Env.app_insights_connection_string',
+        'azureml_appinsights_logger.appinsights_logger.AzureLogHandler',
+        autospec=True)
+    mocker.patch(
+        'azureml_appinsights_logger.appinsights_logger.metrics_exporter',
+        autospec=True)
+    mocker.patch(
+        'azureml_appinsights_logger.appinsights_logger.Env.app_insights_connection_string', # noqa E501
         new_callable=mocker.PropertyMock,
         return_value=expected_connection_string
     )
     mocker.patch(
-        'src.app_insights_logger.Env.trace_sampling_rate',
+        'azureml_appinsights_logger.appinsights_logger.Env.trace_sampling_rate', # noqa E501
         new_callable=mocker.PropertyMock,
         return_value=expected_sampling_rate
     )
     mocker.patch(
-        'src.app_insights_logger.Env.log_level',
+        'azureml_appinsights_logger.appinsights_logger.Env.log_level',
         new_callable=mocker.PropertyMock,
         return_value=expected_log_level_string
     )
@@ -138,7 +145,7 @@ def test_opencensus_init_with_env_vars(mocker):
 def test_start_span(mocker):
     # arrange
     mock_tracer = mocker.patch(
-        'src.app_insights_logger.Tracer', autospec=True)
+        'azureml_appinsights_logger.appinsights_logger.Tracer', autospec=True)
     mock_run = mocker.MagicMock()
     mock_run.id = 'OfflineRun'
     span_name = 'FOO'

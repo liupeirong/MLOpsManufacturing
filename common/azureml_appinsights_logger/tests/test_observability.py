@@ -1,19 +1,20 @@
 import pytest
-from src.observability import Observability
-from src.logger_interface import Severity
+from azureml_appinsights_logger.observability import Observability
+from azureml_appinsights_logger.logger_interface import Severity
 
 
 @pytest.fixture
 def mock_loggers(mocker):
-    mock_loggers = mocker.patch("src.observability.Loggers")
-    mock_app_insights_logger = \
-        mocker.patch("src.app_insights_logger.AppInsightsLogger")
-    mock_aml_logger = \
-        mocker.patch("src.console_logger.ConsoleLogger")
-    mock_console_logger = \
-        mocker.patch("src.azure_ml_logger.AzureMlLogger")
+    mock_loggers = mocker.patch(
+        "azureml_appinsights_logger.observability.Loggers")
+    mock_appinsights_logger = mocker.patch(
+        "azureml_appinsights_logger.appinsights_logger.AppInsightsLogger")
+    mock_aml_logger = mocker.patch(
+        "azureml_appinsights_logger.console_logger.ConsoleLogger")
+    mock_console_logger = mocker.patch(
+        "azureml_appinsights_logger.azureml_logger.AzureMlLogger")
     mock_loggers.loggers = [
-        mock_app_insights_logger,
+        mock_appinsights_logger,
         mock_aml_logger,
         mock_console_logger]
     return mock_loggers
@@ -22,7 +23,7 @@ def mock_loggers(mocker):
 def test_log_metric_is_called_by_all_loggers(mocker, mock_loggers):
     # arrange
     mocker.patch(
-        'src.observability.Observability._loggers',
+        'azureml_appinsights_logger.observability.Observability._loggers',
         new_callable=mocker.PropertyMock,
         return_value=mock_loggers,
         create=True
@@ -44,7 +45,7 @@ def test_log_metric_is_called_by_all_loggers(mocker, mock_loggers):
 def test_log_is_called_by_all_loggers(mocker, mock_loggers):
     # arrange
     mocker.patch(
-        'src.observability.Observability._loggers',
+        'azureml_appinsights_logger.observability.Observability._loggers',
         new_callable=mocker.PropertyMock,
         return_value=mock_loggers,
         create=True

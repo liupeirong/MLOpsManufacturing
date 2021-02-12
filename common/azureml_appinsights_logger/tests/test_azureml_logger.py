@@ -1,11 +1,11 @@
-from src.azure_ml_logger import AzureMlLogger
-from src.logger_interface import Severity
+from azureml_appinsights_logger.azureml_logger import AzureMlLogger
+from azureml_appinsights_logger.logger_interface import Severity
 
 
 def test_get_callee_returns_callee_file_with_line_number():
     # arrange
     logger = AzureMlLogger()
-    expected = "test_azure_ml_logger.py:11"
+    expected = "test_azureml_logger.py:11"
 
     # act
     actual = logger.get_callee(0)
@@ -17,8 +17,8 @@ def test_get_callee_returns_callee_file_with_line_number():
 def test_get_callee_details_returns_callee_module_file_with_line_number(): # noqa E501
     # arrange
     logger = AzureMlLogger()
-    expected_module = "test_azure_ml_logger"
-    expected_file_name = "test_azure_ml_logger.py"
+    expected_module = "test_azureml_logger"
+    expected_file_name = "test_azureml_logger.py"
     expected_line_number = 25
 
     # act
@@ -95,7 +95,8 @@ def test_log_honors_severity(capsys):
 
 def test_except_sets_severity(mocker):
     # arrange
-    mock_log = mocker.patch('src.azure_ml_logger.AzureMlLogger.log')
+    mock_log = mocker.patch(
+        'azureml_appinsights_logger.azureml_logger.AzureMlLogger.log')
     logger = AzureMlLogger()
     exception = Exception('FOO')
 

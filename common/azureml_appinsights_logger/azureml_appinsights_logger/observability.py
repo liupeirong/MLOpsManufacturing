@@ -1,8 +1,8 @@
 from azureml.core import Run
 
 from .env_variables import Env
-from .app_insights_logger import AppInsightsLogger
-from .azure_ml_logger import AzureMlLogger
+from .appinsights_logger import AppInsightsLogger
+from .azureml_logger import AzureMlLogger
 from .console_logger import ConsoleLogger
 from .logger_interface import (
     ObservabilityAbstract,

@@ -11,22 +11,7 @@ This repo contains samples of machine learning (ML) projects we have often seen 
 
 This repo contains sample code and definition of Azure DevOps pipelines for CI/CD. These pipelines run in [this Azure DevOps project](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build?view=folders). ML pipelines run in the Azure environment deployed using the Azure DevOps pipelines.
 
-The folders are structured as following - 
-```
-- common # contains code common across samples
-    - infrastructure # code to provision Azure resources to run the samples
-- docs # how-tos and best practices
-- samples # each sample may have different folders, below is a typical example
-    - <sample 1>
-        - .devcontainer # VSCode dev container you can optionally use for development
-        - devops_pipelines # Azure DevOps CI/CD pipeline definition
-        - local_development # scripts for creating a local dev environment without having to have a VSCode dev container
-        - ml_model # code for building the ML model
-        - ml_service # code for building ML pipelines
-        - README.md # explains what the sample is demonstrating and how to run it
-    - <sample 2>
-    - ...
-```
+See the details on [Repository Structure](./docs/process/RepositoryStructure.md)
 
 ## Getting Started
 

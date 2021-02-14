@@ -1,7 +1,8 @@
 from azureml_appinsights_logger.appinsights_logger \
-    import AppInsightsLogger, logging
+    import AppInsightsLogger, logging, Severity
 import uuid
 from opencensus.trace.span import SpanKind
+import pytest
 
 
 def test_get_run_id_should_use_runid_in_online_run(mocker):
@@ -159,3 +160,35 @@ def test_start_span(mocker):
     assert span.span_kind == SpanKind.SERVER
     span.attributes.__setitem__.assert_any_call('http.route', span_name)
     span.attributes.__setitem__.assert_any_call('http.method', 'START')
+
+
+test_severity = [Severity.DEBUG, Severity.INFO,
+                 Severity.WARNING, Severity.ERROR,
+                 Severity.CRITICAL]
+
+
+@pytest.mark.parametrize("severity", test_severity)
+def test_log_matches_severity(mocker, severity):
+    # arrange
+    mock_run = mocker.MagicMock()
+    mock_run.id = 'OfflineRun'
+    mock_logger = mocker.patch.object(logging, 'getLogger')
+
+    # act
+    logger = AppInsightsLogger(mock_run)
+    logger.log("FOO", severity)
+
+    # assert
+    if severity == Severity.DEBUG:
+        mock_logger.return_value.debug.assert_called_once()
+    elif severity == Severity.INFO:
+        # unrelated code logs additional info
+        mock_logger.return_value.info.assert_called()
+    elif severity == Severity.WARNING:
+        mock_logger.return_value.warning.assert_called_once()
+    elif severity == Severity.ERROR:
+        mock_logger.return_value.error.assert_called_once()
+    elif severity == Severity.CRITICAL:
+        mock_logger.return_value.critical.assert_called_once()
+
+    mock_logger.reset_mock()

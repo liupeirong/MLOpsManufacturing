@@ -10,9 +10,16 @@ The posts in this folder are intended for sharing technical learnings from some 
 # Folder Structure
 
 ```bash
+├─ architecture # Azure ML architecture information 
 ├─ media # contains images for docs
 ├─ process # enginnering fundamentals 
 ```
+
+## Architecture
+
+This folder contains Azure Machine Learning Architecture related information.
+
+- [Azure Machine Learning Environment: How to use custom software and depencies in Azure ML pipeline](architecture/AzureMLEnvironment.md)
 
 ## Process
 

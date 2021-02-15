@@ -11,8 +11,7 @@ The posts in this folder are intended for sharing technical learnings from some 
 
 ```bash
 ├─ media # contains images for docs
-├─ process # enginnering foundamental 
-├─ Others (coming soon)
+├─ process # enginnering fundamentals 
 ```
 
 ## Process

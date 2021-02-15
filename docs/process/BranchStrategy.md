@@ -1,7 +1,8 @@
 # Overview
 
-**Branch Strategy for Issue** defines how should you create/maintain/merge a feature branch when a new task is assigned to you.  
-A feature branch should be named as *your account*/*issue id*/*description*. Or in case you use Azure DevOps for manage tasks, task/*task id*/*description*.
+**Branch Strategy for Issue** defines how should you create/maintain/merge a feature branch when a new task is assigned to you. There are several well known flows such as GitHub flow and git flow. This strategy is based on GitHub flow.
+
+A feature branch should be named as *your account*/*issue id*/*description*. Or in case you use Azure DevOps for manage tasks, *your account*/*task id*/*description*.
 
 ## Branch Strategy for Tasks
 
@@ -33,3 +34,4 @@ When you finished code modification:
       
 # References
 [Azure DevOps - Branch Organization](https://docs.microsoft.com/en-us/azure/devops/repos/git/git-branching-guidance?view=azure-devops)
+[GitHub flow](https://guides.github.com/introduction/flow)

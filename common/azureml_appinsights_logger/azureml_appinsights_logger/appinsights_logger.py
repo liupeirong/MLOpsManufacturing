@@ -52,7 +52,7 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
 
         # initializes metric exporter
         mexporter = metrics_exporter.new_metrics_exporter(
-            enable_standard_metrics=True,
+            enable_standard_metrics=self.env.enable_standard_metrics,
             export_interval=self.env.metrics_export_interval,
             connection_string=self.env.app_insights_connection_string,
         )
@@ -76,7 +76,7 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
 
         measure = measure_module.MeasureFloat(name, description)
         self.set_view(name, description, measure)
-        measurement_map.measure_put_attachment(name, value)
+        measurement_map.measure_float_put(measure, value)
         measurement_map.record(tag_map)
 
     def log(self, description="", severity=Severity.INFO):
@@ -117,8 +117,9 @@ class AppInsightsLogger(LoggerInterface, ObservabilityAbstract):
         """
         self.logger.exception(exception, extra=self.custom_dimensions)
         # Mark current span/operation with internal error
-        self.current_span().status = Status(2, exception)
-        self.current_span().attributes['http.status_code'] = 500
+        if self.current_span() is not None:
+            self.current_span().status = Status(2, exception)
+            self.current_span().attributes['http.status_code'] = 500
 
     @staticmethod
     def set_view(metric, description, measure):

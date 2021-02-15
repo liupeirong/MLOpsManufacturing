@@ -22,10 +22,6 @@ class LoggerInterface(Tracer):
     def exception(self, exception):
         pass
 
-    def finish(self):
-        """End the spans and send to reporters."""
-        pass
-
     def span(self, name='span'):
         """Create a new span with the trace using the context information.
         :type name: str
@@ -90,13 +86,17 @@ class ObservabilityAbstract:
         run_id = str(uuid.uuid1())
         if not run.id.startswith(self.OFFLINE_RUN):
             run_id = run.id
+            parent_id, portal_url = "none", "none"
+            if run.parent is not None:
+                parent_id = run.parent.id
+                portal_url = run.parent.get_portal_url()
             self.custom_dimensions = {
                 'custom_dimensions': {
-                    "parent_run_id": run.parent.id,
+                    "parent_run_id": parent_id,
                     "step_id": run.id,
                     "step_name": run.name,
                     "experiment_name": run.experiment.name,
-                    "run_url": run.parent.get_portal_url(),
+                    "run_url": portal_url,
                     "offline_run": False
                 }
             }

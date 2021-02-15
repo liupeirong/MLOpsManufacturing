@@ -17,5 +17,6 @@ class Env:
     log_sampling_rate: float = float(os.environ.get("LOG_SAMPLING_RATE", 1.0))  # NOQA: E501
     trace_sampling_rate: float = float(os.environ.get("TRACE_SAMPLING_RATE", 1.0))  # NOQA: E501
     metrics_export_interval: int = int(os.environ.get("METRICS_EXPORT_INTERVAL", 15))  # NOQA: E501
+    enable_standard_metrics: Optional[bool] = os.environ.get("ENABLE_STANDARD_METRICS", "true").lower().strip() == "true"  # NOQA: E501
 
     build_id: Optional[str] = str(os.environ.get("BUILD_ID", "local"))  # NOQA: E501

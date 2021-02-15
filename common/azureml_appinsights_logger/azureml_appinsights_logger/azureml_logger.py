@@ -29,7 +29,7 @@ class AzureMlLogger(LoggerInterface, ObservabilityAbstract):
         if name != "":
             self.run.log(
                 name, value, description
-            ) if log_parent is False \
+            ) if log_parent is False or self.run.parent is None \
                 else self.run.parent.log(name, value, description)
 
     def log(self, description="", severity=Severity.INFO):

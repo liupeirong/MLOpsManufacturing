@@ -48,3 +48,40 @@ For example, this is how variables are managed in this project:
 * additional infrastructure variables for the image-classification-tensorflow sample are defined [here](../samples/image-classification-tensorflow#cicd-in-azure-devops). They are referenced in, for example, the [train-evaluate-register DevOps pipeline](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L48) 
 * application variables such as the training cluster machine spec have their defaults defined in [devops_pipelines/variable-template.yml](../samples/image-classification-tensorflow/devops_pipelines/variables-template.yml) so you don't have to specify all of them in variable groups, however, based on [the order they are defined in the pipeline](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L46), you can overwrite their values in variables-template.yml by specifying them in the variable groups.
 * for the ML variables that need to change for experimentations, define them as [ML pipeline variables](../samples/image-classification-tensorflow/ml_service/pipelines/build_training_pipeline.py#L46). The defaults for ML variables are stored in [ml_model/parameters.json](../samples/image-classification-tensorflow/ml_model/parameters.json) so that they can run in DevOps pipelines [without having to be specified in the pipeline yamls](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L119).
+
+# Example
+Here are variable examples for yesno sample in `samples\yesno` directory
+
+## Key vault secrets
+| Variable Name            | Short description                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------|
+| ACR_PASSWORD             | Azure Container Registory user password                                              |
+| AML_STORAGE_ACCOUNT_KEY  | Azure Storage Account Key where input data is stored                                 |
+
+## Infrastructure variables
+| Variable Name            | Short description                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------|
+| BASE_NAME                | Unique naming prefix for created resources - max 10 chars, letters and numbers only  |
+| LOCATION                 | Azure location where Azure resources are deployed                                    |
+| RESOURCE_GROUP           | Azure Resource Group name                                                            |
+| AZURE_RM_SVC_CONNECTION  | Azure Resource Manager Service Connection name                                       |
+| SUBSCRIPTION_ID          | Azure Subscription ID for the project                                                |
+| WORKSPACE_NAME           | Azure Machine Learning workspace name                                                |
+
+## Application variables
+| Variable Name            | Short description                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------|
+| KEYVAULT_NAME            | Key vault name where storage account key, Container registry password are stored     |
+| AML_ENV_NAME             | Azure Machine Learning environment name                                              |
+| AML_COMPUTE_CLUSTER_NAME | Azure Machine Learning compute cluster name                                          |
+| AML_STORAGE_ACCOUNT_NAME | Azure Storage Account name where datastore is located                                |
+| AML_BLOB_CONTAINER_NAME  | Azure Storage Account Blob container name which contains input data                  |
+| PIPELINE_ENDPOINT_NAME   | Azure Machine Learning pipeline endpoint name                                        |
+| PIPELINE_NAME            | Azure Machine Learning pipeline name                                                 |
+| AML_INPUT_DATASET_NAME   | Input dataset name which is used by yesno sample                                     |
+| AML_WAVES_DATASET_NAME   | Waves dataset name which is used by yesno sample                                     |
+| SOURCES_DIR_TRAIN        | Source code directory for Azure Machine Learning pipeline                            |
+| FIRST_STEP_SCRIPT_PATH   | Python script path for the first step                                                |
+| ACR_IMAGE                | Custome base image name in Azure Container Registory                                 |
+| ACR_ADDRESS              | Azure Container Registory address                                                    |
+| ACR_USERNAME             | Azure Container Registory user name                                                  |

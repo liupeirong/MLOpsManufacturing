@@ -88,3 +88,7 @@ Sets mocks for AML SDK related to AML Pipeline build scripts:
 ### How to use
 
 TODO
+
+## Limitations
+
+This fixture is still working in progress and ot 100% support for the AML SDK. If you have any fixtures that you would like to have, or if you find improvements while using them, please leave them in the issues.

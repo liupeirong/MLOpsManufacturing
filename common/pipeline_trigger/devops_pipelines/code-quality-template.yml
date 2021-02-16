@@ -1,0 +1,29 @@
+# Pipeline template to run linting, unit tests with code coverage, and publish the results.
+steps:
+- script: |
+   cd common/pipeline_trigger
+   flake8 --output-file=lint-testresults.xml --format junit-xml
+  displayName: 'Run lint tests'
+
+- script: |
+   cd common/pipeline_trigger
+   python -m pytest tests/src/PipelineHttpTrigger/test_pipeline_http_trigger.py --cov=src --cov-report=html --cov-report=xml --junitxml=unit-testresults.xml
+  condition: succeededOrFailed()
+  displayName: 'Run unit tests'
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: 'common/pipeline_trigger/*-testresults.xml'
+    testRunTitle: 'Linting & Unit tests'
+    failTaskOnFailedTests: true
+  displayName: 'Publish test results'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish coverage report'
+  condition: succeededOrFailed()
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: 'common/pipeline_trigger/coverage.xml'
+    reportDirectory: 'common/pipeline_trigger/htmlcov'
+    failIfCoverageEmpty: true

@@ -1,0 +1,136 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - pipeline_trigger
+
+# Variables are defined in YAML and variable group
+variables:
+- name: workingDirectory
+  value: $(System.DefaultWorkingDirectory)/common/pipeline_trigger/src
+- template: variables-template.yml
+- group: iac-aml-vg
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Test
+  displayName: Test
+  jobs:
+  - job: Test_Job
+    displayName: Test
+    timeoutInMinutes: 0
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+    - bash: |
+        python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Install tools'
+    - bash: |
+        pip install -r common/pipeline_trigger/devops_pipelines/requirements.txt --use-deprecated=legacy-resolver
+        pip install --upgrade azureml-sdk
+      displayName: pip install
+    - template: code-quality-template.yml
+
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build_Job
+    displayName: Build
+    timeoutInMinutes: 0
+    steps:
+    - task: UsePythonVersion@0
+      displayName: Python version
+      inputs:
+        versionSpec: 3.8.x
+        addToPath: true
+
+    - bash: |
+        python -m venv worker_venv
+        source worker_venv/bin/activate
+        pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
+      displayName: Pip install
+      workingDirectory: $(workingDirectory)
+
+    - task: ArchiveFiles@2
+      displayName: Archive files
+      inputs:
+        rootFolderOrFile: $(workingDirectory)
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      displayName: Publish artifact
+      artifact: drop
+
+- stage: Deploy
+  displayName: Deploy
+  jobs:
+  - job: Deploy_Job
+    displayName: Deploy
+    timeoutInMinutes: 0
+
+    steps:
+    - task: AzureAppServiceSettings@1
+      displayName: Azure Functions settings
+      inputs:
+        azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
+        appName: $(PIPELINE_TRIGGER_FUNC_APP_NAME)
+        resourceGroupName: $(RESOURCE_GROUP)
+        appSettings: |
+          [
+            {
+              "name": "SUBSCRIPTION_ID",
+              "value": "$(SUBSCRIPTION_ID)",
+              "slotSetting": false
+            },
+            {
+              "name": "RESOURCE_GROUP",
+              "value": "$(RESOURCE_GROUP)",
+              "slotSetting": false
+            },
+            {
+              "name": "WORKSPACE_NAME",
+              "value": "$(WORKSPACE_NAME)",
+              "slotSetting": false
+            },
+            {
+              "name": "PIPELINE_ENDPOINT_NAME",
+              "value": "$(PIPELINE_ENDPOINT_NAME)",
+              "slotSetting": false
+            },
+            {
+              "name": "EXPERIMENT_NAME",
+              "value": "$(EXPERIMENT_NAME)",
+              "slotSetting": false
+            }
+          ]
+
+    - download: current
+      artifact: drop
+      displayName: Download artifact
+
+    - task: AzureFunctionApp@1
+      displayName: Azure Functions deploy
+      inputs:
+        azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
+        appType: functionAppLinux
+        appName: $(PIPELINE_TRIGGER_FUNC_APP_NAME)
+        package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+
+    # Retry if first deployment failed
+    - task: AzureFunctionApp@1
+      displayName: Azure Functions deploy (retry)
+      condition: failed()
+      inputs:
+        azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
+        appType: functionAppLinux
+        appName: $(PIPELINE_TRIGGER_FUNC_APP_NAME)
+        package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+

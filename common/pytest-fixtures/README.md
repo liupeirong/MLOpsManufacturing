@@ -7,8 +7,10 @@ This folder contains pytest-fixture templates for reuse in new MLOps projects.
 
 ## Fixture for mocking AML SDK
 
-[This fixture](./test_aml_mock_fixtures_default.py) is **independent** from other utils and tools used in
+> [This fixture](./test_aml_mock_fixtures_default.py) is **independent** from other utils and tools used in
 [samples](/samples) of this repo.
+
+If you are referencing environment variables directly instead of using util, please import this [test_aml_mock_fixtures_default.py](./test_aml_mock_fixtures_default.py) file under your test directory.
 
 Sets mocks for AML SDK related to AML Pipeline build scripts:
 
@@ -62,8 +64,10 @@ The full unit test code can be found at [test_build_data_processing_os_cmd_pipel
 
 ## Fixture for mocking AML SDK with Env util
 
-[This fixture](./test_aml_mock_fixtures_env.py) is **dependent on the ml_service.util.env_variables.Env class**
+> [This fixture](./test_aml_mock_fixtures_env.py) is **dependent on the ml_service.util.env_variables.Env class**
 used in [non-python-preprocess sample](/samples/non-python-preprocess/ml_service/util/env_variables.py).
+
+If you are referencing your environment variables through dotenv module, please import this [test_aml_mock_fixtures_env.py](./test_aml_mock_fixtures_env.py) file under your test directory.
 
 Sets mocks for AML SDK related to AML Pipeline build scripts:
 

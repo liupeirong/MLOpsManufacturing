@@ -1,18 +1,27 @@
 # Overview
 
-This folder contains [pytest-fixture](https://docs.pytest.org/en/stable/fixture.html) templates for reuse in new MLOps projects on [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning/).
-
-* [Fixture for mocking AML SDK](##Fixture-for-mocking-AML-SDK)
-* [Fixture for mocking AML SDK with Env util](##Fixture-for-mocking-AML-SDK-with-Env-util)
-
-This tutorial introduces how quickly and easily you can write AML unit tests by simply including AML fixture files that are already being built below.
-
 ## Background
 
 When you creating a unit test which is using [AML SDK](https://docs.microsoft.com/en-us/python/api/overview/azure/ml/?view=azure-ml-py), you need to mock a lot of classes.
 Also if you write multiple test codes without using fixtures, there will be a lot of duplicate code. The above problems can be solved simply by including a pre-made AML fixture file to your code.
 
-## Fixture for mocking AML SDK
+## Folder Structure
+
+This folder contains [pytest-fixture](https://docs.pytest.org/en/stable/fixture.html) templates for reuse in new MLOps projects on [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning/).
+```bash
+├─ README.md # explains how to use AML fixtures 
+├─ test_aml_mock_fixtures_default.py # AML fixtures which is not using env util
+└─ test_aml_mock_fixtures_env.py # # AML fixture which is using env util
+```
+
+## Getting Started
+
+This tutorial introduces how quickly and easily you can write AML unit tests by simply including AML fixture files that are already being built below.
+
+* [Fixture for mocking AML SDK](###Fixture-for-mocking-AML-SDK)
+* [Fixture for mocking AML SDK with Env util](###Fixture-for-mocking-AML-SDK-with-Env-util)
+
+### Fixture for mocking AML SDK
 
 > [This fixture](./test_aml_mock_fixtures_default.py) is **independent** from other utils and tools used in
 [samples](/samples) of this repo.
@@ -69,7 +78,7 @@ Sets mocks for AML SDK related to AML Pipeline build scripts:
 
 The full unit test code can be found at [test_build_data_processing_os_cmd_pipeline.py](/samples/non-python-preprocess/ml_service/tests/pipelines/test_build_data_processing_os_cmd_pipeline.py).
 
-## Fixture for mocking AML SDK with Env util
+### Fixture for mocking AML SDK with Env util
 
 > [This fixture](./test_aml_mock_fixtures_env.py) is **dependent on the ml_service.util.env_variables.Env class**
 used in [non-python-preprocess sample](/samples/non-python-preprocess/ml_service/util/env_variables.py).

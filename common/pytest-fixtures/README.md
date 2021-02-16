@@ -1,9 +1,16 @@
 # Overview
 
-This folder contains pytest-fixture templates for reuse in new MLOps projects.
+This folder contains [pytest-fixture](https://docs.pytest.org/en/stable/fixture.html) templates for reuse in new MLOps projects on [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning/).
 
 * [Fixture for mocking AML SDK](##Fixture-for-mocking-AML-SDK)
 * [Fixture for mocking AML SDK with Env util](##Fixture-for-mocking-AML-SDK-with-Env-util)
+
+This tutorial introduces how quickly and easily you can write AML unit tests by simply including AML fixture files that are already being built below.
+
+## Background
+
+When you creating a unit test which is using [AML SDK](https://docs.microsoft.com/en-us/python/api/overview/azure/ml/?view=azure-ml-py), you need to mock a lot of classes.
+Also if you write multiple test codes without using fixtures, there will be a lot of duplicate code. The above problems can be solved simply by including a pre-made AML fixture file to your code.
 
 ## Fixture for mocking AML SDK
 

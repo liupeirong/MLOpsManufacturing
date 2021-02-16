@@ -1,0 +1,33 @@
+# CI/PR Pipeline that deploys an ARM template to create or update the resources needed by the other pipelines.
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for Infrastructure as Code
+    type: string
+    default: common/pipeline_monitor/environment_setup/provisioning
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - common/pipeline_monitor/environment_setup/provisioning/arm-templates/*
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  - group: iac-aml-vg
+
+steps:
+  - task: AzureResourceGroupDeployment@2
+    inputs:
+      azureSubscription: "$(AZURE_RM_SVC_CONNECTION)"
+      action: "Create Or Update Resource Group"
+      resourceGroupName: "$(RESOURCE_GROUP)"
+      location: $(LOCATION)
+      templateLocation: "Linked artifact"
+      csmFile: "${{ parameters.workingDirectory }}/arm-templates/cloud-environment-functions.json"
+      overrideParameters: "-baseName $(BASE_NAME) -location $(LOCATION)"
+      deploymentMode: "Incremental"
+    displayName: "Deploy Functions resources to Azure"

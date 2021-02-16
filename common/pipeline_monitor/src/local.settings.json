@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+
+    "SUBSCRIPTION_ID": "",
+    "RESOURCE_GROUP": "",
+    "WORKSPACE_NAME": "",
+    "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+  }
+}

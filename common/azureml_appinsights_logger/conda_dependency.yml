@@ -7,13 +7,13 @@ dependencies:
 
   - pip:
     - azureml-core==1.*
-    - python-dotenv==0.12.*
-    - dataclasses==0.6
-    - opencensus==0.7.11
-    - opencensus-ext-httplib==0.7.3
-    - opencensus-ext-logging==0.1.0
-    - opencensus-context==0.1.2
-    - opencensus-ext-azure==1.0.5
+    - python-dotenv==0.15.*
+    - dataclasses==0.8.*
+    - opencensus==0.7.*
+    - opencensus-context==0.1.*
+    - opencensus-ext-azure==1.0.*
+    - opencensus-ext-logging==0.1.*
+    - opencensus-ext-httplib==0.7.*
     - pytest==6.2.*
     - pytest-cov==2.10.*
     - pytest-mock==3.5.*

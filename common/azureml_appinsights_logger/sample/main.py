@@ -35,6 +35,9 @@ def main():
                                      script='train.py',
                                      environment=aml_env)
     else:
+        # setting aicxn does not work when running local
+        # because AML add "\" to ";" in the cxn string,
+        # making the cxn string invalid.
         aicxn = 'APPLICATIONINSIGHTS_CONNECTION_STRING'
         aml_env.environment_variables[aicxn] = os.environ[aicxn]
         aml_cluster = aml_ws.compute_targets['train-cluster']

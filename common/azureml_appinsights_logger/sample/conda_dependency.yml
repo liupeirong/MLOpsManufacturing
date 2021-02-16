@@ -7,12 +7,12 @@ dependencies:
 
   - pip:
     - azureml-sdk==1.13.*
-    - dataclasses
-    - python-dotenv
-    - opencensus==0.7.12
-    - opencensus-context==0.1.2
-    - opencensus-ext-azure==1.0.7
-    - opencensus-ext-logging==0.1.0
-    - opencensus-ext-httplib==0.7.4
+    - python-dotenv==0.15.*
+    - dataclasses==0.8.*
+    - opencensus==0.7.*
+    - opencensus-context==0.1.*
+    - opencensus-ext-azure==1.0.*
+    - opencensus-ext-logging==0.1.*
+    - opencensus-ext-httplib==0.7.*
     - --extra-index-url https://test.pypi.org/simple/
-    - azureml_appinsights_logger-MLOpsManufacturing==0.0.6
+    - azureml_appinsights_logger-MLOpsManufacturing==0.0.8

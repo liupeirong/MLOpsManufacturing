@@ -1,6 +1,6 @@
 # Overview
 
-**Branch Strategy for Issue** defines how should you create/maintain/merge a feature branch when a new task is assigned to you. There are several well known flows such as GitHub flow and git flow. This strategy is based on GitHub flow.
+**Branch Strategy for Issue** defines how you should create/maintain/merge a feature branch when a new task is assigned to you. There are several well known flows such as GitHub flow and git flow. This strategy is based on GitHub flow.
 
 A feature branch should be named as *your account*/*issue id*/*description*. Or in case you use Azure DevOps for manage tasks, *your account*/*task id*/*description*.
 
@@ -23,7 +23,7 @@ When you finished code modification:
 1. Create a pull request to merge the changes to main branch.
     - Clear title, and enough detail in the description 
     - At least **two** reviewer approvals are required
-    - Successful build of CI pipeline is required if appricable. 
+    - Successful build of CI pipeline is required if applicable. 
     - Link to related task id is required if appricable.
     
 1. Keep a high quality, up-to-date main branch.

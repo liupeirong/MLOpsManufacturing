@@ -16,61 +16,61 @@ This folder contains [pytest-fixture](https://docs.pytest.org/en/stable/fixture.
 
 ## Getting Started
 
-This tutorial explains how to use AML fixture with your code.   By including this python file in your code, this file will set mocks for AML SDK related to AML Pipeline build scripts:
+This tutorial explains how to use AML fixture with your code with this [sample](/samples). By including this python file in your code, this will set the following AML SDK mocks:
 
 * Workspace.Get
 * PythonScriptStep
 * Pipeline
 * Pipeline.publish
 * ComputeTarget (AmlCompute only)
-* Environment
 
 ### Fixture for mocking AML SDK
 
 > [This fixture](./test_aml_mock_fixtures_default.py) is **independent** from other utils and tools used in
 [samples](/samples) of this repo.
 
-This fixture is for the case of referencing environment variables directly without using env util.
+This code is for cases not using env util.
 
-1. Import [./test_aml_mock_fixtures_default.py](./test_aml_mock_fixtures_default.py) under your tests directory
+1. Copy and paste this [./test_aml_mock_fixtures_default.py](./test_aml_mock_fixtures_default.py) file under your tests directory
 
-1. Import predefined fixture to your test method
-    ```
-    from test_aml_mock_fixtures_env import environment_vars, aml_pipeline_mocks
-    ```
-    > Note: Depending on the location you are referencing 'test_aml_mock_fixtures_env', the path may need to be different.
+    This code mocks frequently used objects in AML SDK and returns them as fixtures so that they can be reused in other code.
 
-1. Pass 'aml_pipeline_mocks' as parameter to your unit test method
-    ```
-    [Example]
-    def test_build_data_processing_os_cmd_pipeline(aml_pipeline_mocks):
+1. Import predefined fixture to your test code
+
+    ```python
+    from ml_service.tests.pipelines.test_aml_mock_fixtures_default import aml_pipeline_mocks
     ```
 
-1. Load mocks from fixture using tuple
-    ```
-    (workspace, aml_compute, mock_workspace_get, mock_pipeline_publish) =\
-    aml_pipeline_mocks
-    ```
+    > Note: Depending on the location you are referencing the fixture file, this path 'ml_service.tests.pipelines.test_aml_mock_fixtures_default' may need to be different.
+
+1. Pass 'aml_pipeline_mocks' as a parameter to your unit test code and load mock objects from fixture by referencing the code below.
+
+    ```python
+    def test_build_data_processing_os_cmd_pipeline_happy_path(mocker: MockFixture, aml_pipeline_mocks):  
     
-1. Use "spy" to write tests in more detail
-
+    # Load mocks from fixture
+    (workspace, aml_compute, mock_workspace_get, mock_pipeline_publish) =\
+        aml_pipeline_mocks
     ```
-    [Example]
-    # Create a spy
-    spy_pythonscriptstep_create =\
-        mocker.patch('azureml.pipeline.steps.PythonScriptStep',wraps=PythonScriptStep)
 
-    # Check if PythonScriptStep instantiation was called correctly
-    spy_pythonscriptstep_create.\
-        assert_called_once_with(allow_reuse=False,
-                                runconfig=ANY,
-                                arguments=ANY,
-                                source_directory=e.sources_directory_train,
-                                script_name="preprocess/"
-                                            "preprocess_os_cmd_aml.py",
-                                name="Preprocess Data with OS cmd",
-                                compute_target=ANY)
+    Each mock object can be accessed by listing them again cause it uses tuple notation.
+
+1. Assertion using mocks
+
+    ```python
+    # Check if the correct workspace retrieved
+    mock_workspace_get.assert_called_with(name=workspace_name,
+                                          resource_group=resource_group,
+                                          subscription_id=subscription_id)
+
+    # Check if Pipeline publish was called with arguments
+    mock_pipeline_publish.assert_called_once_with(name=preprocessing_pipeline_name,
+                                                  description="Data preprocessing"
+                                                              " OS cmd pipeline",
+                                                  version=build_id)
     ```
+
+    This code shows how to make an assertion using an imported mock objects.
 
     The full unit test code can be found at [test_build_data_processing_os_cmd_pipeline.py](/samples/non-python-preprocess/ml_service/tests/pipelines/test_build_data_processing_os_cmd_pipeline.py).
 

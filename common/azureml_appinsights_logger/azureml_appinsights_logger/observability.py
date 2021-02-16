@@ -37,11 +37,14 @@ class Loggers(ObservabilityAbstract):
         run = Run.get_context()
         e = Env()
         if not run.id.startswith(self.OFFLINE_RUN):
+            print("Registered AML Logger")
             self.loggers.append(AzureMlLogger(run))
         if e.app_insights_connection_string:
             if "InstrumentationKey" in e.app_insights_connection_string:
+                print("Registered AppInsights Logger")
                 self.loggers.append(AppInsightsLogger(run))
         if e.log_to_console:
+            print("Registered Console Logger")
             self.loggers.append(ConsoleLogger(run))
 
 

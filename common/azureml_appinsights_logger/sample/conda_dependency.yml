@@ -1,0 +1,18 @@
+name: test_logger_env
+dependencies:
+  # The python interpreter version.
+  # Currently Azure ML Workbench only supports 3.5.2 and later.
+  - python=3.7.*
+  - pip
+
+  - pip:
+    - azureml-sdk==1.13.*
+    - dataclasses
+    - python-dotenv
+    - opencensus==0.7.12
+    - opencensus-context==0.1.2
+    - opencensus-ext-azure==1.0.7
+    - opencensus-ext-logging==0.1.0
+    - opencensus-ext-httplib==0.7.4
+    - --extra-index-url https://test.pypi.org/simple/
+    - azureml_appinsights_logger-MLOpsManufacturing==0.0.6

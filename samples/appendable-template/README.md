@@ -172,7 +172,7 @@ Three new classes for pipeline steps are added to `ml_service/pipelines/steps` d
 
 ```bash
 export BUILD_BUILDID=$(uuidgen)
-python ml_service/pipelines/diabetes_regression_build_train_pipeline_appendable.py
+python ml_service/pipelines/diabetes_regression_build_train_pipeline.py
 ```
 
 4. In [Azure ML studio](https://ml.azure.com/), click "Pipelines" menu, click "Pipeline endpoints" tab, click the pipeline endpoint you published, and click "Submit" button.

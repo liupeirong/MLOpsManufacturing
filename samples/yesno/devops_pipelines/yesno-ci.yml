@@ -37,7 +37,7 @@ stages:
       displayName: Azure Key Vault
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
-        keyVaultName: '$(KEYVAULT_NAME)'
+        keyVaultName: kv-common-$(BASE_NAME)
         secretsFilter: aml-storage-account-key,acr-password
         runAsPreJob: false
     - task: AzureCLI@1

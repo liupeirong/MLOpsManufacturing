@@ -1,8 +1,5 @@
 # Pipeline template that defines common runtime environment variables.
 variables:
-  # Azure Subscription
-  - name: KEYVAULT_NAME
-    value: 
   # Azure ML Workspace/Envirnment/Compute Cluster
   - name: AML_ENV_NAME
     value: 

@@ -1,10 +1,10 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json
 {
-  "name": "Image Classification Tensorflow",
-  "context": "../",
-  "dockerFile": "./image/Dockerfile",
+  "name": "Non Python Preprocess",
+  "context": "../../",
+  "dockerFile": ".devcontainer/image/Dockerfile",
   "workspaceMount": "source=${localWorkspaceFolder}/../..,target=/workspace,type=bind,consistency=cached",
-  "workspaceFolder": "/workspace/samples/image-classification-tensorflow",
+  "workspaceFolder": "/workspace/samples/non-python-preprocess",
   // Set *default* container specific settings.json values on container create.
   "settings": {
     "autoDocstring.docstringFormat": "google",

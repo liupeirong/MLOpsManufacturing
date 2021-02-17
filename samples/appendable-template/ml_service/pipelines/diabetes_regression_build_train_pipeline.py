@@ -1,3 +1,7 @@
+# This is a modified version of 
+# https://github.com/microsoft/MLOpsPython/blob/master/ml_service/pipelines/diabetes_regression_build_train_pipeline.py
+# with "Appendable Template" support.
+
 from azureml.pipeline.core.graph import PipelineParameter
 # from azureml.pipeline.steps import PythonScriptStep
 from azureml.pipeline.core import Pipeline, PipelineData

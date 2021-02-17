@@ -1,9 +1,0 @@
-variables:
-# Pipeline template that defines common runtime environment variables.
-  # Key Vault
-  - name: KEYVAULT_NAME
-    value: kv-common-mlopsmanu
-
-# Environment variables for "pipeline_trigger" functions
-  - name: PIPELINE_MONITOR_FUNC_APP_NAME
-    value: func-monitor-$(BASE_NAME)

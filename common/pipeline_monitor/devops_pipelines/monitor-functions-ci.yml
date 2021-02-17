@@ -81,7 +81,7 @@ stages:
       displayName: Azure Key Vault
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
-        keyVaultName: '$(KEYVAULT_NAME)'
+        keyVaultName: kv-common-$(BASE_NAME)
         secretsFilter: app-insights-connection-string
         runAsPreJob: false
 
@@ -89,7 +89,7 @@ stages:
       displayName: Azure Functions settings
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
-        appName: $(PIPELINE_MONITOR_FUNC_APP_NAME)
+        appName: func-monitor-$(BASE_NAME)
         resourceGroupName: $(RESOURCE_GROUP)
         appSettings: |
           [
@@ -124,7 +124,7 @@ stages:
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
         appType: functionAppLinux
-        appName: $(PIPELINE_MONITOR_FUNC_APP_NAME)
+        appName: func-monitor-$(BASE_NAME)
         package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
     # Retry if first deployment failed
@@ -134,6 +134,6 @@ stages:
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
         appType: functionAppLinux
-        appName: $(PIPELINE_MONITOR_FUNC_APP_NAME)
+        appName: func-monitor-$(BASE_NAME)
         package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 

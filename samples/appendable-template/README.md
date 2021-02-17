@@ -188,6 +188,5 @@ python ml_service/pipelines/diabetes_regression_build_train_pipeline.py
 2. Delete the original `diabetes_regression_build_train_pipeline.py` in `ml_service/pipelines` directory of `MLOpsPython` repo.
 
 
-4. Copy three new classes for pipeline steps to `ml_service/pipelines/steps` directory of `MLOpsPython` repo.
 
 5. Follow ["Getting Started with MLOpsPython"](https://github.com/satonaoki/MLOpsPython/blob/master/docs/getting_started.md).

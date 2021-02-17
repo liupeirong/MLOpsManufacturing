@@ -5,7 +5,3 @@ variables:
     value: yesno_pipeline_endpoint
   - name: EXPERIMENT_NAME
     value: yesno-exp
-
-# Environment variables for "pipeline_trigger" functions
-  - name: PIPELINE_TRIGGER_FUNC_APP_NAME
-    value: func-trigger-$(BASE_NAME)

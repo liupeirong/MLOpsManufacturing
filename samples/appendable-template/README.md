@@ -189,4 +189,4 @@ python ml_service/pipelines/diabetes_regression_build_train_pipeline.py
 
 
 
-5. Follow ["Getting Started with MLOpsPython"](https://github.com/satonaoki/MLOpsPython/blob/master/docs/getting_started.md).
+5. Follow ["Getting Started with MLOpsPython"](https://github.com/microsoft/MLOpsPython/blob/master/docs/getting_started.md).

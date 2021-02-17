@@ -21,7 +21,7 @@ class ConsoleLogger(LoggerInterface, ObservabilityAbstract):
         msg = f"Logging Metric for runId={self.run_id}: " \
             f"name={name} value={value} description={description} " \
             f"log_parent={log_parent}"
-        self.log(msg)
+        print(msg)
 
     def log(self, description="", severity=Severity.INFO):
         """

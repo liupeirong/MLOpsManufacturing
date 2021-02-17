@@ -1,175 +1,142 @@
+# Overview
+Logs text and metrics in Azure ML, App Insights, and console with a single call. Also supports tracing in App Insights. 
+
 # How to use
 
-Environment variables:
+## 1. Add dependencies
+
+The following dependencies are required to use this package.
+
+```yaml
+  - python-dotenv==0.15.*
+  - dataclasses==0.8.*
+  - opencensus==0.7.*
+  - opencensus-context==0.1.*
+  - opencensus-ext-azure==1.0.*
+  - opencensus-ext-logging==0.1.*
+  - opencensus-ext-httplib==0.7.*
+```
+ 
+## 2. Configure environment variables to control logger behavior
 
 ```bash
-# Observability related
+# AppInsights logger is enabled if this is a valid connection string
 APPLICATIONINSIGHTS_CONNECTION_STRING = ''
+# Console logger is enabled if set to 'true'
 LOG_TO_CONSOLE = 'false'
-# DEBUG, INFO, WARNING, ERROR, CRITICAL
-LOG_LEVEL = 'DEBUG' 
+# Azure ML logger is enabled when running as an experiment in Azure ML
+# DEBUG, INFO, WARNING, ERROR, CRITICAL, default is WARNING
+LOG_LEVEL = 'WARNING' 
 # Probability 0.0 -> 1.0
 LOG_SAMPLING_RATE = '1.0'
 # Probability 0.0 -> 1.0
 TRACE_SAMPLING_RATE = '1.0'
-# Seconds
+# Frequency in seconds to send metric to App Insights, default is 15
 METRICS_EXPORT_INTERVAL = '15'
+# Whether to log App Insights standard machine metrics, CPU, memory etc.
+ENABLE_STANDARD_METRICS = 'true'
 ```
 
-Client code:
-```python
-from utils.logger.logger_interface import Severity
-from utils.logger.observability import Observability
+## 3. Log messages and metrics
 
-observability = Observability()
+```python
+from azureml_appinsights_logger.observability import Observability
+from azureml_appinsights_logger.logger_interface import Severity
+
+logger = Observability()
 
 def main():
-  observability.log("Hello")
-  observability.log("Something is wrong", severity=Serverity.ERROR)
-  observability.log_metric(name="metric1", value=100)
-  observability.log_metric(name="metric2", value=200, log_parent=True)
+  logger.log("Hello")
+  logger.log("Something is wrong", severity=Serverity.ERROR)
+  logger.log_metric(name="metric1", value=100)
+  logger.log_metric(name="metric2", value=200, log_parent=True)
   try:
     raise Exception("error")
   except Exception as ex:
-    observability.exception(ex)
+    logger.exception(ex)
+  
+  # allow time for appinsights exporter to send metrics every EXPORT_INTERVAL seconds
+  time.sleep(30)
+
 
 if __name__ == '__main__':
-  observability.start_span('train_aml')
+  logger.start_span('train_aml')
   try:
     main()
   except Exception as exception:
-    observability.exception(exception)
+    logger.exception(exception)
     raise exception
   finally:
-    observability.end_span()
+    logger.end_span()
 ```
 
-## Observability Usage
+## 4. Query logs and metrics
 
-To use the logger in your project: 
+### correlation_id
 
-**1. dependencies:**
+The correlation_id is used to map specific Azure ML experiment run with the logs and metrics. 
+Correlation_id is added to telemetry processor as a custom dimension in the following steps:
 
-Observability requires the following dependencies. Make sure you add them into your project before the usage:
-```yaml
-      - opencensus==0.7.7
-      - opencensus-context==0.1.1
-      - opencensus-ext-azure==1.0.2
-```  
-Additionally, AppInsightsLogger needs the connection to AppInsights. Therefore make sure you add the Instrumentation key to the environment variables of the running environment:
-```python
-os.environ["APP_INSIGHTS_CONNECTION_STRING"] = "_____"
-```
+* When logging in an Azure ML experiment run, the correlation_id is the Azure ML *Run Id*
+* When logging outside of an Azure ML experiment run, the correlation_id is the *BUILD_ID* environment variable
+* When logging outside of an Azure ML experiment run, and there's no *BUILD_ID* environment variable, it's set to a unique identifier
+
+### Check metrics in Azure ML
+
+Navigate to [Azure ML portal](https://ml.azure.com/), find the target experiment and run.
+In the *Metrics* tab you can see the logged metrics. 
+![Metrcis](media/metrics.png)
  
+### Check metrics in AppInsights
 
-**2. Import Observability** 
-
-Import Observability object in your script and create an object of Observability type.
-Observability object, checks the context of the 
-[Run](https://docs.microsoft.com/en-us/python/api/azureml-core/azureml.core.run(class)?view=azure-ml-py) object and if
- the context is **Online**, it will add **AzureMlLogger** to the list of loggers.
-If  the Run context is offline, it will only add AppInsightLogger to list of loggers. 
-```python
-from util.logger.observability import Observability
-
-observability = Observability()
-```
-
-**3. Log your message/metrics**
-
-
-**3.1 log metrics:**
-Below is the usage of **log_metric** method.
-```python
-observability.log_metric(name="alpha", value="2.1", description="value of alpha")
-observability.log_metric(name="alpha", value="2.1", description="value of alpha", log_parent=True)
-```
-upon a call to _log_metric_:
-- If the context of Run class is online, metrics will be sent to azure ML.
-- Metrics will be sent to AppInsights as a custom metrics. 
-Please note that metrics exporter sends the metrics at **export_interval** rate (in seconds) to 
-AppInsights based on their last entered value. The default export_interval is 15 seconds.
-
-
-**3.2 log messages:**
-Below is the usage of **log** method.
-
-
-```python
-observability.log(description="value of alpha",severity=Severity.WARNING)
-```
-upon a call to _log_metric_:
-- If the context of Run class is online, logs will be sent to azure ML.
-- Logs will be sent to AppInsights. 
-
-
-
-**4. check the logs/metrics**
-
-Observability is sending the logs/metrics to AzureMl( in online context) and to AppInsights.
-
-**Logs/Metrics Correlation:** 
-
-The correlation_id is used to map specific Run/Build with the logs/metrics being sent  to different resources. 
-Correlation_id will be created and added to telemetry processor in a custom dimension in following steps:
-
-1. If the logging is happening in an **Online Run Context**,
-the correlationId is similar to **RunId**
-
-1. If the logging is happening in an **Offline Run Context**,
-the correlationId is the same as the **buildId** of the Pipeline
-(fetched from EnvVariable)
-
-1. If the logging is happening in Offline Run Context and there
-is no BuildId set to the Environment variable, it will will
-be associated with a **unique identifier**.
-
-**Check Metrics in Azure ML:**
-
-To check the metrics in Azure ML, navigate to [Azure ML portal](https://ml.azure.com/), find your desired experiment
- and in the Metrics tab  you can see the logged metrics. 
- ![Metrcis](media/metrics.png)
- 
-**Check Metrics in  AppInsights:**
-
-To check the metrics in Application Insights, navigate to Azure Portal and your application Insights service. 
-Click on Logs tab and select custom Metrics. You may use the below queries to retrieve your metrics:
-The following lists all the custom metrics:
+Navigate to Application Insights in the Azure portal.
+Click on *Logs* tab and select *Custom Metrics*.
+You may use the below queries to retrieve all metrics:
 ```sql
 customMetrics
 ```
-To narrow your search to the  specific run you can provide the correlation_id:
 
+To narrow your search to the specific run you can provide the correlation_id:
 ```sql
 customMetrics 
 | where customDimensions.correlation_id contains "e56b31b7-513f-4c34-9158-c2e1b28a5aaf" 
 ```
+
 ![metrics-appInsights](media/metrics-appinsights.png)
 
-**Check logs in  Azure ML:**
+### Check logs in Azure ML
 
-Logs will be sent to AzureML only in Online context. 
+When running as an experiment in Azure ML, logs will be sent to Azure ML. 
 You can check the logs by logging in to [Azure ML portal](https://ml.azure.com/) portal. 
-Then click on desired experiment and select the specific step.
-click on logs/output tab and check your logs.
-logs will be sent to Azure ML in the following format: 
+Then click on the target experiment and run. If there are child runs, select the specific child run.
+click on *Outputs + logs* tab and check the logs.
+
+Logs are in the following format: 
 ```text
 timeStamp, [severity], callee_file_name:line_number:description
 ```
+
 ![logs-aml](media/logs-aml.png)
 
-**Check logs in  Application Insights:**
+### Check logs in Application Insights
 
-To check the logs in Application Insights, navigate to Azure Portal and your application Insights service. 
-Click on Logs tab and select traces. You may use the below queries to retrieve your logs:
-The following lists all the custom metrics:
+Navigate to Application Insights in the Azure Portal. Click on *Logs* tab and select *Traces*.
+You may use the below queries to retrieve your logs:
 ```sql
 traces
 ```
-To narrow your search to the specific run you can provide the correlation_id:
 
+To narrow the search to the specific run, provide the correlation_id:
 ```sql
 traces
 | where customDimensions.correlation_id contains "e56b31b7-513f-4c34-9158-c2e1b28a5aaf"
 ```
 ![logs-appInsights](media/logs-appinsights.png)
+
+## Dependency Tracing (spans)
+
+Dependencing tracing is most useful in an ML inferencing application.
+It will trace the incoming request down its dependency services and is only available in App Insights.
+Call `start_span` and `end_span` around the code you want to trace.
+To view the dependency map, navigate to App Insights portal, select *Application map* tab.
+![span-appInsights](media/span-appinsights.png)

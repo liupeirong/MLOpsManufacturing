@@ -8,8 +8,8 @@ import os
 libpath = os.path.join(sys.path[0], '..')
 sys.path.append(libpath)
 
-from azureml_appinsights_logger.observability \
-    import Observability, Severity # noqa E402
+from azureml_appinsights_logger.observability import Observability # noqa E402
+from azureml_appinsights_logger.logger_interface import Severity # noqa E402
 
 
 logger = Observability()

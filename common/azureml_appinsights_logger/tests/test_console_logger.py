@@ -11,18 +11,19 @@ def mock_run(mocker):
     return mocker.MagicMock()
 
 
-def test_log_metric_calls_log(mocker, mock_run):
+def test_log_metric_calls_log(mocker, mock_run, capsys):
     # arrange:
     logger = ConsoleLogger(mock_run)
-    spy = mocker.spy(logger, 'log')
 
     # act:
     logger.log_metric("FOO", "BAZ", "BAR", False)
 
     # assert:
-    spy.assert_called_once_with(
-        "Logging Metric for runId=MYRUN: name=FOO value=BAZ"
-        " description=BAR log_parent=False")
+    captured = capsys.readouterr()
+    assert "MYRUN" in captured.out
+    assert "FOO" in captured.out
+    assert "BAR" in captured.out
+    assert "BAZ" in captured.out
 
 
 def test_logs_nothing_when_severity_lower(mocker, mock_run, capsys):
@@ -50,7 +51,8 @@ def test_logs_when_severity_higher(mocker, mock_run, capsys):
 
     # assert:
     captured = capsys.readouterr()
-    assert captured.out == "FOO - custom dimensions: BAR\n"
+    assert "FOO" in captured.out
+    assert "BAR" in captured.out
 
 
 def test_logs_with_default_severity(mocker, mock_run, capsys):
@@ -67,4 +69,5 @@ def test_logs_with_default_severity(mocker, mock_run, capsys):
     # assert:
     spy.assert_called_once_with("FOO")
     captured = capsys.readouterr()
-    assert captured.out == "FOO - custom dimensions: BAR\n"
+    assert "FOO" in captured.out
+    assert "BAR" in captured.out

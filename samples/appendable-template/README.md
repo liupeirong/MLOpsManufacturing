@@ -168,7 +168,7 @@ Three new classes for pipeline steps are added to `ml_service/pipelines/steps` d
 
 2. Make a copy of [.env.example](local_development/.env.example), place it in the root of this sample, configure the variables, and rename the file to `.env`. You need to configure `SUBSCRIPTION_ID`, `RESOURCE_GROUP` and `WORKSPACE_NAME`.
 
-3. Run `diabetes_regression_build_train_pipeline.py` or `diabetes_regression_build_train_pipeline_appendable.py` from `samples/appendable-template` directory.
+3. Run `diabetes_regression_build_train_pipeline.py` from `samples/appendable-template` directory.
 
 ```bash
 export BUILD_BUILDID=$(uuidgen)

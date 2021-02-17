@@ -49,8 +49,47 @@ For example, this is how variables are managed in this project:
 * application variables such as the training cluster machine spec have their defaults defined in [devops_pipelines/variable-template.yml](../samples/image-classification-tensorflow/devops_pipelines/variables-template.yml) so you don't have to specify all of them in variable groups, however, based on [the order they are defined in the pipeline](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L46), you can overwrite their values in variables-template.yml by specifying them in the variable groups.
 * for the ML variables that need to change for experimentations, define them as [ML pipeline variables](../samples/image-classification-tensorflow/ml_service/pipelines/build_training_pipeline.py#L46). The defaults for ML variables are stored in [ml_model/parameters.json](../samples/image-classification-tensorflow/ml_model/parameters.json) so that they can run in DevOps pipelines [without having to be specified in the pipeline yamls](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L119).
 
-# Example
-Here are variable examples for yesno sample in `samples\yesno` directory
+# Example 1: Image-classification-tensorflow
+
+## Infrastructure variables
+| Variable Name            | Short description                                                                      |
+| ------------------------ | ---------------------------------------------------------------------------------------|
+| ACR_SVC_CONNECTION       | Service Connection to a Docker Container Registry for build agent                      |
+| AML_COMPUTE_CLUSTER_NAME | Azure ML Compute cluster used for training                                             |
+| RESOURCE_GROUP           | Azure Resource Group where the Azure ML Workspace is located                           |
+| WORKSPACE_NAME           | Azure ML Workspace name                                                                |
+| WORKSPACE_SVC_CONNECTION | Service Connection to Azure ML Workspace                                               |
+| ACI_DEPLOYMENT_NAME      | Azure ML deployment name to Azure Container Instance                                   |
+| TEST_IMAGE_CLASSES       | a comma separated list of image classification class names of images for smoke testing |
+| TEST_IMAGE_URLS          | a comma separated URLs of images for smoke testing                                     |
+
+## Application variables
+| Variable Name               | Short description                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------------------|
+| SOURCES_DIR_TRAIN           | The directory containing the scripts for the ML model                                  |
+| EXPERIMENT_NAME             | Azure Machine Learning experiment name                                                 |
+| DATASET_NAME                | Azure Machine Learning input dataset name                                              |
+| RAW_DATAFILE_PATH           | Data directory which you want to train on                                              |
+| PREPROCESSING_PIPELINE_NAME | Azure Machine Learning pipeline name in which data is already processed                |
+| TRAINING_PIPELINE_NAME      | Azure Machine Learning training pipeline name                                          |
+| MODEL_NAME                  | Azure Machine Learning model name                                                      |
+| AML_ENV_NAME                | Azure Machine Learning environment name                                                |
+| AML_COMPUTE_CLUSTER_CPU_SKU | Azure Machine Learning compute cluster cpu sku                                         |
+| AML_COMPUTE_CLUSTER_NAME    | Azure Machine Learning compute cluster name                                            |
+| AML_CLUSTER_PRIORITY        | Azure Machine Learning compute cluster priority                                        |
+| AML_CLUSTER_MIN_NODES       | Azure Machine Learning compute minimum number of nodes                                 |
+| AML_CLUSTER_MAX_NODES       | Azure Machine Learning compute maximum number of nodes                                 |
+
+## Machine Learning variables
+| Variable Name             | Short description                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------|
+| image_size                | The target image size on preprocessing for the source image                            |
+| batch_size                | The number of samples that will be propagated through the network during training      |
+| num_epochs                | How many times the training pass over the entire dataset                               |
+| cancel_if_perform_worse   | Used in evaluation phase for the decision whether the trained model is registered      |
+| tags                      | Tagas used in registered model in Azure Machine Learning                               |
+
+# Example 2: yesno
 
 ## Key vault secrets
 | Variable Name            | Short description                                                                    |
@@ -71,7 +110,6 @@ Here are variable examples for yesno sample in `samples\yesno` directory
 ## Application variables
 | Variable Name            | Short description                                                                    |
 | ------------------------ | -------------------------------------------------------------------------------------|
-| KEYVAULT_NAME            | Key vault name where storage account key, Container registry password are stored     |
 | AML_ENV_NAME             | Azure Machine Learning environment name                                              |
 | AML_COMPUTE_CLUSTER_NAME | Azure Machine Learning compute cluster name                                          |
 | AML_STORAGE_ACCOUNT_NAME | Azure Storage Account name where datastore is located                                |

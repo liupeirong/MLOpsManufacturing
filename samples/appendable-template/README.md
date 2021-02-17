@@ -150,7 +150,7 @@ This sample is based on `diabetes_regression` sample in [`MLOpsPython` repo](htt
 
 This sample contains minimum files required to run `diabetes_regression_build_train_pipeline.py` locally to build an Azure ML pipeline.
 
-`diabetes_regression_build_train_pipeline_appendable.py` is a modified version of original `diabetes_regression_build_train_pipeline.py`. It supports "Appendable Tempalte".
+`diabetes_regression_build_train_pipeline.py` is a modified version of the [original version](https://github.com/microsoft/MLOpsPython/blob/master/ml_service/pipelines/diabetes_regression_build_train_pipeline.py). It is adapted to support the "Appendable Template".
 
 Three new classes for pipeline steps are added to `ml_service/pipelines/steps` directory.
 

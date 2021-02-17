@@ -30,7 +30,7 @@ This folder contains Azure DevOps/Azure Machine Learning pipeline information.
 
 ## Process
 
-This folder contains Engineering Foundamental related information.
+This folder contains Engineering Fondamentals related information.
 
 - [How to manage branches](process/BranchStrategy.md)
 - [Repository Structure information](process/RepositoryStructure.md)

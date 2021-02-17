@@ -14,7 +14,7 @@ When you are assigned a new task:
 1. Create a new feature branch to modify code.
     - Direct commit to main branch is **blocked**
     - The Feature branch should be named as:
-      - task/*task id*/*description*. i.e., task/125/BranchNamingConvention
+      - *your account*/*task id*/*description*. i.e., kenakamu/125/BranchNamingConvention
       - if you use github, then we recommend to use *your account*/*issue id*/*description*
 
 
@@ -24,7 +24,7 @@ When you finished code modification:
     - Clear title, and enough detail in the description 
     - At least **two** reviewer approvals are required
     - Successful build of CI pipeline is required if applicable. 
-    - Link to related task id is required if appricable.
+    - Link to related task id is required if applicable.
     
 1. Keep a high quality, up-to-date main branch.
     - main branch should pass all tests

@@ -150,7 +150,7 @@ This sample is based on `diabetes_regression` sample in [`MLOpsPython` repo](htt
 
 This sample contains minimum files required to run `diabetes_regression_build_train_pipeline.py` locally to build an Azure ML pipeline.
 
-`diabetes_regression_build_train_pipeline.py` is a modified version of the [original version](https://github.com/microsoft/MLOpsPython/blob/master/ml_service/pipelines/diabetes_regression_build_train_pipeline.py). It is adapted to support the "Appendable Template".
+`diabetes_regression_build_train_pipeline.py` in this repo is a modified version of the [original version](https://github.com/microsoft/MLOpsPython/blob/master/ml_service/pipelines/diabetes_regression_build_train_pipeline.py) in `MLOpsPython` repo. It is adapted to support the "Appendable Template".
 
 Three new classes for pipeline steps are added to `ml_service/pipelines/steps` directory.
 
@@ -185,8 +185,6 @@ python ml_service/pipelines/diabetes_regression_build_train_pipeline.py
 
 1. Clone `MLOpsPython` repo
 
-2. Delete the original `diabetes_regression_build_train_pipeline.py` in `ml_service/pipelines` directory of `MLOpsPython` repo.
+2. Overwrite the `ml_service/pipelines` directory of `MLOpsPython` repo with `samples/appendable-template/ml_service/pipelines` directory of this repo (Overwrite `diabetes_regression_build_train_pipeline.py` and copy three `diabetes_regression_build_*_steps.py` files).
 
-
-
-5. Follow ["Getting Started with MLOpsPython"](https://github.com/microsoft/MLOpsPython/blob/master/docs/getting_started.md).
+3. Follow ["Getting Started with MLOpsPython"](https://github.com/microsoft/MLOpsPython/blob/master/docs/getting_started.md).

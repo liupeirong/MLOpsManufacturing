@@ -81,7 +81,7 @@ stages:
       displayName: Azure Functions settings
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
-        appName: $(PIPELINE_TRIGGER_FUNC_APP_NAME)
+        appName: func-trigger-$(BASE_NAME)
         resourceGroupName: $(RESOURCE_GROUP)
         appSettings: |
           [
@@ -121,7 +121,7 @@ stages:
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
         appType: functionAppLinux
-        appName: $(PIPELINE_TRIGGER_FUNC_APP_NAME)
+        appName: func-trigger-$(BASE_NAME)
         package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 
     # Retry if first deployment failed
@@ -131,6 +131,6 @@ stages:
       inputs:
         azureSubscription: '$(AZURE_RM_SVC_CONNECTION)'
         appType: functionAppLinux
-        appName: $(PIPELINE_TRIGGER_FUNC_APP_NAME)
+        appName: func-trigger-$(BASE_NAME)
         package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
 

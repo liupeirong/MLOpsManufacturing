@@ -5,6 +5,10 @@ parameters:
     type: string
     default: common/azureml_appinsights_logger
 
+  - name: pythonVersion
+    type: string
+    default: '3.7'
+
 pr: none
 
 resources:
@@ -22,16 +26,12 @@ stages:
     vmImage: ubuntu-latest
   jobs:
     - job: build_package
-      strategy:
-        matrix:
-          Python37:
-            python.version: '3.7'
 
       steps:
       - task: UsePythonVersion@0
         inputs:
-          versionSpec: '$(python.version)'
-        displayName: 'Use Python $(python.version)'
+          versionSpec: '${{ parameters.pythonVersion }}'
+        displayName: 'Use Python ${{ parameters.pythonVersion }}'
 
       - bash: echo "##vso[task.prependpath]$CONDA/bin"
         displayName: Add conda to PATH
@@ -59,8 +59,8 @@ stages:
           steps:
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: '$(python.version)'
-            displayName: 'Use Python $(python.version)'
+              versionSpec: '${{ parameters.pythonVersion }}'
+            displayName: 'Use Python ${{ parameters.pythonVersion }}'
 
           - bash: echo "##vso[task.prependpath]$CONDA/bin"
             displayName: Add conda to PATH

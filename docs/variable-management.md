@@ -60,8 +60,6 @@ For example, this is how variables are managed in this project:
 | WORKSPACE_NAME           | Azure ML Workspace name                                                                |
 | WORKSPACE_SVC_CONNECTION | Service Connection to Azure ML Workspace                                               |
 | ACI_DEPLOYMENT_NAME      | Azure ML deployment name to Azure Container Instance                                   |
-| TEST_IMAGE_CLASSES       | a comma separated list of image classification class names of images for smoke testing |
-| TEST_IMAGE_URLS          | a comma separated URLs of images for smoke testing                                     |
 
 ## Application variables
 | Variable Name               | Short description                                                                      |
@@ -79,6 +77,8 @@ For example, this is how variables are managed in this project:
 | AML_CLUSTER_PRIORITY        | Azure Machine Learning compute cluster priority                                        |
 | AML_CLUSTER_MIN_NODES       | Azure Machine Learning compute minimum number of nodes                                 |
 | AML_CLUSTER_MAX_NODES       | Azure Machine Learning compute maximum number of nodes                                 |
+| TEST_IMAGE_CLASSES       | a comma separated list of image classification class names of images for smoke testing |
+| TEST_IMAGE_URLS          | a comma separated URLs of images for smoke testing                                     |
 
 ## Machine Learning variables
 | Variable Name             | Short description                                                                      |

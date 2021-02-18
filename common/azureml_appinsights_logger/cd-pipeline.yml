@@ -1,0 +1,46 @@
+# publish azureml_appinsights_logger
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for this package
+    type: string
+    default: common/azureml_appinsights_logger
+
+resources:
+  pipelines:
+  - pipeline: observability_lib_ci
+    source: observability_lib_ci
+    trigger:
+      branches:
+        include:
+        - main
+
+pool:
+  vmImage: ubuntu-latest
+strategy:
+  matrix:
+    Python37:
+      python.version: '3.7'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+  displayName: 'Use Python $(python.version)'
+
+- bash: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: Add conda to PATH
+
+- script: |
+    conda env create --quiet --file conda_dependency.yml
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'conda install dependencies'
+
+- task: TwineAuthenticate@1
+  inputs:
+    artifactFeed: 'MLOpsManufacturing/observability_feed'
+
+- script: |
+    source activate observability_env
+    python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) dist/*.whl
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'publish to ADO feed'

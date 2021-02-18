@@ -7,8 +7,8 @@ parameters:
 
 resources:
   pipelines:
-  - pipeline: observability_lib_ci
-    source: observability_lib_ci
+  - pipeline: observability-lib-ci
+    source: observability-lib-ci
     trigger:
       branches:
         include:

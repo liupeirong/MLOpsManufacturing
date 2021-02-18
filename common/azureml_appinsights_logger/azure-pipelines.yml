@@ -72,10 +72,11 @@ steps:
   displayName: 'build package'
 
 - task: TwineAuthenticate@1
-  displayName: 'Twine Authenticate'
-  inputs:
-    artifactFeed: MLOpsManufacturing/observability_feed
+  inputs:
+    artifactFeed: 'MLOpsManufacturing/observability_feed'
 
 - script: |
     source activate observability_env
-    python -m twine upload -r observability_feed dist/*.whl
+    python -m twine upload -r observability_feed dist/*.whl
+    workingDirectory: ${{ parameters.workingDirectory }}
+    displayName: 'publish to ADO feed'

@@ -1,0 +1,56 @@
+# Lint, test, package, and publish azureml_appinsights_logger
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for this package
+    type: string
+    default: common/azureml_appinsights_logger
+
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - common/azureml_appinsights_logger
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - common/azureml_appinsights_logger
+
+pool:
+  vmImage: ubuntu-default
+strategy:
+  matrix:
+    Python35:
+      python.version: '3.5'
+    Python36:
+      python.version: '3.6'
+    Python37:
+      python.version: '3.7'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+  displayName: 'Use Python $(python.version)'
+
+- script: |
+    conda env create --quiet --file conda_dependency.yml
+    conda activate observability_env
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'conda install dependencies'
+
+- script: |
+    flake8 .
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'lint with flake8'
+
+- script: |
+    pip install pytest pytest-azurepipelines
+    pytest
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'pytest'

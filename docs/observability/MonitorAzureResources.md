@@ -36,7 +36,7 @@ Data Scientists uses Azure Machine Learning to build and publish models. They sh
 
 ## Quality Assurance
 
-Quality Assurance team may run the model performance test build by Data Scientist team by using different set of test dataset. You may want to restrice their access to Azure Machine Learning service so that they cannot see the code to build the model, as they just need to run the model accuracy tests. 
+Quality Assurance team may run the model performance test built by Data Scientist team by using different set of test dataset. You may want to restrict their access to Azure Machine Learning service so that they cannot see the code to build the model, as they just need to run the model accuracy tests. 
 
 - Not see the details on Azure DevOps and Azure ML
 - Run a performance experiment pipeline

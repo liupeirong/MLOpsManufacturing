@@ -11,7 +11,7 @@ The following dependencies are required to use this package.
 
 ```yaml
   - python-dotenv==0.15.*
-  - dataclasses==0.8.*
+  - dataclasses==0.*
   - opencensus==0.7.*
   - opencensus-context==0.1.*
   - opencensus-ext-azure==1.0.*

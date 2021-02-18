@@ -12,6 +12,7 @@ The posts in this folder are intended for sharing technical learnings from some 
 ```bash
 ├─ architecture # Azure ML architecture information 
 ├─ media # contains images for docs
+├─ observability # contains Azure resouces observability information
 ├─ pipeline # contains pipeline information
 ├─ process # enginnering fundamentals 
 ```
@@ -21,6 +22,12 @@ The posts in this folder are intended for sharing technical learnings from some 
 This folder contains Azure Machine Learning Architecture related information.
 
 - [Azure Machine Learning Environment: How to use custom software and depencies in Azure ML pipeline](architecture/AzureMLEnvironment.md)
+
+## Observability
+
+This folder contains Azure Resources observability related information.
+
+- [Observability Option for Azure Resources and Azure Machine Learning](observability/MonitorAzureResources.md)
 
 ## Pipeline
 

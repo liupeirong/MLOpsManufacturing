@@ -54,7 +54,16 @@ steps:
 
 - script: |
     source activate observability_env
-    pip install pytest-azurepipelines
-    pytest
+    pip install pytest-azurepipelines pytest-cov
+    pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'pytest'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '**/coverage.xml'
+    reportDirectory: '**/htmlcov'
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'publish test coverage'
+  

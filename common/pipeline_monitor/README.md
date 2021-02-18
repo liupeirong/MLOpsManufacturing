@@ -13,6 +13,44 @@
 <!-- Overview -->
 # Overview
 When using Azure Machine Learning(AML) Service, there are cases when it is necessary to monitor AML pipeline run results. This sample demonstrates how to retrieve such data and load into Application Insights so that you can create dashbaord from logs.
+1. Receive Machine Learning service Event
+
+    See more details [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-machine-learning?tabs=event-grid-event-schema#microsoftmachinelearningservicesruncompleted-event)
+1. Get run id from Event
+1. Get run details by using run id which contains following information:
+    - runId: ID of this run.
+    - target
+    - status: The run's current status. Same value as that returned from get_status().
+    - startTimeUtc: UTC time of when this run was started, in ISO8601.
+    - endTimeUtc: UTC time of when this run was finished (either Completed or Failed), in ISO8601.
+    This key does not exist if the run is still in progress.
+    - properties: Immutable key-value pairs associated with the run. Default properties include the run's snapshot ID and information about the git repository from which the run was created (if any). Additional properties can be added to a run using add_properties.
+    - inputDatasets: Input datasets associated with the run.
+    - outputDatasets: Output datasets associated with the run.
+    - logFiles
+    - submittedBy
+
+     See more details [here](https://docs.microsoft.com/en-us/python/api/azureml-core/azureml.core.run(class)?view=azure-ml-py#get-details--) 
+1. Get additional information from run context and store them in custom dimensions.
+    ```python
+    custom_dimensions = {
+        "parent_run_id": aml_run.parent.id if aml_run.parent else aml_run.id,
+        "parent_run_name": aml_run.parent.name if aml_run.parent else aml_run.name,
+        "parent_run_number": aml_run.parent.number if aml_run.parent else aml_run.number,
+        "run_number": aml_run.number,
+        "step_id": aml_run.id,
+        "step_name": aml_run.name,
+        "experiment_name": aml_run.experiment.name,
+        "run_url": aml_run.parent.get_portal_url() if aml_run.parent else aml_run.get_portal_url(),
+        "parent_run_status": aml_run.parent.status if aml_run.parent else aml_run.status,
+        "run_status": aml_run.status,
+        "type": "run_detail",
+        "workspace_name": aml_run.experiment.workspace.name
+    }
+    ```
+1. Send them to app insights
+
+The reason why custom dimensions is added is that run details are not enough to query results in real projects.
 
 **What does this sample demonstrate:**
 - How to retrieve AML pipeline run results via Azure Function
@@ -175,7 +213,7 @@ It may take up to five minutes until the log is sent to Application Insights.
 
 1. Select **Logs** in **Monitoring section**.
 
-1. Run Kusto query after replace variable and see the results.
+1. Run Kusto query after replace variable and see the results. This query calculates pipeline step duration by using `startTimeUtc` and `endTimeUtc`. It also projects (selects) experiment name and workspace name from custom dimensions.
 
     ```sh
     let experiment_name = '<your experiment name>';

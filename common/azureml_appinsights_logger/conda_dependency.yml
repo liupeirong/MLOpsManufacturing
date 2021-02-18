@@ -19,4 +19,5 @@ dependencies:
     - pytest-mock==3.5.*
     - flake8==3.8.*
     - flake8_formatter_junit_xml==0.0.*
-    - twine
+    - twine==3.3.*
+    - build==0.2.*

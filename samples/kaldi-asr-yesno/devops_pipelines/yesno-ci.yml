@@ -4,8 +4,8 @@ trigger:
     - main
   paths:
     include:
-    - samples/yesno/ml_model
-    - samples/yesno/ml_service
+    - samples/kaldi-asr-yesno/ml_model
+    - samples/kaldi-asr-yesno/ml_service
 
 variables:
 - template: yesno-variables-template.yml
@@ -29,7 +29,7 @@ stages:
         python -m pip install --upgrade pip setuptools wheel
       displayName: 'Install tools'
     - bash: |
-        pip install -r samples/yesno/devops_pipelines/requirements.txt --use-deprecated=legacy-resolver
+        pip install -r samples/kaldi-asr-yesno/devops_pipelines/requirements.txt --use-deprecated=legacy-resolver
         pip install --upgrade azureml-sdk
       displayName: pip install
     - template: code-quality-template.yml
@@ -51,6 +51,6 @@ stages:
         inlineScript: |
           set -e # fail on error
           # Invoke the Python building and publishing a training pipeline
-          cd samples/yesno
+          cd samples/kaldi-asr-yesno
           python -m ml_service.pipelines.build_pipeline
       displayName: 'Publish Azure Machine Learning Pipeline'

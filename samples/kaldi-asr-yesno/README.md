@@ -41,9 +41,9 @@ The [yesno sample](https://github.com/kaldi-asr/kaldi/tree/master/egs/yesno) use
 
 This sample requires Kaldi ASR Toolkit which is not avaiable for out of box Azure Machine Learning Environments. You can create custom docker images which contains all requires dependencies by yourself nad use it as Azure Machine Learning Environment. See [Create & use software environments in Azure Machine Learning](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-use-environments) for more detail.
 
-This sample contains [Dockerfile](./azureml_environment/Dockerfile) to build a custom base image which contains Kaldi ASR Toolkit and dependencies. Follow the steps below to build the image and push it to container registory. We recommend you to run separate VM which contains docker engine to build the image as it may take 30-60 minutes depending on specs.
+This sample contains [Dockerfile](./environment_setup/azureml_environment/Dockerfile) to build a custom base image which contains Kaldi ASR Toolkit and dependencies. Follow the steps below to build the image and push it to container registory. We recommend you to run separate VM which contains docker engine to build the image as it may take 30-60 minutes depending on specs.
 
-1. Download SRILM from http://www.speech.sri.com/projects/srilm/download.html into same folder as Dockerfile.
+1. Download SRILM from http://www.speech.sri.com/projects/srilm/download.html into environment_setup/azureml_environment folder and rename it to **srilm.tar.gz**.
 
 1. Move to a directory which contains Dockerfile and build the docker image. This may take hours depending on computer spec. The [Dockerfile](./azureml_environment/Dockerfile) expects srilm.tar.gz file exists in the directory.
 
@@ -92,10 +92,10 @@ After you have all Azure resources and input data in Azure Storage, you need to 
 - Azure Machine Learning compute
 - Azure Machine Learning datastore and datasets
 
-1. Change directory to samples/yesno.
+1. Change directory to samples/kaldi-asr-yesno.
 
     ```shell
-    cd samples/yesno
+    cd samples/kaldi-asr-yesno
     ```
 
 1. Run following command to create compute.

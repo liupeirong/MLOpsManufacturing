@@ -25,10 +25,10 @@ pool:
   vmImage: ubuntu-latest
 strategy:
   matrix:
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
+    # Python35:
+    #   python.version: '3.5'
+    # Python36:
+    #   python.version: '3.6'
     Python37:
       python.version: '3.7'
 
@@ -40,7 +40,7 @@ steps:
 
 - script: |
     conda env create --quiet --file conda_dependency.yml
-    conda activate observability_env
+    source activate observability_env
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'conda install dependencies'
 
@@ -50,7 +50,7 @@ steps:
   displayName: 'lint with flake8'
 
 - script: |
-    pip install pytest pytest-azurepipelines
+    pip install pytest-azurepipelines
     pytest
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'pytest'

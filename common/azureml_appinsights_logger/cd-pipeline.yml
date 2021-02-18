@@ -35,6 +35,12 @@ steps:
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'conda install dependencies'
 
+- script: |
+    source activate observability_env
+    python -m build
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'build package'
+
 - task: TwineAuthenticate@1
   inputs:
     artifactFeed: 'MLOpsManufacturing/observability_feed'

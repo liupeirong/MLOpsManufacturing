@@ -62,8 +62,5 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: '**/coverage.xml'
-    reportDirectory: '**/htmlcov'
-  workingDirectory: ${{ parameters.workingDirectory }}
-  displayName: 'publish test coverage'
-  
+    summaryFileLocation: '${{parameters.workingDirectory}}/**/coverage.xml'
+    reportDirectory: '${{parameters.workingDirectory}}/**/htmlcov'

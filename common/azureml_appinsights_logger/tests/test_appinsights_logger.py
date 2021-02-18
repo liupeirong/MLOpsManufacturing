@@ -5,7 +5,18 @@ from opencensus.trace.span import SpanKind
 import pytest
 
 
-def test_get_run_id_should_use_runid_in_online_run(mocker):
+@pytest.fixture
+def mock_exporter(mocker):
+    mocker.patch(
+        'azureml_appinsights_logger.appinsights_logger.AzureExporter')
+    mocker.patch(
+        'azureml_appinsights_logger.appinsights_logger.AzureLogHandler')
+    mocker.patch(
+        'azureml_appinsights_logger.appinsights_logger.metrics_exporter')
+
+
+def test_get_run_id_should_use_runid_in_online_run(
+        mocker, mock_exporter):
     mock_run = mocker.MagicMock()
     mock_run.id = 'FOO'
     mock_run.name = 'FOO1'
@@ -35,7 +46,8 @@ def test_get_run_id_should_use_runid_in_online_run(mocker):
     assert actual_custom_dimensions == expected_custom_dimensions
 
 
-def test_get_run_id_should_use_buildid_in_offline_run(mocker):
+def test_get_run_id_should_use_buildid_in_offline_run(
+        mocker, mock_exporter):
     # arrange
     mock_run = mocker.MagicMock()
     mock_run.id = 'OfflineRun'
@@ -63,7 +75,8 @@ def test_get_run_id_should_use_buildid_in_offline_run(mocker):
     assert actual_custom_dimensions == expected_custom_dimensions
 
 
-def test_get_run_id_should_use_uuid_in_offline_run_when_no_buildid(mocker):
+def test_get_run_id_should_use_uuid_in_offline_run_when_no_buildid(
+        mocker, mock_exporter):
     # arrange
     mock_run = mocker.MagicMock()
     mock_run.id = 'OfflineRun'
@@ -143,7 +156,7 @@ def test_opencensus_init_with_env_vars(mocker):
         expected_log_level)
 
 
-def test_start_span(mocker):
+def test_start_span(mocker, mock_exporter):
     # arrange
     mock_tracer = mocker.patch(
         'azureml_appinsights_logger.appinsights_logger.Tracer', autospec=True)
@@ -168,7 +181,7 @@ test_severity = [Severity.DEBUG, Severity.INFO,
 
 
 @pytest.mark.parametrize("severity", test_severity)
-def test_log_matches_severity(mocker, severity):
+def test_log_matches_severity(mocker, severity, mock_exporter):
     # arrange
     mock_run = mocker.MagicMock()
     mock_run.id = 'OfflineRun'

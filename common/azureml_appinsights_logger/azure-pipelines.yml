@@ -22,7 +22,7 @@ trigger:
     - common/azureml_appinsights_logger
 
 pool:
-  vmImage: ubuntu-default
+  vmImage: ubuntu-latest
 strategy:
   matrix:
     Python35:

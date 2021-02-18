@@ -77,6 +77,6 @@ steps:
 
 - script: |
     source activate observability_env
-    python -m twine upload -r observability_feed dist/*.whl
+    python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) dist/*.whl
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'publish to ADO feed'

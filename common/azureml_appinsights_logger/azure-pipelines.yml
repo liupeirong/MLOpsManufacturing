@@ -54,7 +54,7 @@ steps:
 
 - script: |
     source activate observability_env
-    pip install pytest-azurepipelines pytest-cov
+    pip install pytest-azurepipelines
     pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'pytest'
@@ -64,3 +64,18 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '${{parameters.workingDirectory}}/**/coverage.xml'
     reportDirectory: '${{parameters.workingDirectory}}/**/htmlcov'
+
+- script: |
+    source activate observability_env
+    python -m build
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'build package'
+
+- task: TwineAuthenticate@1
+  displayName: 'Twine Authenticate'
+  inputs:
+    artifactFeed: MLOpsManufacturing/observability_feed
+
+- script: |
+    source activate observability_env
+    python -m twine upload -r observability_feed dist/*.whl

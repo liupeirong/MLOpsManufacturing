@@ -69,5 +69,5 @@ steps:
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'show directory'
 
-- publish: $(System.DefaultWorkingDirectory)/${{ parameters.workingDirectory }}/dist/*.whl
+- publish: $(System.DefaultWorkingDirectory)/${{ parameters.workingDirectory }}/dist
   artifact: observability_lib_whl

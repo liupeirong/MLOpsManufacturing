@@ -1,0 +1,36 @@
+# Pipeline template that defines common runtime environment variables.
+variables:
+  # Azure ML Workspace/Envirnment/Compute Cluster
+  - name: AML_ENV_NAME
+    value: 
+  - name: AML_COMPUTE_CLUSTER_NAME
+    value: 
+  # Azure ML Datastore
+  - name: AML_BLOB_DATASTORE_NAME
+    value: blobdatastore
+  - name: AML_STORAGE_ACCOUNT_NAME
+    value:
+  - name: AML_BLOB_CONTAINER_NAME
+    value: azureml
+  # Azure ML Pipeline/Experiment
+  - name: PIPELINE_ENDPOINT_NAME
+    value: yesno_pipeline_endpoint
+  - name: PIPELINE_NAME
+    value: yesno_pipeline
+  # Azure ML Dataset
+  - name: AML_INPUT_DATASET_NAME
+    value: input
+  - name: AML_WAVES_DATASET_NAME
+    value: waves
+  # Path
+  - name: SOURCES_DIR_TRAIN
+    value: ml_model
+  - name: FIRST_STEP_SCRIPT_PATH
+    value: yesno_aml.py
+  # Azure Container Registry
+  - name: ACR_IMAGE
+    value: 
+  - name: ACR_ADDRESS
+    value: 
+  - name: ACR_USERNAME
+    value: 

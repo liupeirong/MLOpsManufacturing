@@ -42,3 +42,34 @@ stages:
           - script: |
               python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_ci/observability_lib_whl/*
             displayName: 'publish to ADO feed'
+
+- stage: publish_to_testpypi
+  pool:
+    vmImage: ubuntu-latest
+  jobs:
+  - deployment: publish_to_testpypi
+    environment: 'Test_PyPI_Env'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: observability_lib_ci
+            artifact: 'observability_lib_whl'
+            displayName: 'download artifacts'
+
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+            displayName: 'Use Python 3.x'
+
+          - script: |
+              pip install twine
+            displayName: 'install twine'
+
+          - task: TwineAuthenticate@1
+            inputs:
+             pythonUploadServiceConnection: testpypi
+
+          - script: |
+              python -m twine upload -r testpypi --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_ci/observability_lib_whl/*
+            displayName: 'publish to TestPyPI'

@@ -1,4 +1,6 @@
 import logging
+import datetime
+import time
 
 from .env_variables import Env
 from .logger_interface import (
@@ -31,8 +33,18 @@ class ConsoleLogger(LoggerInterface, ObservabilityAbstract):
         :return:
         """
         if self.level <= severity:
-            print(f"{description} - custom dimensions:"
-                  f" {self.custom_dimensions}")
+            time_stamp = datetime.datetime.fromtimestamp(time.time()).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            callee = self.get_callee(
+                2
+            )  # to get the script who is calling Observability
+            print(
+                "{}, [{}], {}:{}".format(
+                    time_stamp, self.severity_map[severity],
+                    callee, description
+                )
+            )
 
     def exception(self, exception: Exception):
         """

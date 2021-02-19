@@ -44,7 +44,6 @@ def test_logs_when_severity_higher(mocker, mock_run, capsys):
     # arrange:
     logger = ConsoleLogger(mock_run)
     logger.level = Severity.WARNING
-    logger.custom_dimensions = 'BAR'
 
     # act:
     logger.log("FOO", Severity.WARNING)
@@ -52,7 +51,6 @@ def test_logs_when_severity_higher(mocker, mock_run, capsys):
     # assert:
     captured = capsys.readouterr()
     assert "FOO" in captured.out
-    assert "BAR" in captured.out
 
 
 def test_logs_with_default_severity(mocker, mock_run, capsys):
@@ -60,7 +58,6 @@ def test_logs_with_default_severity(mocker, mock_run, capsys):
     mocker.patch.object(ConsoleLogger.log, "__defaults__", (Severity.WARNING,))
     logger = ConsoleLogger(mock_run)
     logger.level = Severity.INFO
-    logger.custom_dimensions = 'BAR'
     spy = mocker.spy(logger, 'log')
 
     # act:
@@ -70,4 +67,3 @@ def test_logs_with_default_severity(mocker, mock_run, capsys):
     spy.assert_called_once_with("FOO")
     captured = capsys.readouterr()
     assert "FOO" in captured.out
-    assert "BAR" in captured.out

@@ -39,7 +39,7 @@ class AzureMlLogger(LoggerInterface, ObservabilityAbstract):
         :param severity: log severity
         :return:
         """
-        if self.level <= severity:
+        if self.level <= severity and self.env.log_text_to_aml:
             time_stamp = datetime.datetime.fromtimestamp(time.time()).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )

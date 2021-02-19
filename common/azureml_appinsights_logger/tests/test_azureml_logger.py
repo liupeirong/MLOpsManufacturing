@@ -72,8 +72,18 @@ def test_log_metric_logs_nothing_when_metric_name_empty(mocker):
     mocked_run.parent.log.assert_not_called()
 
 
-def test_log_honors_severity(capsys):
+def test_log_honors_severity(mocker, capsys):
     # arrange
+    mocker.patch(
+        'azureml_appinsights_logger.env_variables.Env.log_to_console',
+        new_callable=mocker.PropertyMock,
+        return_value=False
+    )
+    mocker.patch(
+        'azureml_appinsights_logger.env_variables.Env.log_level',
+        new_callable=mocker.PropertyMock,
+        return_value='WARNING'
+    )
     logger = AzureMlLogger()
 
     # act
@@ -81,9 +91,8 @@ def test_log_honors_severity(capsys):
 
     # assert
     captured = capsys.readouterr()
-    captured_out = captured.out.split(",")
-    assert captured_out[1].endswith("[WARNING]")
-    assert captured_out[2].endswith("FOO\n")
+    assert 'WARNING' in captured.out
+    assert 'FOO' in captured.out
 
     # act - lower severity
     logger.log('FOO')
@@ -105,3 +114,37 @@ def test_except_sets_severity(mocker):
 
     # assert
     mock_log.assert_called_once_with(exception, Severity.CRITICAL)
+
+
+def test_log_nothing_when_log_text_to_aml_is_false(mocker, capsys):
+    # arrange
+    mocker.patch(
+        'azureml_appinsights_logger.env_variables.Env.log_to_console',
+        new_callable=mocker.PropertyMock,
+        return_value=True
+    )
+    logger = AzureMlLogger()
+
+    # act
+    logger.log('FOO', Severity.CRITICAL)
+
+    # assert
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+
+def test_log_when_log_text_to_aml_is_true(mocker, capsys):
+    # arrange
+    mocker.patch(
+        'azureml_appinsights_logger.env_variables.Env.log_to_console',
+        new_callable=mocker.PropertyMock,
+        return_value=False
+    )
+    logger = AzureMlLogger()
+
+    # act
+    logger.log('FOO', Severity.CRITICAL)
+
+    # assert
+    captured = capsys.readouterr()
+    assert 'FOO' in captured.out

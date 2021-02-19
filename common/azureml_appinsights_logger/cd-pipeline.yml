@@ -47,6 +47,7 @@ stages:
 - stage: publish_to_testpypi
   pool:
     vmImage: ubuntu-latest
+  condition: true
   jobs:
   - deployment: publish_to_testpypi
     environment: 'Test_PyPI_Env'

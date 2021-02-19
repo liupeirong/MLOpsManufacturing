@@ -41,9 +41,9 @@ stages:
 
           - script: |
               echo $(Pipeline.Workspace)
-              ls -l $(Pipeline.Workspace)/observability_lib_ci
+              ls -l $(Pipeline.Workspace)/observability_lib_ci/observability_lib_whl
             displayName: 'list'
 
           - script: |
-              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_ci
+              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_ci/observability_lib_whl
             displayName: 'publish to ADO feed'

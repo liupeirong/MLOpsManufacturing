@@ -1,5 +1,6 @@
 # publish azureml_appinsights_logger
 pr: none
+trigger: none
 
 resources:
   pipelines:
@@ -14,7 +15,6 @@ stages:
 - stage: publish_to_ado_feed
   pool:
     vmImage: ubuntu-latest
-  condition: false
   jobs:
   - deployment: publish_to_ado_feed
     environment: 'ADO_Feed_Env'
@@ -46,7 +46,6 @@ stages:
 - stage: publish_to_testpypi
   pool:
     vmImage: ubuntu-latest
-  condition: true
   jobs:
   - deployment: publish_to_testpypi
     environment: 'Test_PyPI_Env'

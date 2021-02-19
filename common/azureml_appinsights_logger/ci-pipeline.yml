@@ -63,5 +63,10 @@ steps:
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'build package'
 
+- script: |
+    ls -l
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'show directory'
+
 - publish: $(System.DefaultWorkingDirectory)/${{ parameters.workingDirectory }}/dist/*.whl
   artifact: observability_lib_whl

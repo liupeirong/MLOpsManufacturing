@@ -1,14 +1,4 @@
 # publish azureml_appinsights_logger
-parameters:
-  - name: workingDirectory
-    displayName: Working Directory for this package
-    type: string
-    default: common/azureml_appinsights_logger
-
-  - name: pythonVersion
-    type: string
-    default: '3.7'
-
 pr: none
 
 resources:
@@ -21,31 +11,20 @@ resources:
         - main
 
 stages:
-- stage: build_package
+- stage: download_build_artifacts
   pool:
     vmImage: ubuntu-latest
   jobs:
-    - job: build_package
+    - job: download_package
 
       steps:
-      - task: UsePythonVersion@0
+      - task: DownloadPipelineArtifact@2
         inputs:
-          versionSpec: '${{ parameters.pythonVersion }}'
-        displayName: 'Use Python ${{ parameters.pythonVersion }}'
-
-      - bash: echo "##vso[task.prependpath]$CONDA/bin"
-        displayName: Add conda to PATH
-
-      - script: |
-          conda env create --quiet --file conda_dependency.yml
-        workingDirectory: ${{ parameters.workingDirectory }}
-        displayName: 'conda install dependencies'
-
-      - script: |
-          source activate observability_env
-          python -m build
-        workingDirectory: ${{ parameters.workingDirectory }}
-        displayName: 'build package'
+          buildType: 'specific'
+          pipelineId: 'observability_lib_ci'
+          specificBuildWithTriggering: true
+          artifactName: 'observability_lib_whl'
+          targetPath: '$(Pipeline.Workspace)'
 
 - stage: publish_to_ado_feed
   pool:
@@ -59,23 +38,21 @@ stages:
           steps:
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: '${{ parameters.pythonVersion }}'
-            displayName: 'Use Python ${{ parameters.pythonVersion }}'
-
-          - bash: echo "##vso[task.prependpath]$CONDA/bin"
-            displayName: Add conda to PATH
+              versionSpec: '3.x'
+            displayName: 'Use Python 3.x'
 
           - script: |
-              conda env create --quiet --file conda_dependency.yml
-            workingDirectory: ${{ parameters.workingDirectory }}
-            displayName: 'conda install dependencies'
+              pip install twine
+            displayName: 'install twine'
 
           - task: TwineAuthenticate@1
             inputs:
               artifactFeed: 'MLOpsManufacturing/observability_feed'
 
           - script: |
-              source activate observability_env
-              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) dist/*.whl
-            workingDirectory: ${{ parameters.workingDirectory }}
+              ls $(Pipeline.Workspace)
+            displayName: 'list folder'
+
+          - script: |
+              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/dist
             displayName: 'publish to ADO feed'

@@ -24,6 +24,8 @@ stages:
           project: '$(System.TeamProjectId)'
           pipelineId: 44
           specificBuildWithTriggering: true
+          buildVersionToDownload: 'latest'
+          branchName: 'main'
           artifactName: 'observability_lib_whl'
           targetPath: '$(Pipeline.Workspace)'
 

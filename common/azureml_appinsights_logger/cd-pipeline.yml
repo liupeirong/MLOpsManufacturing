@@ -1,5 +1,6 @@
 # publish azureml_appinsights_logger
 pr: none
+trigger: none
 
 resources:
   pipelines:
@@ -11,24 +12,6 @@ resources:
         - main
 
 stages:
-- stage: download_build_artifacts
-  pool:
-    vmImage: ubuntu-latest
-  jobs:
-    - job: download_package
-
-      steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'specific'
-          project: '$(System.TeamProjectId)'
-          definition: '44'
-          specificBuildWithTriggering: true
-          buildVersionToDownload: 'latestFromBranch'
-          branchName: 'refs/heads/paige/observability_lib'
-          artifactName: 'observability_lib_whl'
-          targetPath: '$(Pipeline.Workspace)/dist'
-
 - stage: publish_to_ado_feed
   pool:
     vmImage: ubuntu-latest
@@ -57,5 +40,10 @@ stages:
               artifactFeed: 'MLOpsManufacturing/observability_feed'
 
           - script: |
-              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) observability_lib_whl
+              echo $(Pipeline.Workspace)
+              ls -l $(Pipeline.Workspace)
+            displayName: 'list'
+
+          - script: |
+              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_whl
             displayName: 'publish to ADO feed'

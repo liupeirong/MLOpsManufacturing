@@ -39,6 +39,10 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: observability_lib_ci
+            artifact: 'observability_lib_whl'
+            displayName: 'download artifacts'
+
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.x'

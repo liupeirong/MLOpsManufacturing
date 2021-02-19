@@ -63,11 +63,5 @@ steps:
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'build package'
 
-- script: |
-    echo $(System.DefaultWorkingDirectory)/${{ parameters.workingDirectory }}/dist
-    ls -l dist/*
-  workingDirectory: ${{ parameters.workingDirectory }}
-  displayName: 'show directory'
-
-- publish: $(System.DefaultWorkingDirectory)/${{ parameters.workingDirectory }}/dist
+- publish: ${{ parameters.workingDirectory }}/dist
   artifact: observability_lib_whl

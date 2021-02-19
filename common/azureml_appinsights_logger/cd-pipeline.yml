@@ -27,12 +27,7 @@ stages:
           buildVersionToDownload: 'latestFromBranch'
           branchName: 'refs/heads/paige/observability_lib'
           artifactName: 'observability_lib_whl'
-          targetPath: '$(Pipeline.Workspace)'
-
-      - script: |
-          echo $(Pipeline.Workspace)
-          ls $(Pipeline.Workspace)
-        displayName: 'list folder'
+          targetPath: '$(Pipeline.Workspace)/dist'
 
 - stage: publish_to_ado_feed
   pool:
@@ -56,11 +51,6 @@ stages:
           - task: TwineAuthenticate@1
             inputs:
               artifactFeed: 'MLOpsManufacturing/observability_feed'
-
-          - script: |
-              echo $(Pipeline.Workspace)
-              ls $(Pipeline.Workspace)
-            displayName: 'list folder'
 
           - script: |
               python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/dist

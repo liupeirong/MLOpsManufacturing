@@ -29,6 +29,11 @@ stages:
           artifactName: 'observability_lib_whl'
           targetPath: '$(Pipeline.Workspace)'
 
+      - script: |
+          echo $(Pipeline.Workspace)
+          ls $(Pipeline.Workspace)
+        displayName: 'list folder'
+
 - stage: publish_to_ado_feed
   pool:
     vmImage: ubuntu-latest
@@ -53,6 +58,7 @@ stages:
               artifactFeed: 'MLOpsManufacturing/observability_feed'
 
           - script: |
+              echo $(Pipeline.Workspace)
               ls $(Pipeline.Workspace)
             displayName: 'list folder'
 

@@ -1,4 +1,5 @@
 [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-ci?branchName=refs%2Fpull%2F59%2Fmerge)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=44&branchName=refs%2Fpull%2F59%2Fmerge)
+[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-cd?branchName=paige%2Fobservability_lib)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=45&branchName=paige%2Fobservability_lib)
 
 # Overview
 Logs text and metrics in Azure ML, App Insights, and console with a single call. Also supports tracing in App Insights. 

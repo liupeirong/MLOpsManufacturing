@@ -1,6 +1,5 @@
 # publish azureml_appinsights_logger
 pr: none
-trigger: none
 
 resources:
   pipelines:

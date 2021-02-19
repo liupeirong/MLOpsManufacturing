@@ -17,7 +17,7 @@ stages:
     vmImage: ubuntu-latest
   jobs:
   - deployment: publish_to_ado_feed
-    environment: 'publish_to_pypi_env'
+    environment: 'ADO_Feed_Env'
     strategy:
       runOnce:
         deploy:
@@ -41,9 +41,9 @@ stages:
 
           - script: |
               echo $(Pipeline.Workspace)
-              ls -l $(Pipeline.Workspace)
+              ls -l $(Pipeline.Workspace)/observability_lib_ci
             displayName: 'list'
 
           - script: |
-              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_whl
+              python -m twine upload -r observability_feed --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/observability_lib_ci
             displayName: 'publish to ADO feed'

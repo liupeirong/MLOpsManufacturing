@@ -64,7 +64,8 @@ steps:
   displayName: 'build package'
 
 - script: |
-    ls -l
+    echo $(System.DefaultWorkingDirectory)/${{ parameters.workingDirectory }}/dist
+    ls -l dist/*
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'show directory'
 

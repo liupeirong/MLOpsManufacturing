@@ -22,10 +22,10 @@ stages:
         inputs:
           buildType: 'specific'
           project: '$(System.TeamProjectId)'
-          pipelineId: 44
+          definition: '44'
           specificBuildWithTriggering: true
-          buildVersionToDownload: 'latest'
-          branchName: 'main'
+          buildVersionToDownload: 'latestFromBranch'
+          branchName: 'refs/heads/paige/observability_lib'
           artifactName: 'observability_lib_whl'
           targetPath: '$(Pipeline.Workspace)'
 

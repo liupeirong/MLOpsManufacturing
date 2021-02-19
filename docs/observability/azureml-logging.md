@@ -35,7 +35,7 @@ This wiki illustrates logging design for Azure ML.
 ```
 ## Where to see
 ### Azure DevOps
-![azureml-logging-01.png](../media/observability/azureml-logging-01.png)
+![azureml-logging-01.png](../media/observability/azureml-logging-01.PNG)
 
 ### Azure ML
 You can find logs on "Outputs + logs" pane under "Experiments" on Azure ML studio.

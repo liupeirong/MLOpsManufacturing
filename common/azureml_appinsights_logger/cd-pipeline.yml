@@ -21,7 +21,8 @@ stages:
       - task: DownloadPipelineArtifact@2
         inputs:
           buildType: 'specific'
-          pipelineId: 'observability_lib_ci'
+          project: '$(System.TeamProjectId)'
+          pipelineId: 44
           specificBuildWithTriggering: true
           artifactName: 'observability_lib_whl'
           targetPath: '$(Pipeline.Workspace)'

@@ -64,3 +64,12 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '${{parameters.workingDirectory}}/**/coverage.xml'
     reportDirectory: '${{parameters.workingDirectory}}/**/htmlcov'
+ 
+- script: |
+    source activate observability_env
+    python -m build
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'build package'
+
+- publish: ${{ parameters.workingDirectory }}/dist/*.whl
+  artifact: observability_lib_whl

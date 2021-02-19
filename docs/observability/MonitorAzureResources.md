@@ -6,7 +6,7 @@ You can collect logs and visualize Azure Resources for observability. In this do
 
 Even though each team may have different access permission to each Azure resource and observability requirements, you can use same technology to collect logs, then customize the visualization and alerts for each team.
 
-![Observability-choice](../media/observability-choice.png)
+![Observability-choice](../media/observability/observability-choice.png)
 
 Customer may have their own tools for observabilty. In such case, you can consider log integration between Azure Monitor and their system.
 ___

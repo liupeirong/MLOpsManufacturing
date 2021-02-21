@@ -3,4 +3,8 @@ steps:
 - script: |   
    conda env create -f /home/vsts/ci_dependencies.yml -n ci-latest
   workingDirectory: ${{ parameters.workingDirectory }}
-  displayName: 'Dowload pip packages with latest dependency file'
+  displayName: 'Download pip packages with latest dependency file'
+- script: |   
+   pip list
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'Show pip package list'

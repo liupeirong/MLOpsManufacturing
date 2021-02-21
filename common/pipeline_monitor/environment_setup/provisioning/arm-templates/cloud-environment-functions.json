@@ -1,0 +1,169 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+      "parameters": {
+        "baseName": {
+        "type": "string",
+        "maxLength": 10,
+        "minLength": 3,
+        "metadata": {
+          "description": "The base name to use as prefix to create all the resources."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "eastus",
+        "allowedValues": [
+          "eastus",
+          "eastus2",
+          "southcentralus",
+          "southeastasia",
+          "westcentralus",
+          "westeurope",
+          "westus2",
+          "centralus",
+          "japaneast"
+        ]
+      },
+      "func_host_plan_name": {
+        "type": "string",
+        "defaultValue": "[concat('func-monitor-', parameters('baseName'))]"
+      },
+      "func_host_kind": {
+        "type": "string",
+        "defaultValue": "Linux"
+      },
+      "func_host_sku_name": {
+        "type": "string",
+        "defaultValue": "S1"
+      },
+      "func_host_sku_tier": {
+        "type": "string",
+        "defaultValue": "Standard"
+      },
+      "func_monitor_storage_name": {
+        "type": "string",
+        "defaultValue": "[concat('stmonitor', parameters('baseName'))]"
+      },
+      "func_monitor_storage_sku_name": {
+        "type": "string",
+        "defaultValue": "Standard_LRS",
+        "allowedValues": [
+          "Standard_LRS",
+          "Standard_GRS",
+          "Standard_RAGRS"
+        ]
+      },
+      "func_monitor_app_name": {
+        "type": "string",
+        "defaultValue": "[concat('func-monitor-', parameters('baseName'))]"
+      },
+      "func_monitor_app_kind": {
+        "type": "string",
+        "defaultValue": "functionapp,linux"
+      },
+      "func_monitor_worker_runtime": {
+        "type": "string",
+        "defaultValue": "python",
+        "allowedValues": [
+          "node",
+          "dotnet",
+          "java",
+          "python",
+          "powershell"
+        ]
+      },
+      "func_monitor_linux_framework_version": {
+        "type": "string",
+        "defaultValue": "PYTHON|3.8"
+      },
+      "func_monitor_insights_name": {
+        "type": "string",
+        "defaultValue": "[concat('func-monitor-', parameters('baseName'))]"
+      }
+    },
+    "variables": {
+      "funcHostPlanName": "[parameters('func_host_plan_name')]",
+      "funcMonitorStorageName": "[parameters('func_monitor_storage_name')]",
+      "funcMonitorAppName": "[parameters('func_monitor_app_name')]",
+      "funcMonitorInsightsName": "[parameters('func_monitor_insights_name')]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Web/serverfarms",
+        "apiVersion": "2018-02-01",
+        "name": "[variables('funcHostPlanName')]",
+        "location": "[parameters('location')]",
+        "kind": "[parameters('func_host_kind')]",
+        "sku": {
+          "name": "[parameters('func_host_sku_name')]",
+          "tier": "[parameters('func_host_sku_tier')]"
+        },
+        "properties": {
+          "reserved": true
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2019-06-01",
+        "name": "[variables('funcMonitorStorageName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "[parameters('func_monitor_storage_sku_name')]"
+        },
+        "kind": "Storage"
+      },
+      {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2018-11-01",
+        "name": "[variables('funcMonitorAppName')]",
+        "location": "[parameters('location')]",
+        "kind": "[parameters('func_monitor_app_kind')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', variables('funcHostPlanName'))]",
+          "[resourceId('Microsoft.Storage/storageAccounts', variables('funcMonitorStorageName'))]"
+        ],
+        "properties": {
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('funcHostPlanName'))]",
+          "siteConfig": {
+            "appSettings": [
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('funcMonitorStorageName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('funcMonitorStorageName')), '2019-06-01').keys[0].value)]"
+              },
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~3"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(resourceId('microsoft.insights/components', variables('funcMonitorInsightsName')), '2015-05-01').InstrumentationKey]"
+              },
+              {
+                "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                "value": "[reference(resourceId('microsoft.insights/components', variables('funcMonitorInsightsName')), '2015-05-01').ConnectionString]"
+              },
+              {
+                "name": "FUNCTIONS_WORKER_RUNTIME",
+                "value": "[parameters('func_monitor_worker_runtime')]"
+              }
+            ],
+            "linuxFxVersion": "[parameters('func_monitor_linux_framework_version')]"
+          }
+        }
+      },
+      {
+        "type": "microsoft.insights/components",
+        "apiVersion": "2015-05-01",
+        "name": "[variables('funcMonitorInsightsName')]",
+        "location": "[parameters('location')]",
+        "tags": {
+          "[concat('hidden-link:', resourceId('Microsoft.Web/sites', variables('funcMonitorInsightsName')))]": "Resource"
+        },
+        "properties": {
+          "ApplicationId": "[variables('funcMonitorInsightsName')]",
+          "Request_Source": "IbizaWebAppExtensionCreate"
+        }
+      }
+    ]
+  }

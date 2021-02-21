@@ -1,0 +1,7 @@
+variables:
+# Pipeline template that defines common runtime environment variables.
+  # Azure ML Pipeline/Experiment
+  - name: PIPELINE_ENDPOINT_NAME
+    value: yesno_pipeline_endpoint
+  - name: EXPERIMENT_NAME
+    value: yesno-exp

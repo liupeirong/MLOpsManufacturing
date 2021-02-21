@@ -1,0 +1,11 @@
+{
+    "scriptFile": "pipeline_run_monitor.py",
+    "bindings": [
+      {
+        "type": "eventGridTrigger",
+        "name": "event",
+        "direction": "in"
+      }
+    ]
+  }
+  

@@ -1,0 +1,18 @@
+name: yesno_dev
+dependencies:
+  - python=3.8
+  - pip=20.1.1
+  - pip:
+      - azureml-sdk
+      - azureml-dataprep[pandas]
+      - azure-storage-file-datalake
+      - black
+      - flake8
+      - flake8_formatter_junit_xml
+      - isort
+      - pydocstyle
+      - pytest
+      - pytest-cov
+      - pytest-mock
+      - python-dotenv
+      - jsonschema

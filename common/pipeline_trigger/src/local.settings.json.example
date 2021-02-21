@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+
+    "SUBSCRIPTION_ID": "",
+    "RESOURCE_GROUP": "rg-mlopsmanu-shared",
+    "WORKSPACE_NAME": "mlw-mlopsmanu",
+
+    "PIPELINE_ENDPOINT_NAME": "yesno_pipeline_endpoint",
+    "EXPERIMENT_NAME": "yesno-exp"
+  }
+}

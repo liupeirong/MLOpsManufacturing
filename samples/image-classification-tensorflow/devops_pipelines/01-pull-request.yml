@@ -18,6 +18,8 @@ pr:
     include:
     - main
   paths:
+    include:
+    - samples/image-classification-tensorflow
     exclude:
     - samples/image-classification-tensorflow/.env.example
     - README.md

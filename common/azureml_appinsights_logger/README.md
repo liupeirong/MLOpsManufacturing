@@ -27,7 +27,7 @@ The following dependencies are required to use this package.
 ```bash
 # AppInsights logger is enabled if this is a valid connection string
 APPLICATIONINSIGHTS_CONNECTION_STRING = ''
-# Console logger is enabled if set to 'true'
+# Console logger is enabled if set to 'true', default to 'true'
 LOG_TO_CONSOLE = 'false'
 # Azure ML logger is enabled when running as an experiment in Azure ML
 # DEBUG, INFO, WARNING, ERROR, CRITICAL, default is WARNING
@@ -38,7 +38,7 @@ LOG_SAMPLING_RATE = '1.0'
 TRACE_SAMPLING_RATE = '1.0'
 # Frequency in seconds to send metric to App Insights, default is 15
 METRICS_EXPORT_INTERVAL = '15'
-# Whether to log App Insights standard machine metrics, CPU, memory etc.
+# Whether to log App Insights standard machine metrics, CPU, memory etc, default to 'false'
 ENABLE_STANDARD_METRICS = 'true'
 ```
 

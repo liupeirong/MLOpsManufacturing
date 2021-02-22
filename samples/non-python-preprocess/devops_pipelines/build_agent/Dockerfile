@@ -34,9 +34,9 @@ RUN groupadd --gid 1001 vsts && \
 USER vsts
 
 # precreate CI environment for user vsts
-COPY devops_pipelines/build_agent/ci_dependencies.yml /home/vsts/.
+COPY local_development/dev_dependencies.yml /home/vsts/.
 
-RUN conda env create -f /home/vsts/ci_dependencies.yml -n ci
+RUN conda env create -f /home/vsts/dev_dependencies.yml -n ci
 
 # activate environment (Azure Pipelines won't use bash to execute)
 ENV PATH /home/vsts/.conda/envs/ci/bin:$PATH

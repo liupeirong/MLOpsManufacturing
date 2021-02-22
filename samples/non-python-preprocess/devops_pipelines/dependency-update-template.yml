@@ -1,7 +1,7 @@
 # Pipeline template to update the custom docker image with latest dependencies
 steps:
 - script: |   
-   conda env create -f /home/vsts/ci_dependencies.yml -n ci-latest
+   conda env update -f /home/vsts/ci_dependencies.yml
   workingDirectory: ${{ parameters.workingDirectory }}
   displayName: 'Download pip packages with latest dependency file'
 - script: |   

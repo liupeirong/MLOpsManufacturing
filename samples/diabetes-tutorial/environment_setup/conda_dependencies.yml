@@ -1,0 +1,10 @@
+name: my_conda
+dependencies:
+  - pip=20.0.2
+  - python=3.7.6
+  - scikit-learn
+  - pip:
+      - azureml-core
+      - python-dotenv
+      - sklearn-pandas
+      - matplotlib

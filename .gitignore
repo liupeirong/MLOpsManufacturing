@@ -116,6 +116,7 @@ data/
 *.txt
 .azureml/
 azureml-models/
+config.json
 
 # devcontainer
 dockergid

@@ -1,0 +1,67 @@
+# Lint, test, and package azureml_appinsights_logger
+parameters:
+  - name: workingDirectory
+    displayName: Working Directory for this package
+    type: string
+    default: common/azureml_appinsights_logger
+
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - common/azureml_appinsights_logger
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - common/azureml_appinsights_logger
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+  displayName: 'Use Python 3.x'
+
+- bash: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: Add conda to PATH
+
+- script: |
+    conda env create --quiet --file conda_dependency.yml
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'conda install dependencies'
+
+- script: |
+    source activate observability_env
+    flake8 .
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'lint with flake8'
+
+- script: |
+    source activate observability_env
+    pip install pytest-azurepipelines
+    pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'pytest'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '${{parameters.workingDirectory}}/**/coverage.xml'
+    reportDirectory: '${{parameters.workingDirectory}}/**/htmlcov'
+ 
+- script: |
+    source activate observability_env
+    python -m build
+  workingDirectory: ${{ parameters.workingDirectory }}
+  displayName: 'build package'
+
+- publish: ${{ parameters.workingDirectory }}/dist
+  artifact: observability_lib_whl

@@ -1,4 +1,5 @@
-This wiki page illustrates the overview of how to design notification.
+# Notification - Azure DevOps, Azure Machine Learning, and Cost Management
+This document illustrates the overview of how to design notification.
 
 # Notification
 |Who|What|Where|How|Related document|

@@ -1,4 +1,5 @@
-This wiki illustrates logging design for Azure ML.
+# Azure Machine Learning Logging
+This document illustrates logging design for Azure ML.
 
 - [Overview](#anchor0)
 - [Logging information](#anchor1)

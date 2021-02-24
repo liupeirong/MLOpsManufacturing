@@ -1,5 +1,7 @@
 
 # Azure Resources Access Control
+You might want to grant different permissions to each persona. This document illustrates how to configure access control for Azure resources.
+
 - [Access Control - Azure DevOps](#anchor0)
     - Organization-level permissions
     - Project-level permissions
@@ -95,7 +97,7 @@ Once you add an AAD group as contributor, people in the group can do almost anyt
 
 Creating custom role is another option to achieve the requirement in order to reduce permissions for QA team as much as possible.
 
-Please refer to [the wiki - custom role](/Spikes/Security/Custom-Role) to know more details.
+Please refer to [the document - Create custom role](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-assign-roles#create-custom-role) to know more details.
 
 <a id="anchor2"></a>
 ## <a href="#anchor2">Access Control - Azure Storage Account</a>
@@ -129,7 +131,6 @@ Note: The timing of setting above should be before creating other folders.
 
 <a id="anchor3"></a>
 ## <a href="#anchor3">Access Control - Azure Dashboard</a>
-#728
 ### Groups using Azure Active Directory
 Create four groups using Azure Active Directory.
 |Group Name|Attribute|

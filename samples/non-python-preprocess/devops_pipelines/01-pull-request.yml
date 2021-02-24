@@ -39,6 +39,9 @@ variables:
 - group: nonpython-preprocess-aml-vg
 
 steps:
+- template: dependency-update-template.yml
+  parameters:
+    workingDirectory: ${{ parameters.workingDirectory }}
 - template: code-quality-template.yml
   parameters:
     workingDirectory: ${{ parameters.workingDirectory }}

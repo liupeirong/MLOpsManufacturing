@@ -2,7 +2,7 @@ import pytest
 import runpy
 from pytest_mock import MockFixture
 from unittest.mock import ANY
-from ml_service.tests.pipelines.test_fixtures import environment_vars, aml_pipeline_mocks  # NOQA: F401, E501
+from ml_service.tests.pipelines.test_aml_mock_fixtures_env import environment_vars, aml_pipeline_mocks  # NOQA: F401, E501
 from ml_service.util.env_variables import Env
 from azureml.pipeline.core import Pipeline
 from azureml.pipeline.steps import PythonScriptStep

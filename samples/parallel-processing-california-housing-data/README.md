@@ -112,6 +112,11 @@ After you have all Azure resources and input data in Azure Storage, you need to 
     |PREPARATION_STEP_SCRIPT_PATH| python script path for the preparation step|
     |EXTRACTION_STEP_SCRIPT_PATH| python script path for the extraction step|
     |TRAINING_STEP_SCRIPT_PATH| python script path for the training step|
+    |ERROR_THRESHOLD|The number of record failures for TabularDataset and file failures for FileDataset that should be ignored during processing. If the error count goes above this value, then the job will be aborted.|
+    |NODE_COUNT|Number of nodes in the compute target used for running the Parallel Run|
+    |MINI_BATCH_SIZE|size of data can be processed in one run() call|
+    |PROCESS_COUNT_PER_NODE|Number of processes executed on each node. Optional, default value is number of cores on node|
+    |RUN_INVOCATION_TIMEOUT|Timeout in seconds for each invocation of the run() method|
     
 
 1. Use the VSCode [dev container](./.devcontainer), or install Anaconda or Mini Conda and create a Conda envrionment by running [local_install_requirements.sh](./local_development/local_install_requirements.sh).

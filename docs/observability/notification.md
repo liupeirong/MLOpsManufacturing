@@ -29,7 +29,7 @@ You can see the current **team or project level** notifications setting from Pro
 
 ### Add new notifications
 1. Click "New subscription" and select a templete
-![Azure-Devops-monitoring-and-notification-04.png](../media/observability/Azure-Devops-monitoring-and-notification-04.png)
+![Azure-Devops-monitoring-and-notification-04.PNG](../media/observability/Azure-Devops-monitoring-and-notification-04.PNG)
 
 2. Input the detail and click "Finish"
 

@@ -1,33 +1,42 @@
 
 # Azure Resources Access Control
+
 You might want to grant different permissions to each persona. This document illustrates how to configure access control for Azure resources.
 
-- [Access Control - Azure DevOps](#anchor0)
-    - Organization-level permissions
-    - Project-level permissions
-    - How to restrict access to ADO for QA team?
-- [Access Control - Azure ML](#anchor1)
-    - Groups using Azure Active Directory
-    - What QA team should NOT do?
-    - What QA team should do?
-    - How to restrict access to AML for QA team?
-    - How to create custom role to restrict specific actions? (not this time but another option)
-- [Access Control - Azure Storage Account](#anchor2)
-    - Groups using Azure Active Directory
-    - How to give QA team access to only test data folder?
-- [Access Control - Azure Dashboard](#anchor3)
-    - Groups using Azure Active Directory
-    - How to give QA team access to only Dashboard?
-- [Access Control - Azure Key Vault](#anchor4)
+- [Azure Resources Access Control](#azure-resources-access-control)
+  - [<a href="#anchor0">Access Control - Azure DevOps</a>](#access-control---azure-devops)
+  - [Organization-level permissions](#organization-level-permissions)
+    - [Current setting](#current-setting)
+  - [Project-level permissions](#project-level-permissions)
+    - [Current setting](#current-setting-1)
+  - [How to restrict access to ADO for QA team?](#how-to-restrict-access-to-ado-for-qa-team)
+  - [<a href="#anchor1">Access Control - Azure ML</a>](#access-control---azure-ml)
+    - [Groups using Azure Active Directory](#groups-using-azure-active-directory)
+  - [What QA team should NOT do?](#what-qa-team-should-not-do)
+  - [What QA team should do?](#what-qa-team-should-do)
+  - [How to restrict access to AML for QA team?](#how-to-restrict-access-to-aml-for-qa-team)
+  - [How to create custom role to restrict specific actions?](#how-to-create-custom-role-to-restrict-specific-actions)
+  - [<a href="#anchor2">Access Control - Azure Storage Account</a>](#access-control---azure-storage-account)
+    - [Groups using Azure Active Directory](#groups-using-azure-active-directory-1)
+    - [How to give QA team access to only test data folder?](#how-to-give-qa-team-access-to-only-test-data-folder)
+  - [<a href="#anchor3">Access Control - Azure Dashboard</a>](#access-control---azure-dashboard)
+    - [Groups using Azure Active Directory](#groups-using-azure-active-directory-2)
+  - [How to give QA team access to only Dashboard?](#how-to-give-qa-team-access-to-only-dashboard)
+  - [<a href="#anchor4">Access Control - Azure Key Vault</a>](#access-control---azure-key-vault)
 
 <a id="anchor0"></a>
+
 ## <a href="#anchor0">Access Control - Azure DevOps</a>
+
 ## Organization-level permissions
+
 - Only Dev members
 - No QA members
 
 ### Current setting
-Reference: 
+
+Reference:
+
 - [Collection-level groups](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#collection-level-groups)
 - [Organization-level permissions](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#organization-level-permissions)
 
@@ -37,11 +46,14 @@ Reference:
 |Project Collection Valid Users|Has permissions to access team projects and view information in the collection.|Contains all users and groups that have been added anywhere within the collection. You cannot modify the membership of this group.|**Data Scientist**|
 
 ## Project-level permissions
+
 - Dev members
 - No QA members
 
 ### Current setting
+
 Reference:
+
 - [Project-level groups](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#project-level-groups)
 - [Project-level permissions](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page#project-level-permissions)
 
@@ -52,12 +64,15 @@ Reference:
 |{team name}|Has permissions to contribute fully to the project code base and work item tracking. The default Team group is created when you create a project, and by default is added to the Contributors group for the project. Any new teams you create will also have a group created for them and added to the Contributors group.|Add members of the team to this group.|**Data Scientist**|
 
 ## How to restrict access to ADO for QA team?
+
 Simply Platform Admin should not give organization-level and project-level ADO permissions to QA team members.
 
-
 <a id="anchor1"></a>
+
 ## <a href="#anchor1">Access Control - Azure ML</a>
+
 ### Groups using Azure Active Directory
+
 Create two groups using Azure Active Directory.
 |Group Name|Attribute|
 |-|-|
@@ -75,24 +90,28 @@ Each group has the following access:
 |Storage Account for stage|Contributor|**Reader**|
 
 ## What QA team should NOT do?
+
 - Not see the details on Azure DevOps and Azure ML
 
 ## What QA team should do?
+
 - Run a performance experiment pipeline
 - Add/Delete test data to/from folders "test-pcm", "test-meta"
 - See experiment results on Azure Dashboard
 - Receive notifications when experiment is started and ended via email/Microsoft Teams/Slack.
+
 ## How to restrict access to AML for QA team?
--	Access only specific folders for test data in storage
--	Access Azure Dashboard to see performance experiment results
--	Use managed service identity and Azure Function ([HTTP trigger](../../common/pipeline_trigger/README.md)) to run a performance experiment pipeline with key and test config file path
+
+- Access only specific folders for test data in storage
+- Access Azure Dashboard to see performance experiment results
+- Use managed service identity and Azure Function ([HTTP trigger](../../common/pipeline_trigger/README.md)) to run a performance experiment pipeline with key and test config file path
 
 *QA team cannot access to even Azure Function resource.
 
 *Azure Function can access to AML with managed service identity.
 
-
 ## How to create custom role to restrict specific actions?
+
 Once you add an AAD group as contributor, people in the group can do almost anything for the resource.
 
 Creating custom role is another option to achieve the requirement in order to reduce permissions for QA team as much as possible.
@@ -100,9 +119,11 @@ Creating custom role is another option to achieve the requirement in order to re
 Please refer to [the document - Create custom role](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-assign-roles#create-custom-role) to know more details.
 
 <a id="anchor2"></a>
+
 ## <a href="#anchor2">Access Control - Azure Storage Account</a>
 
 ### Groups using Azure Active Directory
+
 Create four groups using Azure Active Directory.
 |Group Name|Attribute|
 |-|-|
@@ -116,6 +137,7 @@ Each group has the following access:
 |{team name} for QA members|〇|×|
 
 ### How to give QA team access to only test data folder?
+
 Each setting for QA team is below:
 
 |Resource|Role|
@@ -128,10 +150,12 @@ Each setting for QA team is below:
 
 Note: The timing of setting above should be before creating other folders.
 
-
 <a id="anchor3"></a>
+
 ## <a href="#anchor3">Access Control - Azure Dashboard</a>
+
 ### Groups using Azure Active Directory
+
 Create four groups using Azure Active Directory.
 |Group Name|Attribute|
 |-|-|
@@ -140,20 +164,24 @@ Create four groups using Azure Active Directory.
 
 Each group has the following access:
 |Resource Name|{team name} for Dev members|{team name} for QA members|
-|-|-|-|-|-|
+|-|-|-|
 |Subscription|Contributor|**No Access**|
 |Resource Group|Contributor|**No Access**|
 |Dashboard for Dev team|Contributor|**No Access**|
 |Dashboard for QA team (experiment result)|Contributor|**Reader**|
 
 ## How to give QA team access to only Dashboard?
+
 What QA team should do:
+
 - See experiment results on Dashboard
 
 QA team does not need to have access to subscription and resource groups, need to access only dashboard to see experiment results.
 
 <a id="anchor4"></a>
+
 ## <a href="#anchor4">Access Control - Azure Key Vault</a>
+
 You can check who can access to key vault on "Access Policies" pane.
 
 - Azure DevOps account (Check Azure AD account)

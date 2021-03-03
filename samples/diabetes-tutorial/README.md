@@ -1,17 +1,19 @@
 # Overview
 
-This is a sample that guides you through the basic works to use your own machine learning code with Azure ML Pipeline.
+This sample guides you how to transform your existing machine learning code to work efficiently with Azure Machine Learning Service Pipelines.
 
-## Background
+## Introduction
 
-Here is a virtual scenario. You have a simple diabetes linear regression code using Scikit-learn.
+Our fictive scenario will use a simple diabetes linear regression code based on Scikit-learn.
 
 > Linear Regression Example: https://scikit-learn.org/stable/auto_examples/linear_model/plot_ols.html
 
-- How can I use it with Azure ML?
-- What should we do for MLOPS?
+Questions:
 
-We will guide you in a very basic way here.
+- What needs to be done to run the regression on Azure Machine Learning?
+- What do we need to do to leverage MLOps features of Azure Machine Learning?
+
+We will guide you step by step through both answers to these questions. 
 
 # Getting Started
 
@@ -22,7 +24,7 @@ We will guide you in a very basic way here.
 
 ## Step 0. Setup dev environment
 
-- git clone this repo
+- clone this repo
 - Open vscode in dev container
   
   > The first run can take a long time because it builds docker images.
@@ -73,7 +75,7 @@ We will guide you in a very basic way here.
   $ python -m environment_setup.provisioning.create_compute
   ```
 
-- Let's go to your Azure ML workspace!
+- Let's go check out your Azure ML workspace!
 
   Go to https://ml.azure.com/ or you can access through https://portal.azure.com.
 
@@ -94,16 +96,16 @@ Mean squared error:  4150.680189329983
 Coefficient of determination:  0.19057346847560164
 ```
 
-When finished, you can see the metrics and have *sklearn_regression_model.pkl* file and *fig.png* graph image in *outputs* folder.
+When finished, you should see the metrics, the *sklearn_regression_model.pkl* file and *fig.png* graph image in the *outputs* folder.
 
 
 ## Step 2. Split your train.py into steps
 
-From now on, the long journey to make your code the MLOps begins. The first is to split your code. Your code works well with single file, but you need to fragment it for MLOps implementation.
+From now on, the long journey to make your code ready for MLOps begins. The first action is to split your code. Your code works well on your dev environment with single file, but you should fragment it for an optimal MLOps implementation.
 
 ![split your code](docs/image-20210219000056606.png)
 
-It's up to you to decide how many to split! But now... let's break down into 3 steps: Data Preparation, Train, Register Model. The results of this are in the *src/steps* folder.
+It's up to you to decide how detailed you want to split! But for now... let's break down into 3 steps: Data Preparation, Train, Register Model. The resulting scripts are already preprepared in the *src/steps* folder.
 
 - *src/steps/01_prep_data.py*
 
@@ -117,9 +119,9 @@ It's up to you to decide how many to split! But now... let's break down into 3 s
 
   > Register the model file with Azure ML workspace.
 
-> Most works are to handle parameters with *argparse* and leave logs via *Run.get_context()*. Of course, there's a lot of work to do to use advanced features!
+> The most effort for the adaption is to handle parameters with *argparse* and do logging via *Run.get_context()*. Of course, there is additional work to do if you want to use advanced features!
 
-Then, You can test if the codes above are running well in your local environment.
+So, now you can test if the scripts are running in your local environment.
 
 ```bash
 $ python -m src.steps.01_prep_data \
@@ -136,17 +138,17 @@ $ python -m src.steps.03_reg_model \
     --model_name=model.pkl
 ```
 
-Once the csv files, graph file, and pkl file are all created in the outputs folder, you can see that they ran normally!
+If the csv files, graph file, and pkl file are all created in the outputs folder, everything completed successfully!
 
 ## Step 3. Run steps with AML
 
-Now let's make sure this code works in Azure. Before set up the MLOps pipeline, it needs to individually test whether if your code works normally in Azure ML.
+Now let's make sure this code works in Azure. Before setting up the MLOps pipeline, we can test if your code executes within Azure ML.
 
 ```bash
 $ python -m ml_service.run_local_compute
 ```
 
-The above is to ensure that only the *src/steps/01_prep_data.py* file is executed through the AML Workspace. This can be done if you want to run a single python file in AML, without the need for MLOps Pipeline.
+The above command will execute the *src/steps/01_prep_data.py* file through the AML Workspace. This can be used if you just want to run a single python file in AML, where you don't need a MLOps pipeline.
 
 ```python
 ...
@@ -161,17 +163,17 @@ config = ScriptRunConfig(source_directory='src/steps',
 ...
 ```
 
-This code is also set to `compute_target='local'`  so the compute uses your local computer.
+This code sets `compute_target='local'`  so the compute uses your local computer.
 
 > The result files such as *'outputs/diabetes_X2.csv* and *'outputs/diabetes_y2.csv* will remain in the */tmp/azuremk_runs* folder of your local computer.
 
 > If you set `compute_target='cpu-cluster'`, it will run on the compute cluster you created above. The first run requires time to be provisioned. (You will be charged as much as the running time!)
 
-This process can step by step to check if your code works well on Azure ML.
+This process can be repeated for each step script, in order to check if it works well together with Azure ML.
 
-## Step 4. Make MLOps pipeline
+## Step 4. Creating the MLOps pipeline
 
-Now it's time to create a pipeline. Let's look around the code. */ml_service/pipelines/build_pipeline.py* is a script that builds the AML pipeline.
+Now it's time to create a pipeline. Let's have a look at the code */ml_service/pipelines/build_pipeline.py*. This script builds the AML pipeline.
 
 ```python
 ...
@@ -196,7 +198,7 @@ The above code defines the environment in which each pipeline step runs. This is
 ...
 ```
 
-The above code creates *PipelineData* that transfers data between Pipeline Steps. And *PipelineParameter* can give variables whenever you run the pipeline.
+The above code creates *PipelineData* objects which help transfer the input and result data between Pipeline Steps. And *PipelineParameter* can pass additional parameters whenever you run the pipeline.
 
 
 
@@ -224,7 +226,7 @@ step2 = PythonScriptStep(
 ...
 ```
 
-> Isn't it similar to the ml_service/run_local_compute.py file above? *PipelineStep* can be connected to each step, but *ScriptRunConfig* can only run a single file. In addition, *PipelineStep* cannot use `compute_targert='local'`, but *ScriptRunConfig* is possible. 
+> Isn't it similar to the ml_service/run_local_compute.py file above? *PipelineStep* can be connected to each step, but *ScriptRunConfig* can only run a single file. In addition, *PipelineStep* cannot use `compute_targert='local'`, this is only possible to use in *ScriptRunConfig*. 
 >
 > Therefore, going to *PipelineStep* after working enough with *ScriptRunConfig* in your local environment saves time and money!
 
@@ -238,7 +240,7 @@ Because each step is connected by *inputs* and *outputs*, all steps are automati
 ...
 ```
 
-Publish your pipeline and add it to *PipelineEndpoint* and publish it.
+Publish your pipeline and add a *PipelineEndpoint* to it.
 
 ```python
 ...
@@ -269,17 +271,17 @@ Go to the Azure ML workspace portal to see that the pipeline has been created.
 
 ## Step 5. Run MLOps pipeline
 
-Lastly, let's run the published pipeline.
+Last but not least, let's run the published pipeline.
 
 ```bash
 $ python -m ml_service.pipelines.run_pipeline --test_size=0.2
 ```
 
-You can give the parameters when you run the pipeline. When you execute the code above, you can get a link to the Azure ML Workspace and go to the link to see the progress of the pipeline.
+You can pass parameters when you run the pipeline. When you execute the code above, you get a link to the Azure ML Workspace and go to the link to see the progress of the pipeline.
 
 > Provisioning might take some time if the cpu-cluster is not provisioned!
 
-If it runs well, you can see that each step is running normally as follows:
+You can see that each step is running:
 
 ![pipeline success](docs/image-20210219011557547.png)
 
@@ -294,7 +296,7 @@ You can get the latest model.
 
 # Conclusion
 
-I introduced the process of moving your existing code to Azure ML Pipeline. This is just the beginning and the most basic step to realize the AML Pipeline.
+We introduced a basic process pattern on how to move your existing Machine Learning code to be executed by an Azure ML Pipeline.
 Now it's time to make your own MLOps according to your needs. Good luck!
 
 

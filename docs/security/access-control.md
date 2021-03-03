@@ -133,8 +133,8 @@ Create four groups using Azure Active Directory.
 Each group has the following access:
 |Group Name|Data - Test Data|Data - all others|
 |-|-|-|
-|{team name} for Dev members|〇|〇|
-|{team name} for QA members|〇|×|
+|{team name} for Dev members|:white_check_mark:|:white_check_mark:|
+|{team name} for QA members|:white_check_mark:|:x:|
 
 ### How to give QA team access to only test data folder?
 

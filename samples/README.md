@@ -30,12 +30,12 @@ principles which are covered
 
 |Sample|CI/CD (AML pipeline)|CI/CD (ML model)|Use of AML pipelines|Model Training|
 |----|----|----|----|----|
-|[Appendable AML Pipeline Step Template](./appendable-template)|no|no|yes|yes|
-|[Image classification with Tensorflow and Keras](./image-classification-tensorflow)|yes|yes|yes|yes|
-|[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)|yes|no|yes|no|
-|[Run non-Python code in AML Pipelines](./non-python-preprocess)|yes|no|yes|no|
-|[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|no|no|yes|yes|
-|[Wrapping existing ML scripts for AML Pipelines Tutorial](./parallel-processing-california-housing-data)|no|no|yes|yes|
+|[Appendable AML Pipeline Step Template](./appendable-template)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
+|[Image classification with Tensorflow and Keras](./image-classification-tensorflow)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)|:heavy_check_mark:|:x:|:heavy_check_mark:|:x:|
+|[Run non-Python code in AML Pipelines](./non-python-preprocess)|:heavy_check_mark:|:x:|:heavy_check_mark:|:x:|
+|[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
+|[Wrapping existing ML scripts for AML Pipelines Tutorial](./parallel-processing-california-housing-data)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
 
 ## Relation to Azure Well Architected Framework Principals
 

@@ -1,2 +1,3 @@
-samples/yesno/src/**    eol=lf
-samples/yesno/local_development/local_install_requirements.sh   eol=lf
+* text=auto
+
+*.sh text eol=lf

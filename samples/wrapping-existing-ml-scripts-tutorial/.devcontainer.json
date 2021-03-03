@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.155.1/containers/azure-machine-learning-python-3
 { 
 	"name": "Azure Machine Learning", 
-	"dockerFile": "Dockerfile", 
+	"dockerFile": ".devcontainer/Dockerfile", 
 
 	// This line allows you to use Docker runconfigs if you set "sharedVolumes": false
 	"mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],

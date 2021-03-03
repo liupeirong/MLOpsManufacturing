@@ -2,6 +2,17 @@
 
 This sample guides you how to transform your existing machine learning code to work efficiently with Azure Machine Learning Service Pipelines.
 
+__What does this sample demonstrate__:
+
+* Setup dev environment for Azure ML
+* Run simple Machine Learning code with Azure ML
+* Create simple MLOps pipeline
+
+__What doesn't this sample demonstrate__:
+
+* Integration with stored data by Dataset, Datastore
+* ML model deployment
+
 ## Introduction
 
 Our fictive scenario will use a simple diabetes linear regression code based on Scikit-learn.
@@ -25,14 +36,27 @@ We will guide you step by step through both answers to these questions.
 ## Step 0. Setup dev environment
 
 - clone this repo
-- Open vscode in dev container
+- Open vscode in [dev container](https://code.visualstudio.com/docs/remote/containers-tutorial)
+  ```bash
+  $ cd samples\wrapping-existing-ml-scripts-tutorial
+  $ code .
+  ```
+  Then choose _Reopen in Container_
   
+  ![Reopen in container](docs/image-202103041111.png)
+
+  or _Open Folder in a Container_
+  
+  ![Open folder in a container](docs/image-202103042222.png)
+
   > The first run can take a long time because it builds docker images.
 
   Then open the terminal and do the following:
 
-- Install the Azure CLI - [read more...](https://docs.microsoft.com/cli/azure/install-azure-cli-linux?pivots=apt)
-  
+- [Optional] Install the Azure CLI - [read more...](https://docs.microsoft.com/cli/azure/install-azure-cli-linux?pivots=apt)
+
+  > This tool is already installed within dev container.
+
   ```bash
   $ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
   ```

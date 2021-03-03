@@ -7,10 +7,9 @@ in the cloud or influencing on the edge, or how certain technologies are used su
 for unit testing or leveraging observability library to send logs and metrics to different destinations.
 
 Each sample has a README that details what it's meant to demonstrate.
-Below we provide some classifications to easily identify the samples after four aspects:
+Below we provide some classifications to easily identify the samples after three aspects:
 
 - Relation to tools from the [common](../common) section of this repo
-- Relation to [best practice docs](..docs) section of this repo
 - [MLOps / DevOps for Data Science](https://docs.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment)
 aspects which are covered
 - [Azure Well Architectured Framework](https://docs.microsoft.com/en-us/azure/architecture/framework/)
@@ -26,17 +25,6 @@ principles which are covered
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|compatible (not implemented yet)|prerequisite|compatible|showcasing|
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./parallel-processing-california-housing-data)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
-
-## Relation to Docs section
-
-|Sample|Architecture|Observability|Pipeline|Process|Security|
-|----|----|----|----|----|----|
-|[Appendable AML Pipeline Step Template](./appendable-template)||||||
-|[Image classification with Tensorflow and Keras](./image-classification-tensorflow)||||||
-|[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)||||||
-|[Run non-Python code in AML Pipelines](./non-python-preprocess)||||||
-|[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)||||||
-|[Wrapping existing ML scripts for AML Pipelines Tutorial](./parallel-processing-california-housing-data)||||||
 
 ## Relation to MLOps / DevOps for Data Science
 

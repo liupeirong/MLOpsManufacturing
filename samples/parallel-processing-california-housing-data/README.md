@@ -1,7 +1,10 @@
 # Overview
 
 **What does this sample demonstrate:**
-- A simple example of how to use `ParallelRunScript` to process data in parallel.
+- A simple example of how to use `ParallelRunScript` to process data in parallel. 
+    - A `ParallelRunScript` can run user script asynchronously and in parallel on multiple AmlCompute targets. This functionality suits for a scenario which processing of large amounts of data is needed. 
+    - By setting up `m` nodes of AmlCompute and `n` processes per each node, the total time is expected to be reduced to `1/mn` of a single process running (not considering the time for environments setup).
+
 - Sample data is created based on california housing dataset obtained by `sklearn.datasets.fetch_california_housing` function. For more details please refer to sklearn documentation [Real world dataset - 7.2.7. California Housing dataset](https://scikit-learn.org/dev/datasets/real_world.html#california-housing-dataset)
 
     > According to above documentation,  
@@ -112,9 +115,13 @@ After you have all Azure resources and input data in Azure Storage, you need to 
     |PREPARATION_STEP_SCRIPT_PATH| python script path for the preparation step|
     |EXTRACTION_STEP_SCRIPT_PATH| python script path for the extraction step|
     |TRAINING_STEP_SCRIPT_PATH| python script path for the training step|
-    |ERROR_THRESHOLD|The number of record failures for TabularDataset and file failures for FileDataset that should be ignored during processing. If the error count goes above this value, then the job will be aborted.|
-    |NODE_COUNT|Number of nodes in the compute target used for running the Parallel Run|
-    |MINI_BATCH_SIZE|size of data can be processed in one run() call|
+    
+    There are also special settings needed for the `ParallelRunStep`. You can also find the details of them in another sample [Azure Machine Learning Batch Inference](https://github.com/Azure/MachineLearningNotebooks/tree/master/how-to-use-azureml/machine-learning-pipelines/parallel-run).
+    | name | description |
+    |---|---|
+    |ERROR_THRESHOLD|The number of failures that should be ignored during processing. If the error count goes above this value, then the job will be aborted. <br/> - If the input dataset is `TabularDataset` type, this will be the number of record(row) failures; <br/> - If the input dataset is `FileDataset` type, this will be the number of file failures  |
+    |NODE_COUNT|Number of nodes in the compute target used for running the `ParallelRunStep`|
+    |MINI_BATCH_SIZE|Size of data can be processed in one run() call. i.e. if a input dataset is `FileDataset` type consisting of total 10,000 files, and MINI_BATCH_SIZE set to "25", then the `ParallelRunStep` will partition the input dataset to 400 mini batches(10,000 divided by 25). <br/> - If the input dataset is `TabularDataset` type, this will be the approximate size of data passed to each run(). i.e. "1024", "1024KB", "10MB", "1GB"; <br/> - If the input dataset is `FileDataset` type, this will be the approximate number of files passed to each run. <br/> * Please be noticed that MINI_BATCH_SIZE is **string** type, even if the value is number like such as 10.|
     |PROCESS_COUNT_PER_NODE|Number of processes executed on each node. Optional, default value is number of cores on node|
     |RUN_INVOCATION_TIMEOUT|Timeout in seconds for each invocation of the run() method|
     
@@ -123,13 +130,13 @@ After you have all Azure resources and input data in Azure Storage, you need to 
 
 1. In VSCode, open the root folder of this sample, select the Conda environment created above as the Python interpretor.
 
-1. Publish and run Azure ML pipelines. 
+1. Publish and run the Azure ML pipelines. 
     - To publish and run Azure ML pipelines, run:
         ```shell
         # publish the Azure ML pipeline
         python -m ml_service.pipelines.build_pipeline
         ```
-
+        The above command will create a pipeline endpoint (with default name `california_housing_pipeline_endpoint`). Now you can access to Azure Machine Learning, click **Pipeline** on the left panel, choose **Endpoints**, find the newly updated pipeline endpoint and submit a new pipeline run.
 # Linting
 
 ## Flake8

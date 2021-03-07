@@ -11,9 +11,6 @@ dependencies:
       - isort
       - pandas
       - pydocstyle
-      - pytest
-      - pytest-cov
-      - pytest-mock
       - python-dotenv
       - sklearn
       - jsonschema

@@ -51,7 +51,7 @@ This sample takes input files from Azure Machine Learning Datastore which mapped
 
 #### Upload input data
 
-1. change directory to `data` and run `create_sample_data.py` to create sample data.
+1. Change directory to `data` and run `create_sample_data.py` to create sample data.
     ```
     cd samples/parallel-processing-california-housing/data
     python -m create_sample_data --count [count of text files(default 100)]
@@ -137,4 +137,3 @@ After you have all Azure resources and input data in Azure Storage, you need to 
 This sample uses [Flake8](https://flake8.pycqa.org/en/latest/) as linting tool. Ideally we should do linting for all python code, however we exclude Kaldi sample source code as it comes from another repo. This happens a lot in real project that some code comes from outside of the project and you don't want to modify the code. 
 
 See [.flake8](./.flake8) for rule settings.
-

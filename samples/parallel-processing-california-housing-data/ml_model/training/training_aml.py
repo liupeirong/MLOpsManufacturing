@@ -1,4 +1,4 @@
-"""Training wrapper: script to be executed when running Utterance Step."""
+"""Training wrapper: script to be executed when running Training Step."""
 
 import json
 from logging import INFO, Formatter, StreamHandler, getLogger

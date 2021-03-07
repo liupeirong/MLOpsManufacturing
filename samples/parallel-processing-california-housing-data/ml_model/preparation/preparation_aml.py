@@ -1,4 +1,4 @@
-"""Preparation wrapper: script to be executed when running Utterance Step."""
+"""Preparation wrapper: script to be executed when running Preparation Step."""
 
 from logging import INFO, Formatter, StreamHandler, getLogger
 from pathlib import Path

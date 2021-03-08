@@ -1,0 +1,16 @@
+name: california_housing_dev
+dependencies:
+  - python=3.8
+  - pip=20.1.1
+  - pip:
+      - azureml-sdk
+      - azure-storage-file-datalake
+      - black
+      - flake8
+      - flake8_formatter_junit_xml
+      - isort
+      - pandas
+      - pydocstyle
+      - python-dotenv
+      - sklearn
+      - jsonschema

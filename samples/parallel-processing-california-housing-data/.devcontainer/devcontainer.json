@@ -1,0 +1,32 @@
+{
+	"name": "california housing sample dev container",
+	"image": "conda/miniconda3",
+
+	"settings":{
+		"python.formatting.provider": "black",
+		"python.linting.enabled": true,
+		"python.linting.flake8Enabled": true,
+		"python.linting.flake8Args": [
+		"--append-config=${containerWorkspaceFolder}/.flake8"
+		],
+		"python.linting.pydocstyleEnabled": true,
+		"python.linting.pylintEnabled": false,
+		"python.testing.pytestEnabled": true,
+		"python.testing.pytestArgs": [
+		"tests"
+		],
+		"python.sortImports.args": [
+		"--settings-path=${containerWorkspaceFolder}/.isort.cfg"
+		],
+		"python.venvPath": "~/miniconda/envs",
+		"terminal.integrated.inheritEnv": false,
+    	"terminal.integrated.shell.linux": "/bin/bash"
+	},
+	
+	"extensions": [
+		"ms-python.python",
+		"njpwerner.autodocstring"
+	],
+
+	"postCreateCommand": "${containerWorkspaceFolder}/.devcontainer/PostCreateCommand.sh"
+}

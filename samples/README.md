@@ -4,5 +4,5 @@ The samples in this project are intended for providing a starting point for buil
 
 Each sample has a README that details what it's meant to demonstrate. Below is a quick index -
 
-- [Image classification with Tensorflow and Keras](mage-classification-tensorflow) demonstrates how to use Azure DevOps and Azure ML to build, train, evaluate, and track models, including how to retrain on new data. 
+- [Image classification with Tensorflow and Keras](image-classification-tensorflow) demonstrates how to use Azure DevOps and Azure ML to build, train, evaluate, and track models, including how to retrain on new data. 
 - [Run non-Python code as a step in ML Pipeline](non-python-preprocess) demonstrates how to run non Python custom code as a step in Azure ML pipelines. We've seen many cases where companies already have custom code they use to preprocess data before training a ML model. This sample also demonstrates how to use PyTest to mock Azure ML SDK for unit testing.

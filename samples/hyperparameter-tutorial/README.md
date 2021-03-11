@@ -149,11 +149,11 @@ $ python -m ml_service.pipelines.run_pipeline
 
 When it runs normally, you can see the screenshot below.
 
-![image-20210310163438863](docs\image-20210310163438863.png)
+![image-20210310163438863](docs/image-20210310163438863.png)
 
 In the Hyper drive step, you can see the trend of changes in hyperparameter values and primary metric values in the graph. Through this, you can analyze how hyperparameters affect each model.
 
-![image-20210310164054229](docs\image-20210310164054229.png)
+![image-20210310164054229](docs/image-20210310164054229.png)
 
 After finishing the trains, the model with max of _r2_ values as set in the primary metric in `ml_service/pipelines/hyperparams.py` is registered as the best model.
 

@@ -1,12 +1,13 @@
 # Repository Structure
 
-This repo contains sample code and definition of Azure DevOps pipelines for CI/CD. These pipelines run in this [Azure DevOps project](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build?view=folders). Azure ML pipelines run in the Azure environment deployed using the Azure DevOps pipelines.
+This repo contains sample code and definition of Azure DevOps pipelines for CI/CD. These pipelines run in this
+[Azure DevOps project](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build?view=folders).
+Azure ML pipelines run in the Azure environment deployed using the Azure DevOps pipelines.
 
-# Folder structure
+## Folder structure
 
 ```bash
-├─ common # contains code common across samples
-│    └─ infrastructure # code to provision Azure resources to run the samples
+├─ common # contains tools and code cross-cutting samples
 │
 ├─ docs # how-tos and best practices
 │ 
@@ -33,7 +34,7 @@ This repo contains sample code and definition of Azure DevOps pipelines for CI/C
 └─ README.md
 ```
 
-# Add new sample
+## Add new sample
 
 When you add new sample:
 

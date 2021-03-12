@@ -4,6 +4,8 @@ Deploying and smoke testing[![Build Status](https://dev.azure.com/cse-manufactur
 
 # Overview
 
+Demonstrates how to use Azure DevOps and Azure ML to build, train, evaluate, and track models, including how to retrain on new data based on the [Tensorflow Image Classification sample](https://www.tensorflow.org/tutorials/images/classification). 
+
 __What does this sample demonstrate__:
 
 * Track ML experimentation and model performance in Azure ML, and trace back to the source code build version and training dataset version.

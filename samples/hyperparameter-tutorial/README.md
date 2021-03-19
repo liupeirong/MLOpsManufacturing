@@ -1,28 +1,28 @@
 # Overview
 
-This sample guides you on how to create a pipeline of Hyper Parameter tune with  Azure Machine Learning.
+This sample guides you on how to create a Azure Machine Learning pipeline with Hyper Parameter tuning.
 
 __What does this sample demonstrate__:
 
-* Create Hyper parameter tune step into the Azure ML Pipeline
+* How to use the Hyper Parameter tune step in the Azure ML Pipelines
 * Demo how to handle the metrics
 
 __What doesn't this sample demonstrate__:
 
-* Basic about Azure ML Pipeline
+* Basics about Azure ML Pipeline
 
 ## Introduction
 
 > Wrapping existing ML scripts Tutorial: https://github.com/liupeirong/MLOpsManufacturing/tree/main/samples/wrapping-existing-ml-scripts-tutorial
 
-In the example above, we completed the basic MLOps pipeline. This time, we're going to modify the existing code to change it to a pipeline that uses hyperparameter tuning and get the best model.
+In the example above, we created a basic Azure ML Pipeline. This time, we're going to modify the existing code to change it to a pipeline that uses hyperparameter tuning to identify the best model.
 
-The above example was [Linear Regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html), but for the hyperparameter tuning example, we will modify it to [Ridge](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html) and use _alpha(Regularization strength)_ as a hyperparameter.
+The previous example was about [Linear Regression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html), for the hyperparameter tuning example, we will modify it to use [Ridge](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html) and _alpha(Regularization strength)_ as a hyperparameter.
 
 Questions:
 
 - How to change an existing MLOps pipeline to use Hyper Parameters?
-- How to get the best model from the training using Hyper Parameters?
+- How to retrieve the best model from the pipeline run using Hyper Parameters?
 
 We will guide you step by step through both answers to these questions. 
 
@@ -30,15 +30,15 @@ We will guide you step by step through both answers to these questions.
 
 ## Understanding Concepts
 
-Hyperparameter tuning is one of the most challenging issues in Machine Learning, but using the Azure Cloud can easily solve this problem.
+Hyperparameter tuning is one of the most challenging issues in Machine Learning, but using the Azure Machine Learning makes this problem a lot easier to solve.
 
-Parameter sampling can specify hyperparameter values in a range or random, adjust the number of compute instances to train at the same time, or lower performance training can be early terminated, saving costs.
+Parameter sampling can specify hyperparameter values in a range or random, adjust the number of compute instances to train at the same time, or training runs with low performance can be early terminated, saving costs.
 
-If you have an existing Azure ML pipeline code, you just need to work on the below.
+If you have an existing Azure ML pipeline code, you just need to do the following:
 
   - Set hyperparameter values and policies
-  - Add the hyperparameters to be passed over
-  - Modify the existing train step to hyperdrive step
+  - Add the hyperparameters that need to be passed
+  - Convert the existing train step to a hyperdrive step
 
 Let's take a closer look!
 
@@ -97,7 +97,7 @@ model.fit(X_train, y_train)
 
 ## Modifying the pipeline build
 
-Now in the code that creates a pipeline, we change the existing training step to the hyperdrive step.
+Now in the code that creates the pipeline, we change the existing training step to the hyperdrive step.
 
 ```python
 # ml_service/pipelines/build_pipeline.py
@@ -147,7 +147,7 @@ $ python -m ml_service.pipelines.run_pipeline
 
 > Using Compute Cluster may take a while to provision at the first time.
 
-When it runs normally, you can see the screenshot below.
+When it runs normally, the result should look similar like you can see the screenshot below.
 
 ![image-20210310163438863](docs/image-20210310163438863.png)
 
@@ -155,11 +155,11 @@ In the Hyper drive step, you can see the trend of changes in hyperparameter valu
 
 ![image-20210310164054229](docs/image-20210310164054229.png)
 
-After finishing the trains, the model with max of _r2_ values as set in the primary metric in `ml_service/pipelines/hyperparams.py` is registered as the best model.
+After finishing the trainings, the model with max of _r2_ values as set in the primary metric in `ml_service/pipelines/hyperparams.py` is registered as the best model.
 
 # Conclusion
 
-We have looked at the basics of changing the existing MLOps code to a pipeline for hyperparameter tuning. From now on, start working on increasing the accuracy of your model by the hyperparameter tune you want!
+We have looked at the basics of changing the existing Azure ML code into a pipeline for hyperparameter tuning. From now on, start working on increasing the accuracy of your model by the hyperparameter tune you want!
 
 # References
 

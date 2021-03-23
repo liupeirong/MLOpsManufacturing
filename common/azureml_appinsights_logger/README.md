@@ -2,7 +2,8 @@
 [![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-cd?branchName=paige%2Fobservability_lib)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=45&branchName=paige%2Fobservability_lib)
 
 # Overview
-Logs text and metrics in Azure ML, App Insights, and console with a single call. Also supports tracing in App Insights. 
+
+Logs text and metrics in Azure ML, App Insights, and console with a single call. Also supports tracing in App Insights.
 
 > Disclaimer: This package is built by Microsoft engineers, but it is not an officially supported Microsoft package.
 
@@ -21,7 +22,7 @@ The following dependencies are required to use this package.
   - opencensus-ext-logging==0.1.*
   - opencensus-ext-httplib==0.7.*
 ```
- 
+
 ## 2. Configure environment variables to control logger behavior
 
 ```bash
@@ -79,7 +80,7 @@ if __name__ == '__main__':
 
 ### correlation_id
 
-The correlation_id is used to map specific Azure ML experiment run with the logs and metrics. 
+The correlation_id is used to map specific Azure ML experiment run with the logs and metrics.
 Correlation_id is added to telemetry processor as a custom dimension in the following steps:
 
 * When logging in an Azure ML experiment run, the correlation_id is the Azure ML *Run Id*
@@ -89,54 +90,60 @@ Correlation_id is added to telemetry processor as a custom dimension in the foll
 ### Check metrics in Azure ML
 
 Navigate to [Azure ML portal](https://ml.azure.com/), find the target experiment and run.
-In the *Metrics* tab you can see the logged metrics. 
-![Metrcis](https://raw.githubusercontent.com/liupeirong/MLOpsManufacturing/paige/observability_lib/common/azureml_appinsights_logger/media/metrics.png)
+In the *Metrics* tab you can see the logged metrics.
+![Metrcis](/common/azureml_appinsights_logger/media/metrics.png)
 
 ### Check metrics in AppInsights
 
 Navigate to Application Insights in the Azure portal.
 Click on *Logs* tab and select *Custom Metrics*.
 You may use the below queries to retrieve all metrics:
+
 ```sql
 customMetrics
 ```
 
 To narrow your search to the specific run you can provide the correlation_id:
+
 ```sql
 customMetrics 
 | where customDimensions.correlation_id contains "e56b31b7-513f-4c34-9158-c2e1b28a5aaf" 
 ```
 
-![metrics-appInsights](https://raw.githubusercontent.com/liupeirong/MLOpsManufacturing/paige/observability_lib/common/azureml_appinsights_logger/media/metrics-appinsights.png)
+![metrics-appInsights](/common/azureml_appinsights_logger/media/metrics-appinsights.png)
 
 ### Check logs in Azure ML
 
-When running as an experiment in Azure ML, logs will be sent to Azure ML. 
-You can check the logs by logging in to [Azure ML portal](https://ml.azure.com/) portal. 
+When running as an experiment in Azure ML, logs will be sent to Azure ML.
+You can check the logs by logging in to [Azure ML portal](https://ml.azure.com/) portal.
 Then click on the target experiment and run. If there are child runs, select the specific child run.
 click on *Outputs + logs* tab and check the logs.
 
-Logs are in the following format: 
+Logs are in the following format:
+
 ```text
 timeStamp, [severity], callee_file_name:line_number:description
 ```
 
-![logs-aml](https://raw.githubusercontent.com/liupeirong/MLOpsManufacturing/paige/observability_lib/common/azureml_appinsights_logger/media/logs-aml.png)
+![logs-aml](/common/azureml_appinsights_logger/media/logs-aml.png)
 
 ### Check logs in Application Insights
 
 Navigate to Application Insights in the Azure Portal. Click on *Logs* tab and select *Traces*.
 You may use the below queries to retrieve your logs:
+
 ```sql
 traces
 ```
 
 To narrow the search to the specific run, provide the correlation_id:
+
 ```sql
 traces
 | where customDimensions.correlation_id contains "e56b31b7-513f-4c34-9158-c2e1b28a5aaf"
 ```
-![logs-appInsights](https://raw.githubusercontent.com/liupeirong/MLOpsManufacturing/paige/observability_lib/common/azureml_appinsights_logger/media/logs-appinsights.png)
+
+![logs-appInsights](/common/azureml_appinsights_logger/media/logs-appinsights.png)
 
 ## Dependency Tracing (spans)
 
@@ -144,4 +151,4 @@ Dependencing tracing is most useful in an ML inferencing application.
 It will trace the incoming request down its dependency services and is only available in App Insights.
 Call `start_span` and `end_span` around the code you want to trace.
 To view the dependency map, navigate to App Insights portal, select *Application map* tab.
-![span-appInsights](https://raw.githubusercontent.com/liupeirong/MLOpsManufacturing/paige/observability_lib/common/azureml_appinsights_logger/media/span-appinsights.png)
+![span-appInsights](/common/azureml_appinsights_logger/media/span-appinsights.png)

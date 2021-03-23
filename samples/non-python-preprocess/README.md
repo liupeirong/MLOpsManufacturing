@@ -2,10 +2,12 @@
 
 # Overview
 
+Demonstrates how to run non Python custom code as a step in Azure ML pipelines. We've seen many cases where companies already have custom code they use to preprocess data before training a ML model. This sample also demonstrates how to use PyTest to mock Azure ML SDK for unit testing.
+
 __What does this sample demonstrate__:
 
 * Run non Python tool to process Azure ML Datasets as a step in Azure ML pipeline, check return code and capture stdout. 
-* Create tests by mocking Azure ML SDK.
+* Create unit tests by using a [fixture for mocking Azure ML SDK](../../common/pytest-fixtures/).
 
 __What doesn't this sample demonstrate__:
 

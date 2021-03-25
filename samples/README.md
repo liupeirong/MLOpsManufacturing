@@ -44,7 +44,7 @@ principles which are covered
 |Sample|[Cost Optimization](https://docs.microsoft.com/en-us/azure/architecture/framework/cost/overview)|[Operational Excellence](https://docs.microsoft.com/en-us/azure/architecture/framework/devops/overview)|[Performance Efficiency](https://docs.microsoft.com/en-us/azure/architecture/framework/scalability/overview)|[Reliability](https://docs.microsoft.com/en-us/azure/architecture/framework/resiliency/overview)|[Security](https://docs.microsoft.com/en-us/azure/architecture/framework/security/security-principles)|
 |----|----|----|----|----|----|
 |[Appendable AML Pipeline Step Template](./appendable-template)|Pay for consumption|||||
-|[Hyperparameter Tutorial](./hyperparameter-tutorial)|Pay for consumption|Optimized the model|Monitor and optimize (planned)|||
+|[Hyperparameter Tutorial](./hyperparameter-tutorial)|Pay for consumption|Optimize build and release processes||||
 |[Image classification with Tensorflow and Keras](./image-classification-tensorflow)|Pay for consumption|Optimize build and release processes, Monitor the system (planned)||Monitor and measure application health (planned)|Use Identity as Primary Access Control|
 |[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)|Pay for consumption|Optimize build and release processes|||Use Identity as Primary Access Control|
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|Pay for consumption|Optimize build and release processes, Monitor the system (planned)|||Use Identity as Primary Access Control|

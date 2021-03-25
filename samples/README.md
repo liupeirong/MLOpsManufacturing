@@ -20,6 +20,7 @@ principles which are covered
 |Sample|[azureml_appinsights_logger](../common/azureml_appinsights_logger)|[infrastructure](../common/infrastructure/)|[pipeline_monitor](../common/pipeline_monitor/)/[trigger](../common/pipeline_trigger/)|[pytest-fixtures](../common/pytest-fixtures/)|
 |----|----|----|----|----|
 |[Appendable AML Pipeline Step Template](./appendable-template)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
+|[Hyperparameter Tutorial](./hyperparameter-tutorial)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
 |[Image classification with Tensorflow and Keras](./image-classification-tensorflow)|compatible (not implemented yet)|prerequisite|compatible|compatible (not implemented)|
 |[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)|compatible (other logger implemented)|prerequisite|compatible|compatible (unit tests differently implemented)|
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|compatible (not implemented yet)|prerequisite|compatible|showcasing|
@@ -31,6 +32,7 @@ principles which are covered
 |Sample|CI/CD (AML pipeline)|CI/CD (ML model)|Use of AML pipelines|Model Training|
 |----|----|----|----|----|
 |[Appendable AML Pipeline Step Template](./appendable-template)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
+|[Hyperparameter Tutorial](./hyperparameter-tutorial)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
 |[Image classification with Tensorflow and Keras](./image-classification-tensorflow)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)|:heavy_check_mark:|:x:|:heavy_check_mark:|:x:|
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|:heavy_check_mark:|:x:|:heavy_check_mark:|:x:|
@@ -42,6 +44,7 @@ principles which are covered
 |Sample|[Cost Optimization](https://docs.microsoft.com/en-us/azure/architecture/framework/cost/overview)|[Operational Excellence](https://docs.microsoft.com/en-us/azure/architecture/framework/devops/overview)|[Performance Efficiency](https://docs.microsoft.com/en-us/azure/architecture/framework/scalability/overview)|[Reliability](https://docs.microsoft.com/en-us/azure/architecture/framework/resiliency/overview)|[Security](https://docs.microsoft.com/en-us/azure/architecture/framework/security/security-principles)|
 |----|----|----|----|----|----|
 |[Appendable AML Pipeline Step Template](./appendable-template)|Pay for consumption|||||
+|[Hyperparameter Tutorial](./hyperparameter-tutorial)|Pay for consumption|Optimize build and release processes||||
 |[Image classification with Tensorflow and Keras](./image-classification-tensorflow)|Pay for consumption|Optimize build and release processes, Monitor the system (planned)||Monitor and measure application health (planned)|Use Identity as Primary Access Control|
 |[Run Kaldi ASR Toolkit in AML Pipelines](./kaldi-asr-yesno)|Pay for consumption|Optimize build and release processes|||Use Identity as Primary Access Control|
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|Pay for consumption|Optimize build and release processes, Monitor the system (planned)|||Use Identity as Primary Access Control|

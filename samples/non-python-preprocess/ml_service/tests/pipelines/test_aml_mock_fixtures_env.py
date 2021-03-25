@@ -181,6 +181,8 @@ def aml_pipeline_mocks(mocker: MockFixture):
                            }
             }
 
+    mocker.patch('azureml.core.compute.amlcompute'
+                 '.AmlComputeProvisioningConfiguration.validate_configuration')
     mocker.patch('azureml.core.compute.compute.ComputeTarget._get',
                  return_value=amlcd)
     amlcompute = AmlCompute(workspace=workspace, name=e.compute_name)

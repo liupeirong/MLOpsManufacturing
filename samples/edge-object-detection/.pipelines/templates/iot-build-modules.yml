@@ -1,0 +1,28 @@
+# Build IoT modules for both ARM and AMD
+
+steps:
+- task: AzureIoTEdge@2
+  displayName: 'Build module images - AMD'
+  inputs:
+    action: Build module images
+    templateFilePath: edge/deployment.template.json
+    defaultPlatform: amd64
+
+# This enables us to build an ARM docker image on x86
+# https://www.stereolabs.com/docs/docker/building-arm-container-on-x86/
+- task: Bash@3
+  displayName: 'Setup QEMU'
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Install the qemu packages
+      sudo apt-get install qemu binfmt-support qemu-user-static
+      # This step will execute the registering scripts
+      docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+- task: AzureIoTEdge@2
+  displayName: 'Build module images - ARM'
+  inputs:
+    action: Build module images
+    templateFilePath: edge/deployment.template.json
+    defaultPlatform: arm64v8

@@ -1,0 +1,76 @@
+# IaC common resources deployment template
+
+parameters:
+- name: acrName
+  type: string
+- name: appInsightsName
+  type: string
+- name: artifactName
+  type: string
+- name: deploymentLocation
+  type: string
+- name: environment
+  type: string
+- name: keyVaultName
+  type: string
+- name: kvAcrPasswordName
+  type: string
+- name: projectName
+  type: string
+- name: resourceGroupLocation
+  type: string
+- name: resourceGroupName
+  type: string
+- name: serviceConnection
+  type: string
+- name: servicePrincipalObjectId
+  type: string
+
+jobs:
+- deployment: deploy_common_resources
+  displayName: Deploy Common Resources
+  environment: ${{ parameters.environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureCLI@2
+          displayName: 'Create Resource Group'
+          inputs:
+            azureSubscription: ${{ parameters.serviceConnection }}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              if [ $(az group exists --name ${{ parameters.resourceGroupName }}) = false ]; then
+                az deployment sub create -l ${{ parameters.deploymentLocation }} -f $(Pipeline.Workspace)/${{ parameters.artifactName }}/bicep/resourcegroup.bicep --parameters \
+                  location=${{ parameters.resourceGroupLocation }} \
+                  projectName=${{ parameters.projectName }} \
+                  environmentName=${{ parameters.environment }} \
+                  resourceGroupName=${{ parameters.resourceGroupName }}
+              else
+                echo "Resource group '${{ parameters.resourceGroupName }}' already exists, skipping..."
+              fi
+            failOnStandardError: true
+
+        - task: AzureCLI@2
+          displayName: 'Deploy Common Resources'
+          inputs:
+            azureSubscription: ${{ parameters.serviceConnection }}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              # Deploy Common Resources
+              az deployment group create -f $(Pipeline.Workspace)/${{ parameters.artifactName }}/bicep/main.common.bicep \
+                -g ${{ parameters.resourceGroupName }} --parameters \
+                location=${{ parameters.resourceGroupLocation }} \
+                projectName=${{ parameters.projectName }} \
+                environmentName=${{ parameters.environment }} \
+                keyVaultName=${{ parameters.keyVaultName }} \
+                containerRegistryName=${{ parameters.acrName }} \
+                appInsightsName=${{ parameters.appInsightsName }} \
+                servicePrincipalObjectId=${{ parameters.servicePrincipalObjectId }}
+
+              # Store ACR password in KV
+              acrPassword=$(az acr credential show -n ${{ parameters.acrName }} --query 'passwords[0].value' | tr -d '"')
+              az keyvault secret set -n ${{ parameters.kvAcrPasswordName }} --value $acrPassword --vault-name ${{ parameters.keyVaultName }} -o none
+            failOnStandardError: true

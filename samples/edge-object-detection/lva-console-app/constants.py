@@ -1,0 +1,7 @@
+topology_api_version = "2.0"
+device_id = "DEVICE_ID"
+device_tag = "DEVICE_TAG"
+tag_value = "TAG_VALUE"
+module_id = "MODULE_ID"
+iot_connection_string = "IOTHUB_CONNECTION_STRING"
+operations_file = "OPERATIONS_FILENAME"

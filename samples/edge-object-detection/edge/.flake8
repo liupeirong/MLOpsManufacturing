@@ -1,0 +1,10 @@
+[flake8]
+# Must ignore E402 in all test files as we need to setup the module path before importing main
+per-file-ignores =
+    test_**.py: E402
+ignore = E226,E302,E41
+max-line-length = 160
+exclude =
+    __pycache__,
+    venv
+max-complexity = 10

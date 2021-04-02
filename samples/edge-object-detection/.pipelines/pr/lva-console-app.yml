@@ -1,0 +1,19 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+- name: workingDir
+  value: lva-console-app
+- name: pythonVersion
+  value: '3.9'
+
+jobs:
+- job: lva_console_app_validation
+  displayName: 'Run LVA console app validation'
+  steps:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/python-code-validation.yml
+    parameters:
+      workingDir: $(workingDir)
+      pythonVersion: $(pythonVersion)

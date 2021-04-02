@@ -1,0 +1,121 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+- name: artifactName
+  value: deploy_artifacts
+# Service connection variables must be global due to issue:
+# https://developercommunity.visualstudio.com/content/problem/676259/using-a-variable-for-the-service-connection-result.html
+- name: devServiceConnection
+  value: '<your_service_connection_name>'
+# Ideally this should be a separate connection from dev
+- name: prodServiceConnection
+  value: '<your_service_connection_name>'
+# devEnvironment and prodEnvironment need to be declared here because of how Azure DevOps references variables
+# These are needed to set the Azure Dev Ops environment we are deploying to in our deployments
+# But if these variables aren't defined at this level they fail to dereference and deploy to the $(environment) environment
+# Example can be found here: https://gist.github.com/liliankasem/2f9209704401c512997d7e6c8a053399
+- name: devEnvironment
+  value: 'dev'
+- name: prodEnvironment
+  value: 'prod'
+
+stages:
+- stage: Builds
+  displayName: 'Publish IaC Artifacts'
+  jobs:
+  - job: Build
+    steps:
+    - task: CopyFiles@2
+      displayName: 'Copy deployment folder'
+      inputs:
+        sourceFolder: 'deploy'
+        targetFolder: '$(Build.ArtifactStagingDirectory)'
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      artifact: $(artifactName)
+
+- stage: DEV
+  displayName: 'DEV Deployment'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  variables:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-dev.yml
+  jobs:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iac-common.yml
+    parameters:
+      acrName: $(acrName)
+      appInsightsName: $(appInsightsName)
+      artifactName: $(artifactName)
+      deploymentLocation: $(deploymentLocation)
+      environment: $(devEnvironment)
+      keyVaultName: $(keyVaultName)
+      kvAcrPasswordName: $(kvAcrPasswordName)
+      projectName: $(projectName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(devServiceConnection)
+      servicePrincipalObjectId: $(servicePrincipalObjectId)
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iac-iot.yml
+    parameters:
+      artifactName: $(artifactName)
+      environment: $(devEnvironment)
+      iotHubName: $(iotHubName)
+      keyVaultName: $(keyVaultName)
+      kvIotConnStringName: $(kvIotConnStringName)
+      logAnalyticsName: $(logAnalyticsName)
+      mediaServicesName: $(mediaServicesName)
+      mediaServicesStorageName: $(mediaServicesStorageName)
+      projectName: $(projectName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(devServiceConnection)
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iac-edge-vm.yml
+    parameters:
+      artifactName: $(artifactName)
+      bastionHostName: $(bastionHostName)
+      edgeVmAdminUsername: $(edgeVmAdminUsername)
+      edgeVmName: $(edgeVmName)
+      environment: $(devEnvironment)
+      iotHubName: $(iotHubName)
+      keyVaultName: $(keyVaultName)
+      projectName: $(projectName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(devServiceConnection)
+      virtualNetworkName: $(virtualNetworkName)
+
+- stage: PROD
+  displayName: 'PROD Deployment'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/release')
+  variables:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-prod.yml
+  jobs:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iac-common.yml
+    parameters:
+      acrName: $(acrName)
+      appInsightsName: $(appInsightsName)
+      artifactName: $(artifactName)
+      deploymentLocation: $(deploymentLocation)
+      environment: $(prodEnvironment)
+      keyVaultName: $(keyVaultName)
+      kvAcrPasswordName: $(kvAcrPasswordName)
+      projectName: $(projectName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(prodServiceConnection)
+      servicePrincipalObjectId: $(servicePrincipalObjectId)
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iac-iot.yml
+    parameters:
+      artifactName: $(artifactName)
+      environment: $(prodEnvironment)
+      iotHubName: $(iotHubName)
+      keyVaultName: $(keyVaultName)
+      kvIotConnStringName: $(kvIotConnStringName)
+      logAnalyticsName: $(logAnalyticsName)
+      mediaServicesName: $(mediaServicesName)
+      mediaServicesStorageName: $(mediaServicesStorageName)
+      projectName: $(projectName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(prodServiceConnection)

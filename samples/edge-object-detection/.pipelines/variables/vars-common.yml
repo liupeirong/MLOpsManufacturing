@@ -1,0 +1,59 @@
+# Shared environment variables
+
+variables:
+
+  projectName: '<insert_your_project_name>'
+  projectLocation: 'wus'
+
+  # KeyVault secret names
+  kvAcrPasswordName: 'acrPassword'
+  kvIotConnStringName: 'iotHubConnectionString'
+  kvAadSpSecretName: 'aadSpSecret'
+
+  # General Variables
+  SUBSCRIPTION_ID: '<insert_your_azure_subscription_id>'
+  AAD_TENANT_ID: '<insert_your_aad_tenant_id>'
+  AAD_SERVICE_PRINCIPAL_ID: '<insert_your_aad_service_principal_id>'
+
+  # Common Resources
+  # Location for deployment metadata through az cli
+  # https://docs.microsoft.com/en-us/cli/azure/deployment/sub?view=azure-cli-latest#az_deployment_sub_create-required-parameters
+  deploymentLocation: 'westus'
+  resourceGroupLocation: 'westus2'
+  resourceGroupName: 'rg-$(projectLocation)-$(projectName)-$(suffix)'
+  acrName: 'acr$(projectLocation)$(projectName)$(suffix)'
+  appInsightsName: 'appi-$(projectLocation)-$(projectName)-$(suffix)'
+  keyVaultName: 'kv-$(projectLocation)-$(projectName)-$(suffix)'
+
+  # IoT Resources
+  mediaServicesStorageName: 'stms$(projectLocation)$(projectName)$(suffix)'
+  mediaServicesName: 'ms$(projectLocation)$(projectName)$(suffix)'
+  iotHubName: 'iot-$(projectLocation)-$(projectName)-$(suffix)'
+  logAnalyticsName: 'la-$(projectLocation)-$(projectName)-$(suffix)'
+
+  # IoT Resources: Dev IaC deployment only
+  edgeVmAdminUsername: 'edgeadmin'
+  edgeVmName: 'vm-$(projectLocation)-$(projectName)-$(suffix)'
+  virtualNetworkName: 'vnet-$(projectLocation)-$(projectName)-$(suffix)'
+  bastionHostName: 'bastion-$(projectLocation)-$(projectName)-$(suffix)'
+
+# Environment variables consumed by applications
+
+  # LVA Console App Environment Variables
+  MODULE_ID: 'lvaEdge'
+  DEVICE_TAG: 'environment'
+
+  # IoT Edge Manifest Environment Variables
+  ACR_USER: $(acrName)
+  ACR_ADDRESS: '$(acrName).azurecr.io'
+  AMS_ACCOUNT: $(mediaServicesName)
+  RESOURCE_GROUP: $(resourceGroupName)
+  IOT_HUB_RESOURCE_ID: "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Devices/IotHubs/$(iotHubName)"
+  VIDEO_INPUT_FOLDER_ON_DEVICE: '/home/$(edgeVmAdminUsername)/samples/input'
+  VIDEO_OUTPUT_FOLDER_ON_DEVICE: '/home/$(edgeVmAdminUsername)/samples/output'
+  CONTAINER_INSIGHTS_ENDPOINTS: 'http://edgeHub:9600/metrics,http://edgeAgent:9600/metrics,http://$(MODULE_ID):9600/metric'
+  LOG_ANALYTICS_WORKSPACE_ID: ''
+  LOG_ANALYTICS_WORKSPACE_KEY: ''
+  # These values are from the secrets variable group using KeyVault
+  ACR_PASSWORD: $(acrPassword)
+  AAD_SERVICE_PRINCIPAL_SECRET: $(aadSpSecret)

@@ -1,0 +1,57 @@
+{
+    "apiVersion": "2.0",
+    "operations": [
+        {
+            "opName": "GraphTopologyList",
+            "opParams": {}
+        },
+        {
+            "opName": "GraphInstanceList",
+            "opParams": {}
+        },
+        {
+            "opName": "GraphTopologySet",
+            "opParams": {
+                "topologyFile": "topologies/evr_topology.json"
+            }
+        },
+        {
+            "opName": "GraphInstanceSet",
+            "opParams": {
+                "name": "Truck",
+                "properties": {
+                    "topologyName": "EventOnObjectDetection",
+                    "description": "Event-based capture on objection detection.",
+                    "parameters": [
+                        {
+                            "name": "rtspUrl",
+                            "value": "rtsp://rtspsim:554/media/truck.mkv"
+                        },
+                        {
+                            "name": "rtspUserName",
+                            "value": "testuser"
+                        },
+                        {
+                            "name": "rtspPassword",
+                            "value": "testpassword"
+                        },
+                        {
+                            "name": "evrHubSourceInput",
+                            "value": "Event-Truck"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "opName": "GraphInstanceActivate",
+            "opParams": {
+                "name": "Truck"
+            }
+        },
+        {
+            "opName": "GraphInstanceList",
+            "opParams": {}
+        }
+    ]
+}

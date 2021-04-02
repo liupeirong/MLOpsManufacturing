@@ -1,0 +1,60 @@
+# IaC IoT resources deployment template
+
+parameters:
+- name: artifactName
+  type: string
+- name: environment
+  type: string
+- name: iotHubName
+  type: string
+- name: keyVaultName
+  type: string
+- name: kvIotConnStringName
+  type: string
+- name: logAnalyticsName
+  type: string
+- name: mediaServicesName
+  type: string
+- name: mediaServicesStorageName
+  type: string
+- name: projectName
+  type: string
+- name: resourceGroupLocation
+  type: string
+- name: resourceGroupName
+  type: string
+- name: serviceConnection
+  type: string
+
+jobs:
+- deployment: deploy_iot_resources
+  displayName: Deploy IoT Resources
+  dependsOn: deploy_common_resources
+  environment: ${{ parameters.environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureCLI@2
+          displayName: 'Deploy IoT resources'
+          inputs:
+            azureSubscription: ${{ parameters.serviceConnection }}
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              # Deploy IoT Resources
+              az deployment group create -f $(Pipeline.Workspace)/${{ parameters.artifactName }}/bicep/main.iot.bicep \
+                -g ${{ parameters.resourceGroupName }} --parameters \
+                location=${{ parameters.resourceGroupLocation }} \
+                projectName=${{ parameters.projectName }} \
+                environmentName=${{ parameters.environment }} \
+                storageName=${{ parameters.mediaServicesStorageName }} \
+                mediaServicesName=${{ parameters.mediaServicesName }} \
+                iotHubName=${{ parameters.iotHubName }} \
+                logAnalyticsName=${{ parameters.logAnalyticsName }}
+
+              # Store IoT Hub connection string in KV
+              az extension add --name azure-iot
+              iotHubConnectionString=$(az iot hub connection-string show -n ${{ parameters.iotHubName }} --policy-name iothubowner --key-type primary --query 'connectionString' | tr -d '"')
+              az keyvault secret set -n ${{ parameters.kvIotConnStringName }} --value $iotHubConnectionString --vault-name ${{ parameters.keyVaultName }} -o none
+            failOnStandardError: true

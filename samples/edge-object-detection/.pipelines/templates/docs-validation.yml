@@ -1,0 +1,21 @@
+# Docs validation steps template
+
+steps:
+- task: Npm@1
+  displayName: 'Install npm'
+  inputs:
+    command: 'install'
+
+- task: Npm@1
+  displayName: 'Run Markdownlint'
+  inputs:
+    command: 'custom'
+    customCommand: 'run lint'
+
+- task: PublishTestResults@2
+  displayName: 'Publish Markdownlint results'
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '**/test-markdownlint-results.xml'
+    testRunTitle: 'Markdownlint tests'
+    failTaskOnFailedTests: true

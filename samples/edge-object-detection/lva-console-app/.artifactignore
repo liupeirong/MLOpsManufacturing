@@ -1,0 +1,10 @@
+# Files to ignore in Azure Pipelines when creating a pipeline artifact
+
+# Ignore everything
+**/*
+
+# Include
+!**.py
+!operations/
+!topologies/
+!requirements.txt

@@ -1,0 +1,85 @@
+# Template for deploying to an IoT Edge device
+
+parameters:
+- name: appInsightsName
+  type: string
+- name: environment
+  type: string
+- name: iotArtifactName
+  type: string
+- name: iotHubName
+  type: string
+- name: logAnalyticsName
+  type: string
+- name: resourceGroupName
+  type: string
+- name: serviceConnection
+  type: string
+
+steps:
+# This downloads the artifact to the $(Pipeline.Workspace) directory
+- download: current
+  displayName: 'Download IoT edge artifact'
+  artifact: ${{ parameters.iotArtifactName }}
+
+# We need to update the IMAGE_TAG variable to the build Id of the CI pipeline that we are "triggering" from
+# as that corresponds with the tag used on the deployed docker image
+- task: Bash@3
+  displayName: 'Set IMAGE_TAG to CI pipeline BuildId'
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo 'Triggering CI pipeline ID - $(resources.pipeline.ci_iot_edge_modules.runId)'
+      echo '##vso[task.setvariable variable=image_tag]$(resources.pipeline.ci_iot_edge_modules.runId)'
+
+- task: AzureCLI@2
+  displayName: 'Set LOG_ANALYTICS_WORKSPACE_ID, LOG_ANALYTICS_WORKSPACE_KEY, and APPINSIGHTS_INSTRUMENTATIONKEY variables for manifest'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    # This script gets the log analytics workspace id and key variables
+    inlineScript: |
+      # Piping to std error to dev null because it prints error if extension is already installed
+      az extension add --name application-insights 2>/dev/null
+
+      export logAnalyticsWorkspaceId=$(az monitor log-analytics workspace show --resource-group ${{ parameters.resourceGroupName }} --workspace-name ${{ parameters.logAnalyticsName }} --query customerId -o tsv)
+      echo "##vso[task.setvariable variable=LOG_ANALYTICS_WORKSPACE_ID;issecret=false]$logAnalyticsWorkspaceId"
+      export logAnalyticsSharedKey=$(az monitor log-analytics workspace get-shared-keys --resource-group ${{ parameters.resourceGroupName }} --workspace-name ${{ parameters.logAnalyticsName }} --query primarySharedKey -o tsv)
+      echo "##vso[task.setvariable variable=LOG_ANALYTICS_WORKSPACE_KEY;issecret=true]$logAnalyticsSharedKey"
+      export appInsightsInstrumentationKey=$(az monitor app-insights component show --app ${{ parameters.appInsightsName }} -g ${{ parameters.resourceGroupName }} --query instrumentationKey -o tsv)
+      echo "##vso[task.setvariable variable=APPINSIGHTS_INSTRUMENTATIONKEY;issecret=true]$appInsightsInstrumentationKey"
+    failOnStandardError: true
+
+- task: replacetokens@3
+  displayName: 'Replace deployment manifest tokens with environment variables'
+  inputs:
+    rootDirectory: '$(Pipeline.Workspace)/IoTEdgeModules/deployments'
+    targetFiles: '**/*.json'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    tokenPrefix: '${'
+    tokenSuffix: '}'
+    useLegacyPattern: false
+
+- task: AzureCLI@2
+  displayName: 'Deploy IoT Edge modules'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: '$(Pipeline.Workspace)/IoTEdgeModules/scripts/edgeLayeredDeployment.sh'
+    arguments: 'deploymentId=$(image_tag) environment=${{ parameters.environment }} iotHub=${{ parameters.iotHubName }} deploymentsFolderPath=$(Pipeline.Workspace)/IoTEdgeModules/deployments'
+    failOnStandardError: true
+
+- task: AzureCLI@2
+  displayName: 'Run IoT Edge smoke test'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: '$(Pipeline.Workspace)/IoTEdgeModules/scripts/edgeSmokeTest.sh'
+    arguments: 'h=${{ parameters.iotHubName }} v=${{ parameters.environment }} i=$(image_tag)'
+    workingDirectory: '$(Pipeline.Workspace)/IoTEdgeModules/scripts'

@@ -1,0 +1,64 @@
+# Template for running the LVA console app
+
+parameters:
+- name: consoleAppArtifactName
+  type: string
+- name: environment
+  type: string
+- name: iotArtifactName
+  type: string
+- name: iotHubConnectionString
+  type: string
+- name: iotHubName
+  type: string
+- name: moduleId
+  type: string
+- name: operationsFile
+  type: string
+- name: pythonVersion
+  type: string
+- name: serviceConnection
+  type: string
+
+steps:
+# This downloads the artifact to the $(Pipeline.Workspace) directory
+- download: current
+  displayName: 'Download IoT edge artifact'
+  artifact: ${{ parameters.iotArtifactName }}
+
+# This downloads the artifact to the $(Pipeline.Workspace) directory
+- download: current
+  displayName: 'Download LVA console app artifact'
+  artifact: ${{ parameters.consoleAppArtifactName }}
+
+- task: AzureCLI@2
+  displayName: 'Deactivate and delete existing LVA graph instances'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: '$(Pipeline.Workspace)/IoTEdgeModules/scripts/cleanupLvaEdgeModule.sh'
+    arguments: 'environment=${{ parameters.environment }} moduleId=${{ parameters.moduleId }} iotHub=${{ parameters.iotHubName }}'
+    failOnStandardError: true
+
+- task: UsePythonVersion@0
+  displayName: 'Set python version'
+  inputs:
+    versionSpec: ${{ parameters.pythonVersion }}
+
+- script: python -m pip install --upgrade pip setuptools wheel
+  displayName: 'Install tools'
+
+- script: pip install -r requirements.txt
+  displayName: 'Install requirements'
+  workingDirectory: $(Pipeline.Workspace)/LVAConsoleApp
+
+- script: |
+    echo "##vso[task.setvariable variable=OPERATIONS_FILENAME]${{ parameters.operationsFile }}"
+    echo "##vso[task.setvariable variable=TAG_VALUE]${{ parameters.environment }}"
+    echo "##vso[task.setvariable variable=IOTHUB_CONNECTION_STRING]${{ parameters.iotHubConnectionString }}"
+  displayName: 'Set environment variables needed for console app'
+
+- script: python main.py
+  displayName: Run LVA console app
+  workingDirectory: $(Pipeline.Workspace)/LVAConsoleApp

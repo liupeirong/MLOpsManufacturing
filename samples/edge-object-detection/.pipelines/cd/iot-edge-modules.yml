@@ -1,0 +1,133 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: ci_iot_edge_modules
+    source: 'CI - IoT Edge Modules'
+    trigger:
+      branches:
+        include:
+          - refs/heads/main
+          - refs/heads/release
+  - pipeline: ci_lva_console_app
+    source: 'CI - LVA Console App'
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+- name: pythonVersion
+  value: '3.9'
+# Service connection variables must be global due to issue:
+# https://developercommunity.visualstudio.com/content/problem/676259/using-a-variable-for-the-service-connection-result.html
+- name: devServiceConnection
+  value: '<your_service_connection_name>'
+# Ideally this should be a separate connection from dev
+- name: prodServiceConnection
+  value: '<your_service_connection_name>'
+- name: iotArtifactName
+  value: 'IoTEdgeModules'
+- name: consoleAppArtifactName
+  value: 'LVAConsoleApp'
+- name: lvaOperationsFile
+  value: '$(Pipeline.Workspace)/LVAConsoleApp/operations/operations_setup.json'
+# devEnvironment and prodEnvironment need to be declared here because of how Azure DevOps references variables
+# These are needed to set the Azure Dev Ops environment we are deploying to in our deployments
+# But if these variables aren't defined at this level they fail to dereference and deploy to the $(environment) environment
+# Example can be found here: https://gist.github.com/liliankasem/2f9209704401c512997d7e6c8a053399
+- name: devEnvironment
+  value: 'dev'
+- name: prodEnvironment
+  value: 'prod'
+
+stages:
+- stage: Builds
+  # Need to publish the artifacts so that they can be used in later stages in pipeline
+  displayName: 'Download and Publish artifacts'
+  jobs:
+  - job: Artifacts
+    steps:
+    - download: ci_iot_edge_modules
+      displayName: 'Download IoT Edge Module artifacts'
+      artifact: $(iotArtifactName)
+    - publish: $(Pipeline.Workspace)/ci_iot_edge_modules/$(iotArtifactName)
+      displayName: 'Publish IoT Edge Module artifacts'
+      artifact: $(iotArtifactName)
+    - download: ci_lva_console_app
+      displayName: 'Download LVA Console App artifacts'
+      artifact: $(consoleAppArtifactName)
+    - publish: $(Pipeline.Workspace)/ci_lva_console_app/$(consoleAppArtifactName)
+      displayName: 'Publish LVA Console App artifacts'
+      artifact: $(consoleAppArtifactName)
+
+- stage: DEV
+  displayName: 'DEV Deployment'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  variables:
+  - group: secrets_dev
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-dev.yml
+  jobs:
+  - deployment: deploy_edge_modules
+    displayName: Deploy IoT Edge Modules
+    environment: $(devEnvironment)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iot-module-deployment.yml
+            parameters:
+              appInsightsName: $(appInsightsName)
+              environment: $(devEnvironment)
+              iotArtifactName: $(iotArtifactName)
+              iotHubName: $(iotHubName)
+              logAnalyticsName: $(logAnalyticsName)
+              resourceGroupName: $(resourceGroupName)
+              serviceConnection: $(devServiceConnection)
+          - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/lva-console-app.yml
+            parameters:
+              consoleAppArtifactName: $(consoleAppArtifactName)
+              environment: $(devEnvironment)
+              iotArtifactName: $(iotArtifactName)
+              # This value is retrieved from the secrets variable group in the AzDO library
+              iotHubConnectionString: $(iotHubConnectionString)
+              iotHubName: $(iotHubName)
+              moduleId: $(MODULE_ID)
+              operationsFile: $(lvaOperationsFile)
+              pythonVersion: $(pythonVersion)
+              serviceConnection: $(devServiceConnection)
+
+- stage: PROD
+  displayName: 'PROD Deployment'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/release'))
+  variables:
+  - group: secrets_prod
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-prod.yml
+  jobs:
+  - deployment: deploy_edge_modules
+    displayName: Deploy IoT Edge Modules
+    environment: $(prodEnvironment)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iot-module-deployment.yml
+            parameters:
+              appInsightsName: $(appInsightsName)
+              environment: $(prodEnvironment)
+              iotArtifactName: $(iotArtifactName)
+              iotHubName: $(iotHubName)
+              logAnalyticsName: $(logAnalyticsName)
+              resourceGroupName: $(resourceGroupName)
+              serviceConnection: $(prodServiceConnection)
+          - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/lva-console-app.yml
+            parameters:
+              consoleAppArtifactName: $(consoleAppArtifactName)
+              environment: $(prodEnvironment)
+              iotArtifactName: $(iotArtifactName)
+              # This value is retrieved from the secrets variable group in the AzDO library
+              iotHubConnectionString: $(iotHubConnectionString)
+              iotHubName: $(iotHubName)
+              moduleId: $(MODULE_ID)
+              operationsFile: $(lvaOperationsFile)
+              pythonVersion: $(pythonVersion)
+              serviceConnection: $(prodServiceConnection)

@@ -1,0 +1,52 @@
+{
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired.modules.lvaEdge": {
+        "version": "1.0",
+        "type": "docker",
+        "status": "running",
+        "restartPolicy": "always",
+        "settings": {
+          "image": "mcr.microsoft.com/media/live-video-analytics:2",
+          "createOptions": {
+            "HostConfig": {
+              "LogConfig": {
+                "Type": "",
+                "Config": {
+                  "max-size": "10m",
+                  "max-file": "10"
+                }
+              },
+              "Binds": [
+                "${VIDEO_OUTPUT_FOLDER_ON_DEVICE}:/var/media/"
+              ],
+              "IpcMode": "host"
+            }
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired.routes.LVADiagnosticsToIoTHub": "FROM /messages/modules/lvaEdge/outputs/AmsDiagnostics/* INTO $upstream",
+      "properties.desired.routes.LVAOperationalToIoTHub": "FROM /messages/modules/lvaEdge/outputs/AmsOperational/* INTO $upstream"
+    },
+    "lvaEdge": {
+      "properties.desired": {
+        "applicationDataDirectory": "/var/lib/azuremediaservices",
+        "azureMediaServicesArmId": "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/microsoft.media/mediaservices/${AMS_ACCOUNT}",
+        "aadTenantId": "${AAD_TENANT_ID}",
+        "aadServicePrincipalAppId": "${AAD_SERVICE_PRINCIPAL_ID}",
+        "aadServicePrincipalSecret": "${AAD_SERVICE_PRINCIPAL_SECRET}",
+        "aadEndpoint": "https://login.microsoftonline.com",
+        "aadResourceId": "https://management.core.windows.net/",
+        "armEndpoint": "https://management.azure.com/",
+        "diagnosticsEventsOutputName": "AmsDiagnostics",
+        "operationalEventsOutputName": "AmsOperational",
+        "logLevel": "Information",
+        "logCategories": "Application,Events",
+        "allowUnsecuredEndpoints": true,
+        "telemetryOptOut": false
+      }
+    }
+  }
+}

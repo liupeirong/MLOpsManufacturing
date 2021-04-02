@@ -1,0 +1,27 @@
+[
+  {
+    "deployment": "lva",
+    "path": "lva.json",
+    "condition": "tags.lva='true'"
+  },
+  {
+    "deployment": "business-logic",
+    "path": "business-logic/object.detection.json",
+    "condition": "tags.businessLogic='objectDetection'"
+  },
+  {
+    "deployment": "ai-truck",
+    "path": "inferencing-service/yolov3.json",
+    "condition": "tags.inferencingService='yolov3' and tags.gpu='false'"
+  },
+  {
+    "deployment": "ai-truck-gpu",
+    "path": "inferencing-service/yolov3.gpu.json",
+    "condition": "tags.inferencingService='yolov3' and tags.gpu='true'"
+  },
+  {
+    "deployment": "simulator",
+    "path": "rtspsim.json",
+    "condition": "tags.simulator='true'"
+  }
+]

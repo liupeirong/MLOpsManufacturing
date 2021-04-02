@@ -1,0 +1,35 @@
+{
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired.modules.containerInsights": {
+        "version": "1.0",
+        "type": "docker",
+        "status": "running",
+        "restartPolicy": "always",
+        "settings": {
+          "image": "mcr.microsoft.com/azuremonitor/containerinsights/ciprod:iot-0.1.3.3"
+        },
+        "env": {
+          "UploadTarget":{
+            "value":"AzureMonitor"
+          },
+          "LogAnalyticsWorkspaceId":{
+            "value":"${LOG_ANALYTICS_WORKSPACE_ID}"
+          },
+          "LogAnalyticsSharedKey": {
+            "value":"${LOG_ANALYTICS_WORKSPACE_KEY}"
+          },
+          "HubResourceID":{
+            "value":"${IOT_HUB_RESOURCE_ID}"
+          },
+          "MetricsEndpointsCSV":{
+            "value":"${CONTAINER_INSIGHTS_ENDPOINTS}"
+          },
+          "ScrapeFrequencyInSecs": {
+            "value": "30"
+          }
+        }
+      }
+    }
+  }
+}

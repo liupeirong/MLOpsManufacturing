@@ -1,0 +1,105 @@
+# Python validation steps template
+
+parameters:
+- name: workingDir
+  type: string
+- name: pythonVersion
+  type: string
+- name: requirementPaths
+  type: string
+  default: ''
+- name: validationPath
+  type: string
+  default: ''
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: ${{ parameters.pythonVersion }}
+
+  - script: |
+      python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+
+  - script: |
+      if ! [ -z '${{ parameters.requirementPaths }}' ]
+      then
+        requirement_files='${{ parameters.requirementPaths }}'
+      else
+        requirement_files=$(find . -type f -name 'requirements.txt')
+      fi
+
+      for file in $requirement_files
+      do
+          echo Install $file
+          python -m pip install -r $file
+      done
+    displayName: 'Install requirements'
+    workingDirectory: ${{ parameters.workingDir }}
+
+  - script: |
+      validationPath='.'
+      if ! [ -z '${{ parameters.validationPath }}' ]
+      then
+          validationPath='${{ parameters.validationPath }}'
+      fi
+
+      echo Validation path: $validationPath
+
+      flake8 $validationPath --output-file=$(Common.TestResultsDirectory)/test-linter-results.txt
+      flake8_junit $(Common.TestResultsDirectory)/test-linter-results.txt $(Common.TestResultsDirectory)/test-linter-results.xml
+    displayName: 'Run linter'
+    condition: succeededOrFailed()
+    workingDirectory: ${{ parameters.workingDir }}
+
+  - task: PublishTestResults@2
+    displayName: 'Publish linter results'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-linter-results.xml'
+      testRunTitle: 'Linter tests'
+      failTaskOnFailedTests: true
+      searchFolder: $(Common.TestResultsDirectory)
+
+  - script: |
+      validationPath='.'
+      if ! [ -z '${{ parameters.validationPath }}' ]
+      then
+          validationPath='${{ parameters.validationPath }}'
+      fi
+
+      echo Validation path: $validationPath
+
+      python -m pytest \
+      --junitxml=$(Common.TestResultsDirectory)/test-unittest-results.xml \
+      --cov=. \
+      --cov-report=xml:$(Common.TestResultsDirectory)/coverage.xml \
+      $validationPath
+
+      # If there are no unit tests, don't fail because of that
+      ret=$?
+      if [ "$ret" = 5 ]; then
+        echo "No tests collected.  Exiting with 0 (instead of 5)."
+        exit 0
+      fi
+      exit "$ret"
+    displayName: 'Run unit tests'
+    condition: succeededOrFailed()
+    workingDirectory: ${{ parameters.workingDir }}
+
+  - task: PublishTestResults@2
+    displayName: 'Publish unit test results'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-unittest-results.xml'
+      testRunTitle: 'Unit tests'
+      failTaskOnFailedTests: true
+      searchFolder: $(Common.TestResultsDirectory)
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage results'
+    condition: succeededOrFailed()
+    inputs:
+      codeCoverageTool: cobertura
+      pathToSources: ${{ parameters.workingDir }}
+      summaryFileLocation: '$(Common.TestResultsDirectory)/**/coverage.xml'

@@ -1,0 +1,36 @@
+{
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired.modules.objectDetectionBusinessLogic": {
+        "version": "1.0",
+        "type": "docker",
+        "status": "running",
+        "restartPolicy": "always",
+        "settings": {
+          "image": "${ACR_ADDRESS}/objectdetectionbusinesslogic:${IMAGE_TAG}",
+          "createOptions": {}
+        },
+        "env": {
+          "APPINSIGHTS_INSTRUMENTATIONKEY": {
+            "value": "${APPINSIGHTS_INSTRUMENTATIONKEY}"
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired.routes.ObjectDetectionBusinessLogicToIoTHub": "FROM /messages/modules/objectDetectionBusinessLogic/outputs/* INTO $upstream",
+      "properties.desired.routes.LVAToObjectDetectionBusinessLogic": "FROM /messages/modules/lvaEdge/outputs/detectedObjects INTO BrokeredEndpoint(\"/modules/objectDetectionBusinessLogic/inputs/detectedObjects\")",
+      "properties.desired.routes.ObjectDetectionBusinessLogicToLVA_EventCamera1": "FROM /messages/modules/objectDetectionBusinessLogic/outputs/Event-Truck INTO BrokeredEndpoint(\"/modules/lvaEdge/inputs/Event-Truck\")"
+    },
+    "objectDetectionBusinessLogic": {
+      "properties.desired": {
+        "objectTags": [
+          "truck"
+        ],
+        "objectConfidence": 0.4,
+        "notificationTimeout": "5m",
+        "logLevel": "INFO"
+      }
+    }
+  }
+}

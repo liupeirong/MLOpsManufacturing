@@ -1,0 +1,218 @@
+{
+  "$schema-template": "2.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {
+              "${ACR_USER}": {
+                "username": "${ACR_USER}",
+                "password": "${ACR_PASSWORD}",
+                "address": "${ACR_ADDRESS}"
+              }
+            }
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modules": {
+          "objectDetectionBusinessLogic": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.objectDetectionBusinessLogic.debug}",
+              "createOptions": {
+                "ExposedPorts": {
+                  "5678/tcp": {}
+                },
+                "HostConfig": {
+                  "PortBindings": {
+                    "5678/tcp": [
+                      {
+                        "HostPort": "5678"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "env": {
+              "APPINSIGHTS_INSTRUMENTATIONKEY": {
+                "value": "${APPINSIGHTS_INSTRUMENTATIONKEY}"
+              }
+            }
+          },
+          "lvaEdge": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/media/live-video-analytics:2",
+              "createOptions": {
+                "HostConfig": {
+                  "LogConfig": {
+                    "Type": "",
+                    "Config": {
+                      "max-size": "10m",
+                      "max-file": "10"
+                    }
+                  },
+                  "Binds": [
+                    "${VIDEO_OUTPUT_FOLDER_ON_DEVICE}:/var/media/"
+                  ],
+                  "IpcMode": "shareable"
+                }
+              }
+            }
+          },
+          "aiInferencingService": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/lva-utilities/yolov3:onnx-grpc-1.0",
+              "createOptions": {
+                    "HostConfig": {
+                        "IpcMode": "container:lvaEdge"
+                    }
+                }
+            }
+          },
+          "rtspsim": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/lva-utilities/rtspsim-live555:1.2",
+              "createOptions": {
+                "HostConfig": {
+                  "Binds": [
+                    "${VIDEO_INPUT_FOLDER_ON_DEVICE}:/live/mediaServer/media"
+                  ]
+                }
+              }
+            }
+          },
+          "containerInsights": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azuremonitor/containerinsights/ciprod:iot-0.1.3.3"
+              },
+            "env": {
+              "UploadTarget":{
+                "value":"AzureMonitor"
+              },
+              "LogAnalyticsWorkspaceId":{
+                "value":"${LOG_ANALYTICS_WORKSPACE_ID}"
+              },
+              "LogAnalyticsSharedKey": {
+                "value":"${LOG_ANALYTICS_WORKSPACE_KEY}"
+              },
+              "HubResourceID":{
+                "value":"${IOT_HUB_RESOURCE_ID}"
+              },
+              "MetricsEndpointsCSV":{
+                "value":"${CONTAINER_INSIGHTS_ENDPOINTS}"
+              },
+              "ScrapeFrequencyInSecs": {
+                "value": "30"
+              }
+            }
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "routes": {
+          "ObjectDetectionBusinessLogicToIoTHub": "FROM /messages/modules/objectDetectionBusinessLogic/outputs/* INTO $upstream",
+          "ObjectDetectionBusinessLogicToLVA_EventCamera1": "FROM /messages/modules/objectDetectionBusinessLogic/outputs/Event-Truck INTO BrokeredEndpoint(\"/modules/lvaEdge/inputs/Event-Truck\")",
+          "LVAToObjectDetectionBusinessLogic": "FROM /messages/modules/lvaEdge/outputs/detectedObjects INTO BrokeredEndpoint(\"/modules/objectDetectionBusinessLogic/inputs/detectedObjects\")",
+          "LVADiagnosticsToIoTHub": "FROM /messages/modules/lvaEdge/outputs/AmsDiagnostics/* INTO $upstream",
+          "LVAOperationalToIoTHub": "FROM /messages/modules/lvaEdge/outputs/AmsOperational/* INTO $upstream"
+        },
+        "storeAndForwardConfiguration": {
+          "timeToLiveSecs": 7200
+        }
+      }
+    },
+    "lvaEdge": {
+      "properties.desired": {
+        "applicationDataDirectory": "/var/lib/azuremediaservices",
+        "azureMediaServicesArmId": "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/microsoft.media/mediaservices/${AMS_ACCOUNT}",
+        "aadTenantId": "${AAD_TENANT_ID}",
+        "aadServicePrincipalAppId": "${AAD_SERVICE_PRINCIPAL_ID}",
+        "aadServicePrincipalSecret": "${AAD_SERVICE_PRINCIPAL_SECRET}",
+        "aadEndpoint": "https://login.microsoftonline.com",
+        "aadResourceId": "https://management.core.windows.net/",
+        "armEndpoint": "https://management.azure.com/",
+        "diagnosticsEventsOutputName": "AmsDiagnostics",
+        "operationalEventsOutputName": "AmsOperational",
+        "logLevel": "Information",
+        "logCategories": "Application,Events,MediaPipeline",
+        "allowUnsecuredEndpoints": true,
+        "telemetryOptOut": false
+      }
+    },
+    "objectDetectionBusinessLogic": {
+      "properties.desired": {
+        "objectTags": [
+          "truck"
+        ],
+        "objectConfidence": 0.4,
+        "notificationTimeout": "5m",
+        "logLevel": "DEBUG"
+      }
+    }
+  }
+}

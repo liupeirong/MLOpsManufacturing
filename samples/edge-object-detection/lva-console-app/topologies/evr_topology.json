@@ -1,0 +1,180 @@
+{
+  "@apiVersion": "2.0",
+  "name": "EventOnObjectDetection",
+  "properties": {
+    "description": "Event-based recording of assets based on specific objects being detected by external inference engine.",
+    "parameters": [
+      {
+        "name": "rtspUserName",
+        "type": "String",
+        "description": "rtsp source user name.",
+        "default": "dummyUserName"
+      },
+      {
+        "name": "rtspPassword",
+        "type": "String",
+        "description": "rtsp source password.",
+        "default": "dummyPassword"
+      },
+      {
+        "name": "rtspUrl",
+        "type": "String",
+        "description": "rtsp Url"
+      },
+      {
+        "name": "evrHubSourceInput",
+        "type": "String",
+        "description": "input name for hub source",
+        "default": "eventRecordingTrigger"
+      },
+      {
+        "name": "grpcExtensionAddress",
+        "type": "String",
+        "description": "grpc LVA Extension Address",
+        "default": "tcp://aiInferencingService:44000"
+      },
+      {
+        "name": "grpcExtensionUserName",
+        "type": "String",
+        "description": "inferencing endpoint user name.",
+        "default": "dummyUserName"
+      },
+      {
+        "name": "grpcExtensionPassword",
+        "type": "String",
+        "description": "inferencing endpoint password.",
+        "default": "dummyPassword"
+      },
+      {
+        "name": "imageQuality",
+        "type": "String",
+        "description": "image encoding quality for frames (valid for JPG encoding)",
+        "default": "90"
+      },
+      {
+        "name": "imageScaleMode",
+        "type": "String",
+        "description": "image scaling mode",
+        "default": "pad"
+      },
+      {
+        "name": "frameWidth",
+        "type": "String",
+        "description": "Width of the video frame to be received from LVA.",
+        "default": "416"
+      },
+      {
+        "name": "frameHeight",
+        "type": "String",
+        "description": "Height of the video frame to be received from LVA.",
+        "default": "416"
+      },
+      {
+        "name": "hubSinkOutputName",
+        "type": "String",
+        "description": "hub sink output name",
+        "default": "detectedObjects"
+      }
+    ],
+    "sources": [
+      {
+        "@type": "#Microsoft.Media.MediaGraphRtspSource",
+        "name": "rtspSource",
+        "endpoint": {
+          "@type": "#Microsoft.Media.MediaGraphUnsecuredEndpoint",
+          "url": "${rtspUrl}",
+          "credentials": {
+            "@type": "#Microsoft.Media.MediaGraphUsernamePasswordCredentials",
+            "username": "${rtspUserName}",
+            "password": "${rtspPassword}"
+          }
+        }
+      },
+      {
+        "@type": "#Microsoft.Media.MediaGraphIoTHubMessageSource",
+        "name": "evrIotMessageSource",
+        "hubInputName": "${evrHubSourceInput}"
+      }
+    ],
+    "processors": [
+      {
+        "@type": "#Microsoft.Media.MediaGraphSignalGateProcessor",
+        "name": "evrSignalGateProcessor",
+        "inputs": [
+          {
+            "nodeName": "evrIotMessageSource"
+          },
+          {
+            "nodeName": "rtspSource"
+          }
+        ],
+        "activationEvaluationWindow": "PT1S",
+        "activationSignalOffset": "-PT30S",
+        "minimumActivationTime": "PT30S",
+        "maximumActivationTime": "PT30S"
+      },
+      {
+        "@type": "#Microsoft.Media.MediaGraphGrpcExtension",
+        "name": "grpcExtension",
+        "endpoint": {
+          "@type": "#Microsoft.Media.MediaGraphUnsecuredEndpoint",
+          "url": "${grpcExtensionAddress}",
+          "credentials": {
+            "@type": "#Microsoft.Media.MediaGraphUsernamePasswordCredentials",
+            "username": "${grpcExtensionUserName}",
+            "password": "${grpcExtensionPassword}"
+          }
+        },
+        "dataTransfer": {
+          "mode": "sharedMemory",
+          "SharedMemorySizeMiB": "5"
+        },
+        "image": {
+          "scale": {
+            "mode": "${imageScaleMode}",
+            "width": "${frameWidth}",
+            "height": "${frameHeight}"
+          },
+          "format": {
+            "@type": "#Microsoft.Media.MediaGraphImageFormatJpeg",
+            "quality": "${imageQuality}"
+          }
+        },
+        "samplingOptions": {
+          "skipSamplesWithoutAnnotation": "false",
+          "maximumSamplesPerSecond": "1.0"
+        },
+        "inputs": [
+          {
+            "nodeName": "rtspSource"
+          }
+        ]
+      }
+    ],
+    "sinks": [
+      {
+        "@type": "#Microsoft.Media.MediaGraphIoTHubMessageSink",
+        "name": "hubSink",
+        "hubOutputName": "${hubSinkOutputName}",
+        "inputs": [
+          {
+            "nodeName": "grpcExtension"
+          }
+        ]
+      },
+      {
+        "@type": "#Microsoft.Media.MediaGraphAssetSink",
+        "name": "evrAssetSink",
+        "assetNamePattern": "EVR-${System.GraphInstanceName}-${System.DateTime}",
+        "segmentLength": "PT30S",
+        "LocalMediaCacheMaximumSizeMiB": "2048",
+        "localMediaCachePath": "/var/lib/azuremediaservices/tmp/",
+        "inputs": [
+          {
+            "nodeName": "evrSignalGateProcessor"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+    "apiVersion": "2.0",
+    "operations": [
+        {
+            "opName": "GraphTopologyList",
+            "opParams": {}
+        },
+        {
+            "opName": "GraphInstanceList",
+            "opParams": {}
+        },
+        {
+            "opName": "GraphInstanceDeactivate",
+            "opParams": {
+                "name": "Truck"
+            }
+        },
+        {
+            "opName": "GraphInstanceDelete",
+            "opParams": {
+                "name": "Truck"
+            }
+        },
+        {
+            "opName": "GraphTopologyDelete",
+            "opParams": {
+                "name": "EventOnObjectDetection"
+            }
+        },
+        {
+            "opName": "GraphTopologyList",
+            "opParams": {}
+        },
+        {
+            "opName": "GraphInstanceList",
+            "opParams": {}
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+jobs:
+- job: docs_validation
+  displayName: 'Run docs validation tests'
+  steps:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/docs-validation.yml

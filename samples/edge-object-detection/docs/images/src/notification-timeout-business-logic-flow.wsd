@@ -1,0 +1,24 @@
+@startuml notification-timeout-business-logic-flow
+
+participant LVA
+participant BLogic as "Object Detection Business Logic"
+participant IoTHub
+
+== Notification Timeout Business Logic Flow ==
+
+LVA -> BLogic : send detectedObject message
+alt object already detected for that camera
+
+alt within the timeout window
+BLogic -> BLogic : do nothing
+else outside of timeout window
+BLogic -> IoTHub : send eventAlertTrigger message
+BLogic -> BLogic : update notification timeout window
+end
+
+else object not detected for that camera
+BLogic -> IoTHub : send eventAlertTrigger message
+BLogic -> BLogic : update notification timeout window
+end
+
+@enduml

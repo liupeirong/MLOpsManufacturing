@@ -1,0 +1,12 @@
+# Prod environment variables
+
+variables:
+- name: suffix
+  value: 'prod'
+
+# See devops-pipelines.md variables section for how to get this
+- name: servicePrincipalObjectId
+  value: '<insert_your_service_principal_object_id>'
+
+# Common variables template
+- template: vars-common.yml

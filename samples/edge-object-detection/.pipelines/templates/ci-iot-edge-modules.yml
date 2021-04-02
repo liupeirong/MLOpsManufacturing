@@ -1,0 +1,70 @@
+# Build and package IoT Edge modules
+
+parameters:
+- name: acrAddress
+  type: string
+- name: acrName
+  type: string
+- name: imageTag
+  type: string
+  default: $(Build.BuildId)
+- name: pythonVersion
+  type: string
+- name: resourceGroupName
+  type: string
+- name: serviceConnection
+  type: string
+- name: subscriptionId
+  type: string
+- name: workingDir
+  type: string
+
+steps:
+- template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/python-code-validation.yml
+  parameters:
+    workingDir: ${{ parameters.workingDir }}
+    pythonVersion: ${{ parameters.pythonVersion }}
+
+- template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iot-build-modules.yml
+
+- task: AzureIoTEdge@2
+  displayName: 'Publish module images - AMD'
+  inputs:
+    action: Push module images
+    containerregistrytype: Azure Container Registry
+    azureSubscriptionEndpoint: ${{ parameters.serviceConnection }}
+    azureContainerRegistry: '{"loginServer":"${{ parameters.acrAddress }}", "id" : "/subscriptions/${{ parameters.subscriptionId }}/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.ContainerRegistry/registries/${{ parameters.acrName }}"}'
+    templateFilePath: edge/deployment.template.json
+    defaultPlatform: amd64
+    fillRegistryCredential: true
+
+- task: AzureIoTEdge@2
+  displayName: 'Publish module images - ARM'
+  inputs:
+    action: Push module images
+    containerregistrytype: Azure Container Registry
+    azureSubscriptionEndpoint: ${{ parameters.serviceConnection }}
+    azureContainerRegistry: '{"loginServer":"${{ parameters.acrAddress }}", "id" : "/subscriptions/${{ parameters.subscriptionId }}/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.ContainerRegistry/registries/${{ parameters.acrName }}"}'
+    templateFilePath: edge/deployment.template.json
+    defaultPlatform: arm64v8
+    fillRegistryCredential: true
+
+- task: AzureCLI@2
+  displayName: 'Create and push docker cross platform manifest'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      # docker manifest is in preview, so experimental must be used
+      export DOCKER_CLI_EXPERIMENTAL=enabled
+      # Create and push manifest
+      docker manifest create ${{ parameters.acrAddress }}/objectdetectionbusinesslogic:${{ parameters.imageTag }} ${{ parameters.acrAddress }}/objectdetectionbusinesslogic:${{ parameters.imageTag }}-amd64 ${{ parameters.acrAddress }}/objectdetectionbusinesslogic:${{ parameters.imageTag }}-arm64v8
+      docker manifest push ${{ parameters.acrAddress }}/objectdetectionbusinesslogic:${{ parameters.imageTag }}
+    failOnStandardError: true
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Artifact'
+  inputs:
+    targetPath: ${{ parameters.workingDir }}
+    artifactName: IoTEdgeModules

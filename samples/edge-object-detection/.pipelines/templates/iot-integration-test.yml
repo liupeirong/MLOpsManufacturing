@@ -1,0 +1,186 @@
+# Integratioin test Edge modules
+
+parameters:
+- name: acrAddress
+  type: string
+- name: bastionHostName
+  type: string
+- name: deviceId
+  type: string
+  default: 'integration-test-vm'
+- name: edgeVmName
+  type: string
+- name: environment
+  type: string
+- name: imageTag
+  type: string
+- name: iotHubName
+  type: string
+- name: projectName
+  type: string
+  default: 'int'
+- name: resourceGroupName
+  type: string
+- name: resourceGroupLocation
+  type: string
+- name: serviceConnection
+  type: string
+- name: virtualNetworkName
+  type: string
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Create Resource Group'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az group create --location ${{ parameters.resourceGroupLocation }} --name ${{ parameters.resourceGroupName }}
+      echo "##vso[task.setvariable variable=rgCreated]true"
+    failOnStandardError: true
+
+- task: AzureCLI@2
+  displayName: 'Deploy IoT Hub'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      # Deploy IoT Resources
+      az deployment group create -f $(System.DefaultWorkingDirectory)/deploy/bicep/iothub.bicep \
+        -g ${{ parameters.resourceGroupName }} --parameters \
+        location=${{ parameters.resourceGroupLocation }} \
+        projectName=${{ parameters.projectName }} \
+        environmentName=${{ parameters.environment }} \
+        iotHubName=${{ parameters.iotHubName }}
+    failOnStandardError: true
+
+- task: AzureCLI@2
+  displayName: 'Create edge device in IoT Hub'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      # Piping to std error to dev null because it prints error if extension is already installed
+      az extension add --name azure-iot 2>/dev/null
+      AZURE_EXTENSION_USE_DYNAMIC_INSTALL=yes_without_prompt
+
+      # Create device and update tags
+      az iot hub device-identity create -d ${{ parameters.deviceId }} -n ${{ parameters.iotHubName }} --edge-enabled
+      az iot hub device-twin update -d ${{ parameters.deviceId }} -n ${{ parameters.iotHubName }} --tags '{"environment": "${{ parameters.environment }}"}'
+
+      # Get connection string and set as build pipeline variable
+      export deviceConnectionString=$(az iot hub device-identity connection-string show -d ${{ parameters.deviceId }} -n ${{ parameters.iotHubName }} -o tsv)
+      echo "##vso[task.setvariable variable=deviceConnectionString;issecret=true]$deviceConnectionString"
+    failOnStandardError: true
+
+- task: AzureCLI@2
+  displayName: 'Create vm password secret'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    # This script installs a random password generator pwgen
+    # Generates a password and then sets that as a pipeline variable for our vm creation to use
+    inlineScript: |
+      sudo apt-get install -y pwgen
+      export vmPassword=$(pwgen -s -n -c -B 30 1)
+      echo "##vso[task.setvariable variable=vmPassword;issecret=true]$vmPassword"
+    failOnStandardError: true
+
+- task: AzureCLI@2
+  displayName: 'Deploy IoT Edge VM'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: '$(System.DefaultWorkingDirectory)/deploy/scripts/deployEdgeVM.sh'
+    arguments: '-e ${{ parameters.environment }}
+                -p ${{ parameters.projectName }}
+                -r ${{ parameters.resourceGroupName }}
+                -v ${{ parameters.edgeVmName }}
+                -n ${{ parameters.virtualNetworkName }}
+                -a "password"
+                -u "inttestadmin"
+                -k $(vmPassword)
+                -d $(deviceConnectionString)
+                -f $(System.DefaultWorkingDirectory)/deploy/scripts/cloud-config.yml'
+    failOnStandardError: true
+
+- task: replacetokens@3
+  displayName: 'Replace deployment manifest tokens with environment variables'
+  inputs:
+    rootDirectory: '$(System.DefaultWorkingDirectory)/edge/deployments'
+    targetFiles: '**/*.json'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    tokenPrefix: '${'
+    tokenSuffix: '}'
+    useLegacyPattern: false
+
+- task: AzureCLI@2
+  displayName: 'Build and push lva mock module'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      docker build -f Dockerfile.amd64 -t ${{ parameters.acrAddress }}/integration-testing:lva-mock-${{ parameters.imageTag }} .
+      docker push ${{ parameters.acrAddress }}/integration-testing:lva-mock-${{ parameters.imageTag }}
+    failOnStandardError: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/edge/modules/lvaMock'
+
+- task: AzureCLI@2
+  displayName: 'Deploy IoT Edge modules'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: '$(System.DefaultWorkingDirectory)/edge/scripts/integrationTestLayeredDeployment.sh'
+    arguments: 'deploymentId=$(image_tag) environment=${{ parameters.environment }} deviceId=${{ parameters.deviceId }}
+      iotHub=${{ parameters.iotHubName }} deploymentsFolderPath=$(System.DefaultWorkingDirectory)/edge/deployments'
+    failOnStandardError: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)/edge/scripts'
+
+- task: AzureCLI@2
+  displayName: 'Get Built in Event Endpoint and IoT Hub connection string'
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      eventHubConnectionString=$(az iot hub connection-string show -n ${{ parameters.iotHubName }} --default-eventhub -o tsv)
+      echo "##vso[task.setvariable variable=eventHubConnectionString;issecret=true]$eventHubConnectionString"
+      iotHubConnectionString=$(az iot hub connection-string show -n ${{ parameters.iotHubName }} -o tsv)
+      echo "##vso[task.setvariable variable=iotHubConnectionString;issecret=true]$iotHubConnectionString"
+    failOnStandardError: true
+
+- script: pip install -r requirements.txt
+  displayName: 'Install requirements.txt'
+  workingDirectory: $(System.DefaultWorkingDirectory)/edge
+
+- task: PythonScript@0
+  displayName: 'Run Integration Test'
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: '$(System.DefaultWorkingDirectory)/edge/tests/integration-tests/test_objectDetectionBusinessLogic_highConfidence.py'
+    arguments: "$(iotHubConnectionString) $(eventHubConnectionString) ${{ parameters.deviceId }}"
+    failOnStderr: true
+
+- task: AzureCLI@2
+  displayName: 'Delete Resource Group'
+  # This is set to run as long as the resource group was created, even if earlier steps failed
+  # If earlier steps failed we still want to clean up our resources
+  # We are checking if the resource group was created, because if we failed before creating the rg, no need to delete it
+  condition: and(succeededOrFailed(), eq(variables.rgCreated, true))
+  inputs:
+    azureSubscription: ${{ parameters.serviceConnection }}
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az group delete --name ${{ parameters.resourceGroupName }} --yes
+    failOnStandardError: true

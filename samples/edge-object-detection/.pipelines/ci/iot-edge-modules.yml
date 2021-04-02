@@ -1,0 +1,96 @@
+trigger:
+  branches:
+    include:
+    - main
+    - release
+  paths:
+    include:
+    - edge
+    - .pipelines/ci/iot-edge-modules.yml
+    - .pipelines/templates/ci-iot-edge-modules.yml
+    - .pipelines/templates/iot-build-modules.yml
+    - .pipelines/templates/iot-integration-test.yml
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+- name: workingDir
+  value: edge
+- name: pythonVersion
+  value: '3.9'
+# Service connection variables must be global due to issue:
+# https://developercommunity.visualstudio.com/content/problem/676259/using-a-variable-for-the-service-connection-result.html
+- name: devServiceConnection
+  value: '<your_service_connection_name>'
+# Ideally this should be a separate connection from dev
+- name: prodServiceConnection
+  value: '<your_service_connection_name>'
+# This is needed because AzureIoTEdge@2 task nested in ci-iot-edge-modules.yml then iot-build-modules.yml needs it specifically as a variable
+- name: image_tag
+  value: $(Build.BuildId)
+- name: integrationTestVmName
+  value: 'vm-integration-test-$(Build.BuildId)'
+- name: integrationTestRgName
+  value: 'rg-iot-edge-integration-test-$(Build.BuildId)'
+
+jobs:
+- job: build_and_publish_iot_modules_dev
+  displayName: 'Build and Publish IoT Edge Modules in Dev'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  variables:
+  - group: secrets_dev
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-dev.yml
+  steps:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/ci-iot-edge-modules.yml
+    parameters:
+      acrAddress: $(ACR_ADDRESS)
+      acrName: $(acrName)
+      imageTag: $(image_tag)
+      pythonVersion: $(pythonVersion)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(devServiceConnection)
+      subscriptionId: $(SUBSCRIPTION_ID)
+      workingDir: $(workingDir)
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iot-integration-test.yml
+    parameters:
+      acrAddress: $(ACR_ADDRESS)
+      bastionHostName: '$(bastionHostName)-integration-test-$(Build.BuildId)'
+      edgeVmName: $(integrationTestVmName)
+      environment: 'dev-int'
+      imageTag: $(image_tag)
+      iotHubName: '$(iotHubName)-integration-test-$(Build.BuildId)'
+      resourceGroupName: $(integrationTestRgName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      serviceConnection: $(devServiceConnection)
+      virtualNetworkName: '$(virtualNetworkName)-integration-test-$(Build.BuildId)'
+
+- job: build_and_publish_iot_modules_prod
+  displayName: 'Build and Publish IoT Edge Modules in Prod'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/release'))
+  variables:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-prod.yml
+  - group: secrets_prod
+  steps:
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/ci-iot-edge-modules.yml
+    parameters:
+      acrAddress: $(ACR_ADDRESS)
+      acrName: $(acrName)
+      imageTag: $(image_tag)
+      pythonVersion: $(pythonVersion)
+      resourceGroupName: $(resourceGroupName)
+      serviceConnection: $(prodServiceConnection)
+      subscriptionId: $(SUBSCRIPTION_ID)
+      workingDir: $(workingDir)
+  - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/templates/iot-integration-test.yml
+    parameters:
+      acrAddress: $(ACR_ADDRESS)
+      bastionHostName: '$(bastionHostName)-integration-test-$(Build.BuildId)'
+      edgeVmName: $(integrationTestVmName)
+      environment: 'prod-int'
+      imageTag: $(image_tag)
+      iotHubName: '$(iotHubName)-integration-test-$(Build.BuildId)'
+      resourceGroupName: $(integrationTestRgName)
+      resourceGroupLocation: $(resourceGroupLocation)
+      serviceConnection: $(prodServiceConnection)
+      virtualNetworkName: '$(virtualNetworkName)-integration-test-$(Build.BuildId)'

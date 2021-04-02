@@ -1,0 +1,116 @@
+{
+    "$schema-template": "2.0.0",
+    "modulesContent": {
+      "$edgeAgent": {
+        "properties.desired": {
+          "schemaVersion": "1.0",
+          "runtime": {
+            "type": "docker",
+            "settings": {
+              "minDockerVersion": "v1.25",
+              "loggingOptions": "",
+              "registryCredentials": {
+                "${ACR_USER}": {
+                  "username": "${ACR_USER}",
+                  "password": "${ACR_PASSWORD}",
+                  "address": "${ACR_ADDRESS}"
+                }
+              }
+            }
+          },
+          "systemModules": {
+            "edgeAgent": {
+              "type": "docker",
+              "settings": {
+                "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+                "createOptions": {}
+              }
+            },
+            "edgeHub": {
+              "type": "docker",
+              "status": "running",
+              "restartPolicy": "always",
+              "settings": {
+                "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+                "createOptions": {
+                  "HostConfig": {
+                    "PortBindings": {
+                      "5671/tcp": [
+                        {
+                          "HostPort": "5671"
+                        }
+                      ],
+                      "8883/tcp": [
+                        {
+                          "HostPort": "8883"
+                        }
+                      ],
+                      "443/tcp": [
+                        {
+                          "HostPort": "443"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "modules": {
+            "objectDetectionBusinessLogic": {
+              "version": "1.0",
+              "type": "docker",
+              "status": "running",
+              "restartPolicy": "always",
+              "settings": {
+                "image": "${MODULES.objectDetectionBusinessLogic}",
+                "createOptions": {}
+              },
+              "env": {
+                "APPINSIGHTS_INSTRUMENTATIONKEY": {
+                  "value": "${APPINSIGHTS_INSTRUMENTATIONKEY}"
+                }
+              }
+            },
+            "lvaEdge": {
+              "version": "1.0",
+              "type": "docker",
+              "status": "running",
+              "restartPolicy": "always",
+              "settings": {
+                "image": "${MODULES.lvaMock}",
+                "createOptions": {
+                  "HostConfig": {
+                    "IpcMode": "shareable"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "$edgeHub": {
+        "properties.desired": {
+          "schemaVersion": "1.0",
+          "routes": {
+            "ObjectDetectionBusinessLogicToIoTHub": "FROM /messages/modules/objectDetectionBusinessLogic/outputs/* INTO $upstream",
+            "ObjectDetectionBusinessLogicToLVA_EventCamera1": "FROM /messages/modules/objectDetectionBusinessLogic/outputs/Event-Truck INTO BrokeredEndpoint(\"/modules/lvaEdge/inputs/Event-Truck\")",
+            "LVAToObjectDetectionBusinessLogic": "FROM /messages/modules/lvaEdge/outputs/detectedObjects INTO BrokeredEndpoint(\"/modules/objectDetectionBusinessLogic/inputs/detectedObjects\")"
+          },
+          "storeAndForwardConfiguration": {
+            "timeToLiveSecs": 7200
+          }
+        }
+      },
+      "objectDetectionBusinessLogic": {
+        "properties.desired": {
+          "objectTags": [
+            "truck"
+          ],
+          "objectConfidence": 0.5,
+          "notificationTimeout": "0s",
+          "logLevel": "INFO"
+        }
+      }
+    }
+  }

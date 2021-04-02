@@ -1,0 +1,14 @@
+FROM amd64/python:3.7-slim-buster
+
+RUN apt-get -y update
+RUN apt-get -y install gcc
+
+WORKDIR /app
+
+RUN pip install ptvsd==4.3.2
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD [ "python3", "-u", "./main.py" ]

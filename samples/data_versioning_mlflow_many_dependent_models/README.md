@@ -2,7 +2,7 @@ For infrastructure setup, data preparation, please refer to the [DataOps Github 
 
 # Overview
 
-The sample notebook demonstrates how to use MLFlow to track data versioning with DeltaLake and how to track many dependent models using MLFlow. It is developed based on the [Databricks sample notebook](https://docs.databricks.com/_static/notebooks/mlflow/mlflow-delta-training.html) using [Lending Club Loan Dataset hosted on Kaggle](https://www.kaggle.com/husainsb/lendingclub-issued-loans?select=lc_loan.csv)
+The sample *Databricks* notebook demonstrates how to use MLFlow to track data versioning with DeltaLake and how to track many dependent models using MLFlow. It is developed based on the [Databricks sample notebook](https://docs.databricks.com/_static/notebooks/mlflow/mlflow-delta-training.html) using [Lending Club Loan Dataset hosted on Kaggle](https://www.kaggle.com/husainsb/lendingclub-issued-loans?select=lc_loan.csv). We provide an HTML version for a quick previes.
 
 __What does this sample demonstrate__:
 

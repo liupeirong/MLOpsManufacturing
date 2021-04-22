@@ -15,7 +15,7 @@ __What doesn't this sample demonstrate__:
 
 * Comprehensive unit and integration tests - this sample doesn't have the level of unit tests or integration tests adequate for production deployment yet. 
 * Production scale inferencing - this sample stops at experimentation level.
-* End-to-end data and infrustructure pipelines. Please refer to `dataset_versioning` in [DataOps Github Repository](https://github.com/Azure-Samples/modern-data-warehouse-dataops/e2e_samples) for the end-to-end DataOps process, including infrastructure setup, data pipeline setup, data copying and security setup etc.
+* End-to-end data and infrustructure pipelines. Please refer to `dataset_versioning` in [DataOps Github Repository](https://github.com/Azure-Samples/modern-data-warehouse-dataops/tree/master/e2e_samples) for the end-to-end DataOps process, including infrastructure setup, data pipeline setup, data copying and security setup etc.
 
 **Pipeline Structure**  
 This example assumes a scenario that experiments are conducted on Databricks using delta format data. It also assumes that more than one model is required in the experiments and the models are dependent. In this case, it shows how to train a logistic regression model and a LIME model to explain it.

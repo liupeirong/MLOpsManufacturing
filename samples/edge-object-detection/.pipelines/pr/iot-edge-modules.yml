@@ -7,7 +7,7 @@ variables:
 - name: workingDir
   value: edge
 - name: pythonVersion
-  value: '3.9'
+  value: '3.7'
 - template: ${{variables['System.DefaultWorkingDirectory']}}/.pipelines/variables/vars-dev.yml
 - name: image_tag
   value: $(build.BuildId)

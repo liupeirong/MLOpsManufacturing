@@ -1,6 +1,16 @@
 # Build IoT modules for both ARM and AMD
 
 steps:
+# This is needed because the AzureIoTEdge@2 requires iotedgedev 3.0 but fails to install it
+# It fails to install it on ubuntu 20.04 because the pip3 default there is py3.8
+# and iotedgedev 3.0 only supports python 3.7 and below.
+# We have set the python version to 3.7, but that is not respected by how the task installs iotedgedev
+- task: Bash@3
+  displayName: 'Install iotedgedev'
+  inputs:
+    targetType: 'inline'
+    script: 'pip install -U iotedgedev'
+
 - task: AzureIoTEdge@2
   displayName: 'Build module images - AMD'
   inputs:

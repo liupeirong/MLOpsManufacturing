@@ -16,7 +16,7 @@ variables:
 - name: workingDir
   value: lva-console-app
 - name: pythonVersion
-  value: '3.9'
+  value: '3.7'
 
 jobs:
 - job: lva_console_app_validation

@@ -256,7 +256,7 @@ these sections will provide more information on how that can be accomplished!
 
 ### Prerequisites
 
-- [Python v3.9+](https://www.python.org/downloads/)
+- [Python v3.7](https://www.python.org/downloads/)
 - [Docker](https://www.docker.com/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Azure IoT Tools extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.azure-iot-tools)

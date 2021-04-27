@@ -160,7 +160,7 @@ a different camera detects an object, both cameras will send a message to IoT Hu
 
 This UML diagram helps visualize this flow:
 
-![notification timeout flow](/docs/images/out/notification-timeout-business-logic-flow.png)
+![notification timeout flow](./images/out/notification-timeout-business-logic-flow.png)
 
 ### Outgoing IoT Hub Message
 

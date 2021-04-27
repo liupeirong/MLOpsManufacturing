@@ -57,7 +57,7 @@ You will need to do the following steps to get your Azure DevOps instance ready 
     ```
 
     **Write down and remember it's ID and secret, you will need it later in these steps.**
-1. In [vars-common.yml](/.pipelines/variables/vars-common.yml) update the values of:
+1. In [vars-common.yml](./.pipelines/variables/vars-common.yml) update the values of:
 
    - `SUBSCRIPTION_ID` to be your [Azure Subscription ID](https://docs.microsoft.com/en-us/azure/media-services/latest/how-to-set-azure-subscription?tabs=portal)
    - `AAD_TENANT_ID` to be your [AAD Tenant ID](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-how-to-find-tenant)
@@ -88,17 +88,17 @@ You will need to do the following steps to get your Azure DevOps instance ready 
     For all of them update `<environment>ServiceConnection` variable in the `variables:` section of the file.
     The value you will set it to is whatever you named your service connection.
 
-    - [CD IaC](/.pipelines/cd/iac.yml)
-    - [CD IoT Edge Modules](/.pipelines/cd/iot-edge-modules.yml)
-    - [CI IoT Edge Modules](/.pipelines/ci/iot-edge-modules.yml)
+    - [CD IaC](./.pipelines/cd/iac.yml)
+    - [CD IoT Edge Modules](./.pipelines/cd/iot-edge-modules.yml)
+    - [CI IoT Edge Modules](./.pipelines/ci/iot-edge-modules.yml)
 
     Be sure to update both the dev and prod service connection values for all of them.
 1. Now that you have service connections created you will need to find something called the objectId for those
     and update other variables.
 
     You will need to update the `servicePrincipalObjectId` value in both
-    [vars-dev.yml](/.pipelines/variables/vars-dev.yml) and [vars-prod.yml](/.pipelines/variables/vars-prod.yml).
-    The [devops-pipelines.md](/docs/devops-pipelines.md) has a section titled `Getting servicePrincipalObjectId`
+    [vars-dev.yml](./.pipelines/variables/vars-dev.yml) and [vars-prod.yml](./.pipelines/variables/vars-prod.yml).
+    The [devops-pipelines.md](./docs/devops-pipelines.md) has a section titled `Getting servicePrincipalObjectId`
     that will walk you through how to get that.
     If you created a different dev and prod service connection the two values will be different.
 1. Now you will need to create Azure Pipelines using the existing yaml files provided in this repo.
@@ -109,27 +109,27 @@ You will need to do the following steps to get your Azure DevOps instance ready 
     We recommend naming all of them what we have,
     but we will call out any changes that need to be made if you name them differently
 
-    For in depth documentation on all the pipelines, consult the [devops-pipelines.md](/docs/devops-pipelines.md) document
+    For in depth documentation on all the pipelines, consult the [devops-pipelines.md](./docs/devops-pipelines.md) document
 
     Pipelines you need to create:
     1. `CD - IaC`
 
         This is the pipeline that will deploy all our Azure resources.
-        It is from the [cd/iac.yml file](/.pipelines/cd/iac.yml)
+        It is from the [cd/iac.yml file](./.pipelines/cd/iac.yml)
     1. `CD - IoT Edge Modules`
 
         This is the pipeline that will deploy all the edge modules to iotedge.
-        It is from the [cd/iot-edge-modules.yml file](/.pipelines/cd/iot-edge-modules.yml)
+        It is from the [cd/iot-edge-modules.yml file](./.pipelines/cd/iot-edge-modules.yml)
     1. `CI - IoT Edge Modules`
 
         This is the pipeline that builds and pushes the artifacts we will deploy to iotedge.
-        It is from the [ci/iot-edge-modules.yml file](/.pipelines/ci/iot-edge-modules.yml).
+        It is from the [ci/iot-edge-modules.yml file](./.pipelines/ci/iot-edge-modules.yml).
 
         > **Important**
         >
         > If you choose to name this pipeline something other than `CI - IoT Edge Modules`
         > then you will need to update the `resources->pipelines->pipeline->source`
-        > value in the [cd/iot-edge-modules.yml file](/.pipelines/cd/iot-edge-modules.yml) file.
+        > value in the [cd/iot-edge-modules.yml file](./.pipelines/cd/iot-edge-modules.yml) file.
         > That source must match the exact spelling of your pipeline name for deployments to automatically trigger.
 
         Leave the `resources->pipelines->pipeline` value the same,
@@ -138,13 +138,13 @@ You will need to do the following steps to get your Azure DevOps instance ready 
 
         This is the pipeline that builds and pushes the artifacts used to start LVA
         and trigger object detection and recordings once everything is deployed.
-        It is from the [ci/lva-console-app.yml file](/.pipelines/ci/lva-console-app.yml).
+        It is from the [ci/lva-console-app.yml file](./.pipelines/ci/lva-console-app.yml).
 
         > **Important**
         >
         > If you choose to name this pipeline something other than `CI - LVA Console App`
         > then you will need to update the `resources->pipelines->pipeline->source`
-        > value in the [cd/iot-edge-modules.yml file](/.pipelines/cd/iot-edge-modules.yml) file.
+        > value in the [cd/iot-edge-modules.yml file](./.pipelines/cd/iot-edge-modules.yml) file.
         > That source must match the exact spelling of your pipeline name for deployments to automatically trigger.
 
         Leave the `resources->pipelines->pipeline` value the same,
@@ -154,19 +154,19 @@ You will need to do the following steps to get your Azure DevOps instance ready 
     1. `CI - Docs`
 
         This is a pipeline that runs CI if documents are updated.
-        It is from the [ci/docs.yml file](/.pipelines/ci/docs.yml)
+        It is from the [ci/docs.yml file](./.pipelines/ci/docs.yml)
     1. `PR - Docs`
 
         This is a pipeline that does PR validation if you are updating documentation.
-        It is from the [pr/docs.yml file](/.pipelines/pr/docs.yml).
+        It is from the [pr/docs.yml file](./.pipelines/pr/docs.yml).
     1. `PR - IoT Edge Modules`
 
         This is a pipeline that does PR validation for changes to any iotedge modules.
-        It is from the [pr/iot-edge-modules.yml file](/.pipelines/pr/iot-edge-modules.yml).
+        It is from the [pr/iot-edge-modules.yml file](./.pipelines/pr/iot-edge-modules.yml).
     1. `PR - LVA Console App`
 
         This is a pipeline that does PR validation for changes to LVA Console App.
-        It is from the [pr/lva-console-app.yml file](/.pipelines/pr/lva-console-app.yml).
+        It is from the [pr/lva-console-app.yml file](./.pipelines/pr/lva-console-app.yml).
 
     All of the PR pipelines (if created) will not automatically trigger
     unless you add it as a build validation for a certain branch.
@@ -184,7 +184,7 @@ The remaining steps left to take for deployment are:
 
 1. Trigger the `CD - IaC` pipeline to run off the main branch. When this pipeline runs all of your Azure Resources will get created
     in the subscription you created the service connection for.
-    They will all be deployed to the resource group according to how you named it in [vars-common.yml](/.pipelines/variables/vars-common.yml)
+    They will all be deployed to the resource group according to how you named it in [vars-common.yml](./.pipelines/variables/vars-common.yml)
 1. Now that the keyvault has been deployed you will need to add one more secret to it manually.
 
     In order to do this you will need to [add yourself to the keyvault access policies](https://docs.microsoft.com/en-us/azure/key-vault/general/assign-access-policy-portal).
@@ -218,7 +218,7 @@ This is where video recordings will be uploaded. You can also connect to the VM 
 and look at the `objectDetectionBusinessLogic` logs (command to run is `iotedge logs objectDetectionBusinessLogic`).
 This will show you what objects are getting detected in your video.
 
-To stop the object detection you can shut down the VM or follow our [environment setup instructions](/docs/dev-environment-setup.md)
+To stop the object detection you can shut down the VM or follow our [environment setup instructions](./docs/dev-environment-setup.md)
 and the documentation in [LVA Console App](lva-console-app/README.md) and run the console app with the `operations_teardown.json` file :-).
 This is the option we prefer of course :-), but both would work.
 
@@ -236,22 +236,22 @@ these sections will provide more information on how that can be accomplished!
 
 ### Documentation
 
-- [Architecture](/docs/architecture.md)
+- [Architecture](./docs/architecture.md)
 - Design
-  - [Business Logic Design](/docs/design-business-logic.md)
-  - [LVA Topology Design](/docs/design-lva-topology.md)
-  - [Integration Testing](/docs/design-integration-testing.md)
-  - [DevOps Pipelines](/docs/devops-pipelines.md)
-  - [Edge Layered Deployments](/docs/devops-layered-deployment.md)
+  - [Business Logic Design](./docs/design-business-logic.md)
+  - [LVA Topology Design](./docs/design-lva-topology.md)
+  - [Integration Testing](./docs/design-integration-testing.md)
+  - [DevOps Pipelines](./docs/devops-pipelines.md)
+  - [Edge Layered Deployments](./docs/devops-layered-deployment.md)
 - Development
-  - [Environment Setup](/docs/dev-environment-setup.md)
-  - [Edge Virtual Machine](/docs/dev-edge-virtual-machine.md)
-  - [Troubleshooting](/docs/dev-iot-troubleshoot.md)
+  - [Environment Setup](./docs/dev-environment-setup.md)
+  - [Edge Virtual Machine](./docs/dev-edge-virtual-machine.md)
+  - [Troubleshooting](./docs/dev-iot-troubleshoot.md)
 
 ### Projects
 
-- [Edge](/edge/README.md) - This project contains all Edge modules and deployment manifests
-- [LVA Console App](/lva-console-app/README.md) - This project contains the console app that will run direct method operations on the
+- [Edge](./edge/README.md) - This project contains all Edge modules and deployment manifests
+- [LVA Console App](./lva-console-app/README.md) - This project contains the console app that will run direct method operations on the
   LVA module running on the Edge device
 
 ### Prerequisites
@@ -263,9 +263,9 @@ these sections will provide more information on how that can be accomplished!
 
 ### Environment Setup
 
-- [Follow python setup instructions and activate your virtual environment](/docs/dev-environment-setup.md)
+- [Follow python setup instructions and activate your virtual environment](./docs/dev-environment-setup.md)
 - `pip install -r requirements.txt`
 
 ### Linting
 
-See the lint section in the [environment setup document](/docs/dev-environment-setup.md)
+See the lint section in the [environment setup document](./docs/dev-environment-setup.md)

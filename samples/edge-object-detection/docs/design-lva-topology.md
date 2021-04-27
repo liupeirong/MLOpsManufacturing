@@ -1,7 +1,7 @@
 # LVA Topology Design <!-- omit in toc -->
 
 This document outlines the topology design for the Live Video Analytics edge module. This sample project focuses on event-based recording
-of assets. For more details on this scenario, you can read more in our [business logic document](/docs/design-business-logic.md).
+of assets. For more details on this scenario, you can read more in our [business logic document](./design-business-logic.md).
 
 This diagram represents the contents of the topology file we will be deploying.
 
@@ -15,4 +15,4 @@ This diagram represents the contents of the topology file we will be deploying.
 1. The signal gate will need the RTSP source and `evrIoTMessageSource` to open
 1. When the signal gate conditions are met, the asset sink will save the video to Azure Media Services
 
-![LVA Topology](/docs/images/lva-topology.png)
+![LVA Topology](./images/lva-topology.png)

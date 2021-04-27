@@ -36,7 +36,7 @@ The following are the Azure resources for the sample project:
 
 ## Architecture
 
-![iot architecture](/docs/images/arch-diagram.png)
+![iot architecture](./images/arch-diagram.png)
 
 1. We capture video from cameras using RTSP. This is done through the LVA Edge module which has a built-in RTSP source.
 

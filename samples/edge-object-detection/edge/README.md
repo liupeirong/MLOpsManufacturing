@@ -22,14 +22,14 @@ first to get everything setup, and to gain a better understanding of how IoT Edg
 
 Here is a general guide of the project's folder structure for reference.
 
-- [.vscode](/.vscode) | Folder containing launch settings for running the project in VSCode
-- [modules](/modules) | Folder containing all Edge module code
+- [.vscode](./.vscode) | Folder containing launch settings for running the project in VSCode
+- [modules](./modules) | Folder containing all Edge module code
   - individual module | Each module should have its own folder containing
     - `requirements.txt`
     - `module.json`
     - `Dockerfile`
     - `main.py`
-- [tests](/tests) - folder for Edge module unit and integration tests
+- [tests](./tests) - folder for Edge module unit and integration tests
   - filename guidance `test_<moduleName>`
 
 ## Deployment Manifest Templates

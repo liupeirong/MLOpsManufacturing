@@ -55,7 +55,7 @@ Below will explain how we are doing this
 
 #### Deploying Resources
 
-All of the resources needed for integration testing are deployed as steps in the [iot-integration-test template file](/.pipelines/templates/iot-integration-test.yml).
+All of the resources needed for integration testing are deployed as steps in the [iot-integration-test template file](../.pipelines/templates/iot-integration-test.yml).
 
 The resource creation steps in this file are:
 
@@ -69,7 +69,7 @@ The resource creation steps in this file are:
 #### Deploy Modules Script
 
 Once we have the resources set up, we must then deploy the edgeAgent and edgeHub modules, as well as whatever modules we want to test.
-This is done using the [integrationTestLayeredDeployment.sh script](/edge/scripts/integrationTestLayeredDeployment.sh).
+This is done using the [integrationTestLayeredDeployment.sh script](../edge/scripts/integrationTestLayeredDeployment.sh).
 There is documentation within the script about what parameters the script takes in.
 
 At a high level, what the script does is:
@@ -93,7 +93,7 @@ This is why we needed to use the mockModules mentioned above.
 
 ### Writing New Tests
 
-We've created a test handler [edgeModuleTestHandler.py](/edge/tests/edgeModuleTestHandler.py)
+We've created a test handler [edgeModuleTestHandler.py](../edge/tests/edgeModuleTestHandler.py)
 which takes care of managing the concurrency of listening to messages coming into the event hub
 and sending messages to whatever module you want to send them to.
 This class will loop until it has been too long for the event hub to go without receiving a message,
@@ -102,7 +102,7 @@ at that point the test handler will stop the test.
 It is the responsibility of the test file itself to know whether the test has failed or passed,
 the test handler just handles running the loop and routing the proper messages.
 
-In order to write a new test, look at what is being done in [test_objectDetectionBusinessLogic_highConfidence.py](/edge/tests/integration-tests/test_objectDetectionBusinessLogic_highConfidence.py).
+In order to write a new test, look at what is being done in [test_objectDetectionBusinessLogic_highConfidence.py](../edge/tests/integration-tests/test_objectDetectionBusinessLogic_highConfidence.py).
 The connection strings and device name we are sending our test to are passed in as arguments for the test.
 A message handling function is passed into the testHandler.
 This message handling function is where all the event hub messages will be routed,

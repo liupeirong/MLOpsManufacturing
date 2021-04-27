@@ -9,5 +9,5 @@
   - [Edge Layered Deployments](./devops-layered-deployment.md)
 - Development
   - [Environment Setup](./dev-environment-setup.md)
-  - [Edge Virtual Machine](./ev-edge-virtual-machine.md)
+  - [Edge Virtual Machine](./dev-edge-virtual-machine.md)
   - [Troubleshooting](./dev-iot-troubleshoot.md)

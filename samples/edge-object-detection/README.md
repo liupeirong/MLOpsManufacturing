@@ -100,6 +100,9 @@ You will need to do the following steps to get your Azure DevOps instance ready 
     [vars-dev.yml](./.pipelines/variables/vars-dev.yml) and [vars-prod.yml](./.pipelines/variables/vars-prod.yml).
     The [devops-pipelines.md](./docs/devops-pipelines.md) has a section titled `Getting servicePrincipalObjectId`
     that will walk you through how to get that.
+    > Note: This is for the Azure Dev Ops Resource Manager service connection created through Azure Dev Ops
+    > not the one created through cli at the very beginning
+
     If you created a different dev and prod service connection the two values will be different.
 1. Now you will need to create Azure Pipelines using the existing yaml files provided in this repo.
     If this is your first time creating a pipeline this link is slightly helpful

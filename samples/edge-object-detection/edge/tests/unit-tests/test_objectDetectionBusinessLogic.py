@@ -8,7 +8,7 @@ import logging
 
 from testfixtures import LogCapture
 from unittest import TestCase
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch, Mock
 from datetime import datetime, timedelta
 
 # Import main.py from objectDetectionBusinessLogic edge module
@@ -118,7 +118,7 @@ class TestObjectDetectedHandlerFunction():
         ({}, '1s', 0, '2020-11-24T19:22:06.912000Z', 0.9, 'apple')
     ])
     def test_object_detected_handler(self, event_dict, timeout, expected_call_count, expected_time, confidence, tag):
-        mock = AsyncMock()
+        mock = Mock()
         mock.send_message_to_output.return_value = True
 
         with LogCapture() as logs:

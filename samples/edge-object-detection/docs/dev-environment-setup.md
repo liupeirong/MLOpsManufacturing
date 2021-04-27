@@ -5,7 +5,7 @@ The goal of this document is to describe how to setup your development environme
 ## Sections <!-- omit in toc -->
 
 - [Python Setup](#python-setup)
-  - [Install Python (v3.9)](#install-python-v39)
+  - [Install Python (v3.7)](#install-python-v37)
   - [Virtual Environment](#virtual-environment)
     - [Setup Python virtual environment via `VirtualEnv`](#setup-python-virtual-environment-via-virtualenv)
     - [Setup Python virtual environment via `PyEnv`](#setup-python-virtual-environment-via-pyenv)
@@ -14,7 +14,7 @@ The goal of this document is to describe how to setup your development environme
 
 ## Python Setup
 
-### Install Python (v3.9)
+### Install Python (v3.7)
 
 - Windows: <https://www.python.org/downloads/windows/>
   - **For x64 machines**, install `x86-64` version of Python.
@@ -75,7 +75,7 @@ This approach is for Mac users:
 - Install pyenv virtualenv with `brew install pyenv-virtualenv`
   - You need to have `pyenv` installed first
 - Run `pyenv virtualenv`, specifying the Python version you want and the name of the virtualenv directory
-  - E.g. `pyenv virtualenv 3.9.0 my-virtual-env-3.9.0`
+  - E.g. `pyenv virtualenv 3.7.0 my-virtual-env-3.7.0`
 - To activate the environment you can run `pyenv activate <name_of_virtualenv>`
 - To deactivate `pyenv deactivate`
 

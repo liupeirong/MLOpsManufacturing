@@ -18,7 +18,7 @@ variables:
 - name: workingDir
   value: edge
 - name: pythonVersion
-  value: '3.9'
+  value: '3.7'
 # Service connection variables must be global due to issue:
 # https://developercommunity.visualstudio.com/content/problem/676259/using-a-variable-for-the-service-connection-result.html
 - name: devServiceConnection

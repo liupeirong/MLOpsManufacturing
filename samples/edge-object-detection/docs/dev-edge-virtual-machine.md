@@ -14,7 +14,7 @@ IoT Edge modules.
 
 ## Automated Resource Deployment
 
-This repository has an [automated pipeline](/.pipelines/cd/iac.yml) that deploys all of the resources
+This repository has an [automated pipeline](../.pipelines/cd/iac.yml) that deploys all of the resources
 needed for edge object detection, including an IoT Edge enabled VM.
 However, if you would prefer to just deploy the VM manually, this document explains how to do so.
 

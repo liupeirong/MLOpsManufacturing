@@ -28,7 +28,7 @@ This document describes the CI/CD pipelines for the project.
 
 A high level overview of what is accomplished in PR, CI, and CD pipelines can be seen in this image
 
-![devops](/docs/images/devops.png)
+![devops](./images/devops.png)
 
 ## Install ReplaceTokens Task
 
@@ -64,7 +64,7 @@ key vault linked and need to be created manually after running the IaC pipeline.
 
 ### Getting servicePrincipalObjectId
 
-servicePrincipalObjectId is a variable that lives in [vars-dev.yml](/.pipelines/variables/vars-dev.yml) and [vars-prod.yml](/.pipelines/variables/vars-prod.yml).
+servicePrincipalObjectId is a variable that lives in [vars-dev.yml](../.pipelines/variables/vars-dev.yml) and [vars-prod.yml](../.pipelines/variables/vars-prod.yml).
 The purpose of this variable is so that our pipelines have the ability to set secrets in the Key Vault.
 The Key Vault is created by the IaC pipeline, and in that same IaC pipeline we need to write to the Key Vault.
 Because of this, the Key Vault is created with an access policy such that the pipeline can create secrets.
@@ -85,7 +85,7 @@ This command will return the value needed to set for servicePrincipalObjectId.
 ## PR Pipelines
 
 There are two PR pipelines, one for the LVA console app, and one for the IoT Edge modules.
-Both pipelines use the [python-code-validation.yml](/.pipelines/templates/python-code-validation.yml) template to:
+Both pipelines use the [python-code-validation.yml](../.pipelines/templates/python-code-validation.yml) template to:
 
 - Setup the python version and tools
 - Install requirements
@@ -93,9 +93,9 @@ Both pipelines use the [python-code-validation.yml](/.pipelines/templates/python
 - Run the unit tests
 - Publish test results
 
-The console app pipeline ([lva-console-app.yml](/.pipelines/pr/lva-console-app.yml)) doesn't do anything else outside the template.
+The console app pipeline ([lva-console-app.yml](../.pipelines/pr/lva-console-app.yml)) doesn't do anything else outside the template.
 
-The IoT pipeline ([iot-edge-modules.yml](/.pipelines/pr/iot-edge-modules.yml))
+The IoT pipeline ([iot-edge-modules.yml](../.pipelines/pr/iot-edge-modules.yml))
 has one additional step which builds the IoT Edge modules using the `AzureIoTEdge` task.
 
 ## CI Pipelines
@@ -103,11 +103,11 @@ has one additional step which builds the IoT Edge modules using the `AzureIoTEdg
 There are two CI pipelines, one for the LVA console app, and one for the IoT Edge modules. These pipelines both have the same steps as
 the PR pipelines, but with some additions.
 
-[lva-console-app.yml](/.pipelines/ci/lva-console-app.yml) has one additional step
+[lva-console-app.yml](../.pipelines/ci/lva-console-app.yml) has one additional step
 which will publish a pipeline artifact containing the console app. This is published
 as an artifact as the release pipeline will need to run the console app as part of its steps.
 
-[iot-edge-modules.yml](/.pipelines/ci/iot-edge-modules.yml) has two additional steps from the PR pipeline:
+[iot-edge-modules.yml](../.pipelines/ci/iot-edge-modules.yml) has two additional steps from the PR pipeline:
 
 - The `AzureIoTEdge` task is used to publish the edge module containers to an Azure Container Registry
 - A pipeline artifact step is used to publish the deployment manifest files required in the release (CD) pipeline
@@ -119,7 +119,7 @@ that are defining in the deployment template.
 
 ### IaC CD
 
-The deployment for Azure resources is can be found here [iac.yml](/.pipelines/cd/iac.yml)
+The deployment for Azure resources is can be found here [iac.yml](../.pipelines/cd/iac.yml)
 
 #### DEV Stage
 
@@ -150,13 +150,13 @@ Steps:
 
 The IaC CD pipeline uses several templates:
 
-- Common resources can be found under [iac-common.yml](/.pipelines/templates/iac-common.yml)
+- Common resources can be found under [iac-common.yml](../.pipelines/templates/iac-common.yml)
   - Uses Az CLI to:
     - Deploy the `/deploy/bicep/resourcegroup.bicep` file
     - Deploy the `/deploy/bicep/main.common.bicep` file
-- IoT resources can be found under [iac-iot.yml](/.pipelines/templates/iac-iot.yml)
+- IoT resources can be found under [iac-iot.yml](../.pipelines/templates/iac-iot.yml)
   - Uses Az CLI to deploy the `/deploy/bicep/main.iot.bicep` file
-- Edge VM resources can be found under [iac-edge-vm.yml](/.pipelines/templates/iac-edge-vm.yml)
+- Edge VM resources can be found under [iac-edge-vm.yml](../.pipelines/templates/iac-edge-vm.yml)
   - Checks if the VM already exists, if it does the rest of the steps in this template will not run
   - Creates an IoT Edge device registration within the IoT Hub deployed by the previous template
   - Generates SSH keys for the VM and stores them in the Key Vault
@@ -167,9 +167,9 @@ The IaC CD pipeline uses several templates:
 
 ### IoT CD
 
-The deployment of the IoT Edge modules uses the [layered deployment process](/docs/devops-layered-deployment.md).
+The deployment of the IoT Edge modules uses the [layered deployment process](./devops-layered-deployment.md).
 
-[iot-edge-modules.yml](/.pipelines/cd/iot-edge-modules.yml) has the following stages:
+[iot-edge-modules.yml](../.pipelines/cd/iot-edge-modules.yml) has the following stages:
 
 #### DEV Stage
 
@@ -195,20 +195,20 @@ Steps:
 
 #### Templates
 
-The IoT Edge deployment steps are defined in the [iot-module-deployment.yml](/.pipelines/templates/iot-module-deployment.yml)
+The IoT Edge deployment steps are defined in the [iot-module-deployment.yml](../.pipelines/templates/iot-module-deployment.yml)
 template file. Here are the steps in the pipeline:
 
 - Download the artifacts published by the IoT CI pipeline (this contains the deployment manifests for our project)
 - Set the IMAGE_TAG environment variable as this value needs to be the same value as the CI pipeline's build Id
 - Replace all the parameters in the format `${EXAMPLE}` in our manifest files with pipeline variables
-- Run the [edgeLayeredDeployment](/edge/scripts/edgeLayeredDeployment.sh) script to deploy modules to edge devices using the layered system
+- Run the [edgeLayeredDeployment](../edge/scripts/edgeLayeredDeployment.sh) script to deploy modules to edge devices using the layered system
 
-The LVA console steps are defined in the [lva-console-app.yml](/.pipelines/templates/lva-console-app.yml) template file.
+The LVA console steps are defined in the [lva-console-app.yml](../.pipelines/templates/lva-console-app.yml) template file.
 Here are the steps in the pipeline:
 
 - Download the artifacts published by the IoT CI pipeline
 - Download the artifacts published by the LVA console app CI pipeline
-- Run the [cleanupLvaEdgeModule](/edge/scripts/cleanupLvaEdgeModule.sh) script to deactivate and delete any active LVA topologies and instances*
+- Run the [cleanupLvaEdgeModule](../edge/scripts/cleanupLvaEdgeModule.sh) script to deactivate and delete any active LVA topologies and instances*
 - Set the python version, install tools and project requirements
 - Run the LVA console app, given a specific operations file
 
@@ -230,7 +230,7 @@ as at that point, the desired properties are getting populated. To work around t
 
 ### Known Issues
 
-With the [CD IoT Edge Modules pipeline](/.pipelines/cd/iot-edge-modules.yml) it is referencing the artifacts
+With the [CD IoT Edge Modules pipeline](../.pipelines/cd/iot-edge-modules.yml) it is referencing the artifacts
 by using a [pipeline resource](https://docs.microsoft.com/azure/devops/pipelines/process/resources?view=azure-devops&tabs=schema#resources-pipelines)
 which gets artifacts from other pipelines.
 This is used so that CD is automatically triggered as soon as the referenced pipelines have a successful

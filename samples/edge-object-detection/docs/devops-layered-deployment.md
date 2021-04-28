@@ -100,7 +100,7 @@ These tags make is really easy for us to deploy various different edge module co
 change any source code or pipelines. In the example above, we are deploying the object detection business logic with the yolov3 AI inferencing
 service.
 
-![Layered deployment](/docs/images/layered-deployment.png)
+![Layered deployment](./images/layered-deployment.png)
 
 ## IoT Edge CD pipeline
 
@@ -111,7 +111,7 @@ The way our CD pipeline works for deploying the edge modules is by:
 
 Result of a deployment:
 
-![Layered deployment result](/docs/images/layered-deployment-result.png)
+![Layered deployment result](./images/layered-deployment-result.png)
 
 ### edgeLayeredDeployment script
 
@@ -144,7 +144,7 @@ necessary as the deployments need to be active before we can run our smoke test 
 
 ### Edge Smoke Test
 
-The [edge smoke test](/edge/scripts/edgeSmokeTest.sh) makes sure that all the deployments that we know should be
+The [edge smoke test](../edge/scripts/edgeSmokeTest.sh) makes sure that all the deployments that we know should be
 applied are applied to all devices.
 It then makes sure that for each of the devices that is online, all the modules are up and running.
 It does this by polling the module status until the device says it's running,
@@ -157,7 +157,7 @@ but other times it might take a few minutes for the modules to stop running.
 If it takes the modules a while to stop running, this can lead to a scenario where the smoke test runs and sees
 the modules running and thinks everything is good. But really it's the old modules that are running that haven't stopped yet.
 
-For a quick and hacky fix to this, you could add a sleep task to the [iot module deployment template](/.pipelines/templates/iot-module-deployment.yml)
+For a quick and hacky fix to this, you could add a sleep task to the [iot module deployment template](../.pipelines/templates/iot-module-deployment.yml)
 before the smoke test. This would allow for more time for the modules to stop and thus when the smoke test runs it will
 have a higher confidence that it is checking the newly deployed modules.
 

@@ -72,4 +72,4 @@ Essentially, this file is defining the "functions" we want to call on the LVA Ed
 ## Topology Files
 
 The topology json files represent the media graph architecture we want to deploy for the LVA module running on the Edge device. You can
-read more about the topology design in [this design document](/docs/design-lva-topology).
+read more about the topology design in [this design document](../docs/design-lva-topology).

@@ -1,5 +1,5 @@
-[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-ci?branchName=refs%2Fpull%2F59%2Fmerge)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=44&branchName=refs%2Fpull%2F59%2Fmerge)
-[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-cd?branchName=paige%2Fobservability_lib)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=45&branchName=paige%2Fobservability_lib)
+[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-ci?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=44&branchName=main)
+[![Build Status](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_apis/build/status/observability-library/observability-lib-cd?branchName=main)](https://dev.azure.com/cse-manufacturing/MLOpsManufacturing/_build/latest?definitionId=45&branchName=main)
 
 # Overview
 

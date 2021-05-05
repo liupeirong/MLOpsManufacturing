@@ -28,7 +28,7 @@ If images are mostly shared between pipelines and experiments in a single cache 
 
 ## Data Lineage in Azure Machine Learning
 
-**Model reproducibility** is a critical component of production-grade machine learning pipelines. Without it, Data Scientists risk having limited visibility into what causes changes in model performance. The variability may appear to be caused by an adjustment of one parameter, but may actually be caused by hidden sources of randomness. Reproducibility reduces or eliminates variations when rerunning failed jobs or prior experiments, making it essential in the context of fault tolerance and iterative refinement of models. Running ML pipelines in the cloud across multiple compute nodes not only multiplies the sources of non-determinism but also increases the need for both fault tolerance and iterative model development.
+**Model reproducibility** is a critical component of production-grade machine learning pipelines. Without it, Data scientists risk having limited visibility into what causes changes in model performance. The variability may appear to be caused by an adjustment of one parameter, but may actually be caused by hidden sources of randomness. Reproducibility reduces or eliminates variations when rerunning failed jobs or prior experiments, making it essential in the context of fault tolerance and iterative refinement of models. Running ML pipelines in the cloud across multiple compute nodes not only multiplies the sources of non-determinism but also increases the need for both fault tolerance and iterative model development.
 
 There are 5 major components that define a machine learning model:
 
@@ -40,12 +40,11 @@ There are 5 major components that define a machine learning model:
 
 First 4 components are tracked between pipeline's Git repository and Azure Machine Learning tracking storages. Therefore, it's relatively easy to achieve model reproducibility up to the point of what data was used.
 
-Data and annotations are way harder to track. There are tools and processes to maintain data versioning that can provide a great level of observability on data. However, with Azure Machine Learning pipelines, the same level of observability may be achieved with significantly lower effort. For example, here's what we can do when training computer vision models.
+Data and annotations are much harder to track. There are tools and processes to maintain data versioning that can provide a great level of observability on data. However, with Azure Machine Learning pipelines, the same level of observability may be achieved with significantly lower effort. For example, here's what we can do when training computer vision models.
 
-1. Annotation files are expected to change, so maintain snapshots them. Every pipeline run has a snapshot of annotation files in the run's output storage.
-1. Data files (images) are expected to stay unmodified once added to the storage.
-1. Maintain a single shared cache of data files.
-1. Model training code uses dataset annotation data to get references to data files (images). As we get more data files over time, previous experiments are still fully reproducible based on the stored annotation snapshots.
+1. Maintain snapshots of annotation files as they are expected to change. Every pipeline run has a snapshot of annotation files in the run's output storage.
+1. Maintain a single shared cache of data files (images) as they are expected to stay unmodified once added to the storage.
+1. Model training code uses dataset annotation data to get references to data files (images). As data files are added over time, previous experiments are still fully reproducible based on the stored annotation snapshots.
 
 ### Recommended Data Lineage Strategy
 
@@ -75,9 +74,9 @@ Computer vision pipelines on Azure Machine Learning require transferring data fr
 | DataTransferStep | Lowest manageability overhead, storage credentials are managed within AML Datastores | Doesn't support incremental copying |
 | Azure Data Factory | no need to expose storage credentials to pipelines | Same as above + manageability overhead |<!-- markdownlint-disable MD013 -->
 
-Option "PythonScriptStep with [AzCopy](https://docs.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy-copy)" is a clear winner by the following reasons:
+Option "PythonScriptStep with AzCopy" is a clear winner by the following reasons:
 
-1. It has greater flexibility and AzCopy provides a highly efficient and data transfer mechanism with maximum performance.
+1. It has greater flexibility and AzCopy provides a highly efficient data transfer mechanism with maximum performance.
 1. It runs within AML pipelines, and has access to all pipeline's and run's subsystems.
 1. Storage credentials exposure can be mitigated (see below).
 
@@ -132,7 +131,7 @@ azcopy cp "{cache_datastore_url}/{cache_datastore_annotations_path}/*" "{annotat
 
 ### Step 2 - Populate and update data cache
 
-`overwrite` option of azcopy is set to `ifSourceNewer` which make the process a lot faster if files in the cache are not older than ones in the source datastore.
+`overwrite` option of AzCopy is set to `ifSourceNewer` which make the process a lot faster if files in the cache are not older than ones in the source datastore.
 
 ```bash
 azcopy cp "{source_datastore_url}/{source_datastore_data_path}/*" "{cache_datastore_url}/{cache_datastore_data_path}"
@@ -180,7 +179,7 @@ The cache structure would be the following:
 Based on the cache structure, data and annotations must be passed to training steps as 2 separate Azure ML File Datasets in the `mount` mode:
 
 1. File dataset made on `{source_datastore_name}/{dataset_prefix_name}/{cache_data_dir_name}`
-1. File dataset made on `{source_datastore_name}/{dataset_prefix_name}\{cache_annotations_dir_name}\{snapshot_name}`
+1. File dataset made on `{source_datastore_name}/{dataset_prefix_name}/{cache_annotations_dir_name}/{snapshot_name}`
 
 Using the same example, it would be:
 
@@ -215,7 +214,7 @@ This approach makes image collection independent of the labeling process.
 Due to the modern practices on annotation/labeling for computer vision data, the process of labeling on datasets that change over time includes 2 traits:
 
 1. Labeled images are referenced as they are stored in data storage.
-1. There is always a "merging" labels made for groups of images into a single labeling set. It either happens as part of the labeling itself, or during the data preparation steps.
+1. There is always a "merging" labels step for grouping images into a single labeling set. It either happens as part of the labeling itself, or during the data preparation steps.
 
 Our practice shows that regardless of the labeling type (images tags for classification, object identification with bounding boxes, instance segmentation, etc.), what makes labels across multiple sets being grouped and used together is a notion of **dataset**. A single image may be used across many datasets, but a single label will be most likely used only within a single dataset. Even when a label is leveraged across multiple datasets, most likely, it will be augmented with dataset-specific attributes, and therefore better be copied to a dataset-specific location. Dataset is what defines a group of *labeled* images/files.
 

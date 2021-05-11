@@ -1,9 +1,11 @@
-# Machine Learning Data Caching and Lineage
+# Data Caching and Lineage for Computer Vision
 
-This document covers 2 crucial components of Machine Learning Data Operations:
+This document covers 2 crucial components of machine learning data operations:
 
 1. Data Caching - for optimizing data access and reducing compute overhead.
 1. Data Lineage - for providing observability and repeatability of pipeline runs and experiments with regards to the data they use.
+
+The techniques and guidelines mentioned here focus on the domain of computer vision, but may have applications in other machine learning use cases.
 
 ## Data Caching in Azure Machine Learning
 
@@ -11,7 +13,7 @@ Running Machine Learning pipelines and experiments over large datasets on GPU re
 
 When using Azure Machine Learning with GPU compute cluster and data in Azure Storage, the connection between virtual machines and storage accounts may quickly become a factor that slows down training pipelines, effectively making expensive GPU nodes wait for the data to be delivered. This is why [we recommend using Premium Storage Accounts as primary datastores for running Azure Machine Learning pipelines](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-access-data#storage-guidance).
 
-This strategy is particularly effective in training computer vision models because large amount of image data can be stored cost effectively in Azure Blob Storage, and archieved in cool tiers over time. Meanwhile, prior to running Azure Machine Learning pipelines, data can be copied to Premium storage for fast access by the training cluster.
+This strategy is particularly effective in training computer vision models because large amounts of image data can be stored cost effectively in Azure Blob Storage, and archived in cool tiers over time. Meanwhile, prior to running Azure Machine Learning pipelines, data can be copied to Premium storage for fast access by the training cluster.
 
 ### What to cache
 
@@ -38,7 +40,7 @@ There are 5 major components that define a machine learning model:
 1. Data augmentation code and parameters
 1. Data and annotations
 
-First 4 components are tracked between pipeline's Git repository and Azure Machine Learning tracking storages. Therefore, it's relatively easy to achieve model reproducibility up to the point of what data was used.
+First 4 components are tracked between pipeline's Git repository and Azure Machine Learning tracking storages. Therefore, it's relatively easy to achieve model reproducibility up to the point of what data was used (as long as sources of randomness are parameterized as well).
 
 Data and annotations are much harder to track. There are tools and processes to maintain data versioning that can provide a great level of observability on data. However, with Azure Machine Learning pipelines, the same level of observability may be achieved with significantly lower effort. For example, here's what we can do when training computer vision models.
 
@@ -72,7 +74,7 @@ Computer vision pipelines on Azure Machine Learning require transferring data fr
 | PythonScriptStep with AzCopy | Fast and efficient, provides required features | Storage credentials must be exposed to the step (directly, via Key Vault, or to AML compute's identity) |<!-- markdownlint-disable MD013 -->
 | Durable Functions | Fast and efficient, provides almost all required features, no need to expose storage credentials to pipelines | Significantly increases run orchestration complexity, adds manageability overhead, no access to AML run output |<!-- markdownlint-disable MD013 -->
 | DataTransferStep | Lowest manageability overhead, storage credentials are managed within AML Datastores | Doesn't support incremental copying |
-| Azure Data Factory | no need to expose storage credentials to pipelines | Same as above + manageability overhead |<!-- markdownlint-disable MD013 -->
+| Azure Data Factory | no need to expose storage credentials to pipelines | Same as DataTransferStep + manageability overhead |<!-- markdownlint-disable MD013 -->
 
 Option "PythonScriptStep with AzCopy" is a clear winner by the following reasons:
 
@@ -86,7 +88,7 @@ When a certain code component running within an AML pipeline requires direct acc
 
 1. Pass Account Key or SAS-token as AML Pipeline Parameters (**not recommended**).
 1. Store storage access credentials in [AML workspace's Key Vault](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-use-secrets-in-runs)
-1. Isolate code that requires direct storage access to a separate PythonScriptStep (ParallelRunStep) running on an AML compute cluster with a [managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview). Such identity must be given appropriate access to the storage resources. This option should be used once Managed Identity support in azure ML reaches General Availability status.
+1. Isolate code that requires direct storage access to a separate PythonScriptStep (ParallelRunStep) running on an AML compute cluster with a [managed identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview). Such identity must be given appropriate access to the storage resources. This option should be used once [Managed Identity support in azure ML](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities#azure-machine-learning) reaches General Availability status.
 
 ## Data Caching and Data Lineage Implementation
 
@@ -277,7 +279,7 @@ Here are a few examples with dataset name `object_detection` and labels in `.csv
     └── {location_name}.{camera_id}.235232302300.csv      
 ```
 
-There are labels that are yet to be verified, such as those made using transfer learning or another auto-labeling technique. For these labels, the storage structure needs to reflect the state in the data collection and verification processes. On the data collection side, the source (location, camera id) should be presented in the structure. On the verification side, the state of the labels should be presented: auto-labeled as 'positive', auto-labeled as 'negative', and 'verified'. All verified labels must be further processed/converted and transferred to the `train` (default) or `qa_validation` subsets.
+There are labels that are yet to be verified, such as those made using transfer learning or another auto-labeling technique. For these labels, the storage structure needs to reflect the state in the data collection and verification processes. On the data collection side, the source (location, camera id) should be presented in the structure. On the verification side, the state of the labels should be presented: for example, if we are doing object detection for trucks or binary classification, the images can be auto-labeled as 'positive', auto-labeled as 'negative', and 'verified'. All verified labels must be further processed/converted and transferred to the `train` (default) or `qa_validation` subsets.
 
 ```text
 [object_detection] <- dataset name

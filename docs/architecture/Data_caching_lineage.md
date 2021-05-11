@@ -76,7 +76,7 @@ Computer vision pipelines on Azure Machine Learning require transferring data fr
 | DataTransferStep | Lowest manageability overhead, storage credentials are managed within AML Datastores | Doesn't support incremental copying |
 | Azure Data Factory | no need to expose storage credentials to pipelines | Same as DataTransferStep + manageability overhead |<!-- markdownlint-disable MD013 -->
 
-Option "PythonScriptStep with AzCopy" is a clear winner by the following reasons:
+Option "PythonScriptStep with AzCopy" is a clear winner for the following reasons:
 
 1. It has greater flexibility and AzCopy provides a highly efficient data transfer mechanism with maximum performance.
 1. It runs within AML pipelines, and has access to all pipeline's and run's subsystems.
@@ -96,7 +96,7 @@ Data caching and lineage can be implemented for computer vision as a PythonScrip
 
 ### Pre-req: Configure the following arguments of a pipeline run
 
-* `dataset_prefix_name` - a dataset-specific name that will uniquely identify a dataset specific-location in the cache container.
+* `dataset_prefix_name` - a dataset-specific name that will uniquely identify a dataset-specific location in the cache container.
 * `source_datastore_name` - source data store, an Azure ML Datastore (Blob, ADLS Gen2 or File Shares) where the dataset is stored long-term.
 * `source_datastore_data_path` - a directory/prefix in the the source data store where the data files (images) are stored.
 * `source_datastore_annotations_path` - a directory/prefix in the the source data store where annotation files are stored.

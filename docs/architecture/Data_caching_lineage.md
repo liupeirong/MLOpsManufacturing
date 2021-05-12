@@ -50,7 +50,9 @@ Data and annotations are much harder to track. There are tools and processes to 
 
 ### Recommended Data Lineage Strategy
 
-For computer vision models trained on Azure Machine Learning pipelines, we recommend the following strategy:
+> Note that image preprocessing is assumed to be processed in a separate step. Raw images are stored in a separate location under its own retention policy. The preprocessed images are stored in long-term storage where the following strategy applies.
+
+For computer vision models trained on Azure Machine Learning pipelines, we recommend the following strategy.
 
 1. Every pipeline run performs differential caching of the entire set of data files (images) in a Premium Blob Storage container (cache container).
 1. Every pipeline run takes a snapshot of dataset annotations/labels, and stores it as the pipeline run's output. Such snapshot is attributed with a unique *snapshot name*.

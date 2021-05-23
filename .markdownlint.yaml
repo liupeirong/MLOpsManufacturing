@@ -1,0 +1,8 @@
+# line length
+MD013: false
+
+# no inline html
+MD033: false
+
+# duplicate heading
+MD024: false

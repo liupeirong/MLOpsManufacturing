@@ -4,7 +4,7 @@ Azure ML supports [**Environment**](https://docs.microsoft.com/en-us/azure/machi
 
 We usually use one of the existing environments and install dependent python packages by specifiying conda configuration, however, we can also create **Custom Base Image** if existing one doesn't meet our requirements.
 
-# Custom Base Image
+## Custom Base Image
 
 Azure ML supports custom docker image as Azure ML Environment. There are three ways to specify custom base imgae for Azure ML pipeline.
 
@@ -12,7 +12,7 @@ Azure ML supports custom docker image as Azure ML Environment. There are three w
 - Specify Dockerfile
 - Directly embed Dockerfile content
 
-We recommend to build docker image in advance and specify the container registory address. The dokcer image should have all dependencies, softwares and tools, then register it to container registory such as ACR. 
+We recommend to build docker image in advance and specify the container registory address. The dokcer image should have all dependencies, softwares and tools, then register it to container registory such as ACR.
 
 [Build custom image](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#build-a-custom-base-image) contains sample Dockerfile which describe how to create custom base image.
 
@@ -20,21 +20,21 @@ We add additional requirements into the Dockerfile to create the custom base ima
 
 If you specify Dockerfile or Dockerfile content directly in the Azure ML pipeline build code, the build agent has to build the image everytime the pipeline build, which may take too much time.
 
-# Create Dockerfile
+## Create Dockerfile
 
 The sample [Dockerfile](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#build-a-custom-base-image) contains minimum requirements to run experiment, such as conda environment and Azure ML SDK. We can add dependencies and softwares in the Dockerfile.
 
-## Sample Dockerfile for custom image
+### Sample Dockerfile for custom image
 
 This project contains some samples which uses custom base image. See each sample to understand how to write Dockerfile.
 
 [Kaldi yesno sample](../../samples/yesno/environment_setup/azureml_environment/Dockerfile)
 
-# Use custom base image in Azure ML Pipeline
+## Use custom base image in Azure ML Pipeline
 
 As we explain above, there are three ways to specify custom base image.
 
-## Specify container registory address
+### Specify container registory address
 
 This is recommended approach, which you build the image in advance and register to container registory.
 
@@ -48,6 +48,7 @@ myenv = Environment(name="myenv")
 myenv.docker.enabled = True
 myenv.docker.base_image = "mcr.microsoft.com/azureml/o16n-sample-user-base/ubuntu-miniconda:latest"
 ```
+
 If the repository requires authentication, then add additional properties.
 
 ```python
@@ -57,7 +58,7 @@ myenv.docker.base_image_registry.username = "username"
 myenv.docker.base_image_registry.password = "password"
 ```
 
-## Specify Dockerfile
+### Specify Dockerfile
 
 You can also speficy Dockerfile or content directly in Azure ML pipeline building code.
 
@@ -76,6 +77,7 @@ myenv.docker.base_dockerfile = dockerfile
 myenv.docker.base_image = None
 myenv.docker.base_dockerfile = "./Dockerfile"
 ```
+
 This is good approach only when:
 
 - You start from image which contains all Azure ML required dependencies

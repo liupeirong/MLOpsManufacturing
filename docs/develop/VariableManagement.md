@@ -62,6 +62,7 @@ For example, this is how variables are managed in this project:
 ## Example 1: Image-classification-tensorflow
 
 * __Infrastructure variables__
+
 | Variable Name            | Short description                                                                      |
 | ------------------------ | ---------------------------------------------------------------------------------------|
 | ACR_SVC_CONNECTION       | Service Connection to a Docker Container Registry for build agent                      |
@@ -72,6 +73,7 @@ For example, this is how variables are managed in this project:
 | ACI_DEPLOYMENT_NAME      | Azure ML deployment name to Azure Container Instance                                   |
 
 * __Application variables__
+
 | Variable Name               | Short description                                                                      |
 | --------------------------- | ---------------------------------------------------------------------------------------|
 | SOURCES_DIR_TRAIN           | The directory containing the scripts for the ML model                                  |
@@ -87,10 +89,11 @@ For example, this is how variables are managed in this project:
 | AML_CLUSTER_PRIORITY        | Azure Machine Learning compute cluster priority                                        |
 | AML_CLUSTER_MIN_NODES       | Azure Machine Learning compute minimum number of nodes                                 |
 | AML_CLUSTER_MAX_NODES       | Azure Machine Learning compute maximum number of nodes                                 |
-| TEST_IMAGE_CLASSES       | a comma separated list of image classification class names of images for smoke testing |
-| TEST_IMAGE_URLS          | a comma separated URLs of images for smoke testing                                     |
+| TEST_IMAGE_CLASSES          | a comma separated list of image classification class names of images for smoke testing |
+| TEST_IMAGE_URLS             | a comma separated URLs of images for smoke testing                                     |
 
 * __Machine Learning variables__
+
 | Variable Name             | Short description                                                                      |
 | ------------------------- | ---------------------------------------------------------------------------------------|
 | image_size                | The target image size on preprocessing for the source image                            |
@@ -102,12 +105,14 @@ For example, this is how variables are managed in this project:
 ## Example 2: yesno
 
 * __Key vault secrets__
+
 | Variable Name            | Short description                                                                    |
 | ------------------------ | -------------------------------------------------------------------------------------|
 | ACR_PASSWORD             | Azure Container Registory user password                                              |
 | AML_STORAGE_ACCOUNT_KEY  | Azure Storage Account Key where input data is stored                                 |
 
 * __Infrastructure variables__
+
 | Variable Name            | Short description                                                                    |
 | ------------------------ | -------------------------------------------------------------------------------------|
 | BASE_NAME                | Unique naming prefix for created resources - max 10 chars, letters and numbers only  |
@@ -118,6 +123,7 @@ For example, this is how variables are managed in this project:
 | WORKSPACE_NAME           | Azure Machine Learning workspace name                                                |
 
 * __Application variables__
+
 | Variable Name            | Short description                                                                    |
 | ------------------------ | -------------------------------------------------------------------------------------|
 | AML_ENV_NAME             | Azure Machine Learning environment name                                              |

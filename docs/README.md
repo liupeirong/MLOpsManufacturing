@@ -28,8 +28,8 @@ challenges we have encountered in real world projects.
 
 ## observability
 
-* [Logging Option for Azure Machine Learning](observability/AzureMLLogging.md)
-* [Observability Option for Azure Resources and Azure Machine Learning](observability/MonitorAzureResources.md)
+* [Logging options for Azure Machine Learning](observability/AzureMLLogging.md)
+* [Observability options for Azure resources and Azure Machine Learning](observability/MonitorAzureResources.md)
 * [Setting up notifications in Azure](observability/Notification.md)
 
 ## Security

@@ -2,23 +2,23 @@
 
 What are the security considerations to take into account when building a machine learning solution, especially if it's built on Azure Machine Learning Service (AML)? This article summerizes the key points that developers can act upon toward building a secure ML solution. For a complete guide, see this [Microsoft documentation](https://docs.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security).
 
-# Inside Azure ML
+## Inside Azure ML
 
 Azure ML is a Platform-as-a-Service (PAAS). As any PAAS, security is a shared responsibility between the customer and Microsoft.
 
-<img src="../media/azureml-security/00_shared_responsibility.png" width="40%">
+<img src="../media/AzureMLSecurity/00_shared_responsibility.png" width="40%">
 
 When you deploy an AML Workspace, you not only provision resources required by AML in your own subscription, Microsoft also provisions resources for you in a Microsoft managed subscription. Depending on your security requirements, you can have different levels of control over these resources. The following diagrams from [AML documentation](https://docs.microsoft.com/en-us/azure/machine-learning/concept-azure-machine-learning-architecture) depict the resources deployed with an AML Workspace.
 
-**AML Model Traing**
+### AML Model Traing
 
-<img src="../media/azureml-security/01_model_training.png" width="90%">
+<img src="../media/AzureMLSecurity/01_model_training.png" width="90%">
 
-**AML Model Inferencing**
+### AML Model Inferencing
 
-<img src="../media/azureml-security/02_model_inferencing.png" width="90%">
+<img src="../media/AzureMLSecurity/02_model_inferencing.png" width="90%">
 
-# Network Security
+## Network Security
 
 Take the following measures to secure your network and endpoints. You don’t have to implement all of them. For example, you can add your Storage account to a virtual network with a Service Endpoint without having to enable Private Link on your AML workspace.
 
@@ -30,9 +30,9 @@ Take the following measures to secure your network and endpoints. You don’t ha
 
 4. [Enable Azure Container Registry with AML in a virtual network](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-secure-workspace-vnet#enable-azure-container-registry-acr) and [enable subnet delegation in Azure Container Instances](https://docs.microsoft.com/en-us/azure/machine-learning/how-to-secure-inferencing-vnet#enable-azure-container-instances-aci).
 
-<img src="../media/azureml-security/03_AML_VNET.png" width="80%">
+<img src="../media/AzureMLSecurity/03_AML_VNET.png" width="80%">
 
-# Identity & Access Control
+## Identity & Access Control
 
 * AML Operations
   * [Assign user roles to perform specific AML operations](https://docs.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security#restrict-access-to-resources-and-operations)
@@ -52,7 +52,7 @@ Take the following measures to secure your network and endpoints. You don’t ha
   * Avoid having secrets as much as possible. Nothing is more secure than no secrets at all. If you must, store secret variables in Azure Key Vault instead of Azure DevOps.  Not only it's more secure, ML pipelines can also be triggered outside Azure DevOps by users who have access to secrets, for example, from their dev machines.
   * Run [Microsoft Security Code Analysis](https://secdevtools.azurewebsites.net/) in Azure DevOps.
 
-# Information Protection
+## Information Protection
 
 * Enable [Container Registry Vulnerability Scanning](https://docs.microsoft.com/en-us/azure/security-center/defender-for-container-registries-introduction) to ensure Docker images are clear of malicious components
 * Encryption –
@@ -73,13 +73,13 @@ Take the following measures to secure your network and endpoints. You don’t ha
     * To manage the data in AML owned storage containers, you can set [lifecycle actions based on the age](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-lifecycle-management-concepts?tabs=template#rule-actions) of data, ex. N days after modification or creation or access.
   * [Enforce security policy on AML](https://github.com/Azure/azure-policy/tree/master/built-in-policies/policyDefinitions/Machine%20Learning)
 
-    <img src="../media/azureml-security/04_AML_Security_Policy.png" width="50%">
+    <img src="../media/AzureMLSecurity/04_AML_Security_Policy.png" width="50%">
 
   * Enable [Azure Storage diagnostics](https://docs.microsoft.com/en-us/azure/storage/blobs/monitor-blob-storage?tabs=azure-portal#creating-a-diagnostic-setting) to audit storage access. This is what [a sample log entry](https://docs.microsoft.com/en-us/azure/storage/blobs/monitor-blob-storage-reference#fields-that-describe-the-operation) looks like.
 
-    <img src="../media/azureml-security/05_AML_Diagnostics.png" width="80%">
+    <img src="../media/AzureMLSecurity/05_AML_Diagnostics.png" width="80%">
 
-# Threats Unique to Machine Learning
+## Threats Unique to Machine Learning
 
  Production deployments of machine learning solutions in enterprises are still fairly new and few, awareness and understanding of ML security risks are low. Full discussion of ML security risks is out of the scope of this doc, however, here are some examples for raising awareness:
 
@@ -88,7 +88,7 @@ Take the following measures to secure your network and endpoints. You don’t ha
 
 Make sure to analyze the risks and impact in case your ML solution is compromised. Mitigate as much as you can, and have a response plan.
 
-# References
+## References
 
 * Enterprise security and governance for Azure Machine Learning: <https://docs.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security>.
 * Security how-tos: <https://docs.microsoft.com/en-us/azure/machine-learning/how-to-setup-authentication>.

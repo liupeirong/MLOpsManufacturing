@@ -1,16 +1,19 @@
 # Azure Machine Learning Logging
+
 This document illustrates logging design for Azure ML.
 
 - [Overview](#anchor0)
 - [Logging information](#anchor1)
-    - Logs pattern code example
-    - Where to see
+  - Logs pattern code example
+  - Where to see
+
 - [Azure App Insights](#anchor2)
-    - Send logs to Azure App Insights and query with Kusto
-    - Create a Dashboard
+  - Send logs to Azure App Insights and query with Kusto
+  - Create a Dashboard
 
 <a id="anchor0"></a>
-# <a href="#anchor0">Overview</a>
+
+## <a href="#anchor0">Overview</a>
 
 |Where to log|What to log (examples)|Where from|
 |-|-|-|
@@ -19,14 +22,15 @@ This document illustrates logging design for Azure ML.
 |Azure ML|- Execution (console) logs during running pipeline <br>- Result of model performance testing|Azure ML pipeline step scripts|
 |Azure App Insights|- Additional information to identify the detail of pipeline run <br>- Result of model performance testing<br>- Pipeline run duration and status|Azure ML pipeline step scripts<br> Azure Function *1 |
 
-
 *1 We cannot get run duration detail from each step, therefore we use Azure Function to query run duration and status results when each step completed/failed, which is triggered by EventGrid.
 
 <a id="anchor1"></a>
-# <a href="#anchor1">Logging information</a>
 
-## Logs pattern code example
-```
+## <a href="#anchor1">Logging information</a>
+
+### Logs pattern code example
+
+```text
 [logging.formatter]
 
     - Default:
@@ -34,24 +38,28 @@ This document illustrates logging design for Azure ML.
 
     e.g. 2020-11-30 05:57:14,574 - __main__ - INFO - prune parameter: 0 2
 ```
-## Where to see
-### Azure DevOps
+
+### Where to query logs
+
+- Azure DevOps
 ![azureml-logging-01.png](../media/observability/azureml-logging-01.PNG)
-
-### Azure ML
+- Azure  ML
 You can find logs on "Outputs + logs" pane under "Experiments" on Azure ML studio.
+- Azure storage
 
-### Azure storage
 Azure ML output log automatically store in Azure ML blob storages.
 
-
 <a id="anchor2"></a>
-# <a href="#anchor3">Azure App Insights</a>
+
+## <a href="#anchor3">Azure App Insights</a>
+
 Since logs from Python wrapper are already logged in Azure ML it would be better to log only additional information to Azure App Insights.
 The difference from logs in Azure ML is to send only required logs by reducing the amount of info.
 
-## Send logs to Azure App Insights and query with Kusto
-There is a sample demonstrates how to send logs to Azure App Insights by using Function App and query with Kusto. See [pipeline monitor sample](../../common/pipeline_monitor/README.md) for more detail. 
+### Send logs to Azure App Insights and query with Kusto
 
-## Create a Dashboard
-Dashboard is useful to centralize logs and status easily. See [Azure Dashboard]() document for more detail.
+There is a sample demonstrates how to send logs to Azure App Insights by using Function App and query with Kusto. See [pipeline monitor sample](../../common/pipeline_monitor/README.md) for more detail.
+
+### Create a Dashboard
+
+Dashboard is useful to centralize logs and status easily. See [Azure Dashboard](https://docs.microsoft.com/en-us/azure/azure-portal/azure-portal-dashboards) document for more detail.

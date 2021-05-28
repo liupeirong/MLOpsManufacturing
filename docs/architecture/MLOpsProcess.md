@@ -35,7 +35,7 @@ Machine Learning pipelines are often considered a process that generates a new m
 
 Let’s look at an example: imagine that we need to train a model to find anomalies in raw video frames (bad pixels). In real life it’s not common to have a ready-to-use dataset. It means that you have to implement preprocessing steps. For example, if the input dataset is a number of raw video files, they have to be extracted into frames first, and additional algorithms can be applied to each particular frame. So, you need to do some tasks to prepare the dataset, balance it, extract features and so on. After that, you can use any ML framework to train the model. The pre-processing steps could take much longer than the training itself. To reduce compute time, we can run data pre-processing with multiple compute nodes in parallel. It gives us a signal to split our pipeline into several different steps and execute each of them in a different environment (e.g., on a cluster with a number of nodes compared to a single node cluster or GPU nodes versus CPU nodes). If we use a diagram to design our pipeline, it can look like this:
 
-![A pipeline](../media/MLOps_process/mlops_arch_pipe.png)
+![A pipeline](../media/MLOpsProcess/mlops_arch_pipe.png)
 
 You can see that we have four sequential steps there. We execute the first step in parallel on several nodes to convert all available video files into images. The second step is running in parallel as well, but it can be a different number of nodes because there are many more images to process compared to the number of videos. The third step is training and we can use distributed approach such as  Horovod or Parameter Server. The final step runs on a single node to log the model into storage.
 
@@ -51,7 +51,7 @@ You can see that we have four sequential steps there. We execute the first step 
 
 Let’s see how the above example looks like from technologies perspective:
 
-![Pipeline in Azure ML](../media/MLOps_process/mlops_arch_pipe_aml.png)
+![Pipeline in Azure ML](../media/MLOpsProcess/mlops_arch_pipe_aml.png)
 
 ### ML Pipelnes and data scientists ###
 
@@ -132,7 +132,7 @@ Let’s start with the introduction of two branch types that we are going to use
 
 It's important to guarantee that all code going to development branch can represent working ML training pipelines. The only way to do that is to publish and execute the pipelines in the feature branch on a small data set. The small dataset should be prepared in advance and it should be small enough to ensure the pipelines don't spend much time for execution. Any change in ML training pipeline results in publishing and executing the pipeline on the small dataset.
 
-![Moving code from feature branch](../media/MLOps_process/mlops_arch_feature.png)
+![Moving code from feature branch](../media/MLOpsProcess/mlops_arch_feature.png)
 
 The diagram above demonstrates running a build for pull request, including linting and unit testing.
 
@@ -142,7 +142,7 @@ If you have more than one pipeline in the project, you might to implement severa
 
 Once the PR builds pass and code is merged to the development branch, we need to publish modified pipelines to the stable development environment and run the pipelines to produce all required artifacts such as ML models and inferencing containers.
 
-![Pipeline on dev](../media/MLOps_process/mlops_arch_dev.png)
+![Pipeline on dev](../media/MLOpsProcess/mlops_arch_dev.png)
 
 The output artifact at this stage is not always a ML model. It can be a library or even a pipeline itself if we are planning to run it in production, for scoring for example.
 
@@ -163,7 +163,7 @@ For example, we run training from the development branch on the full dataset to 
 
 Rollback can be implemented by removing the **production** tag from the latest model and execute the CI/CD again to pick up the previous version ready for production.
 
-![CICD](../media/MLOps_process/mlops_arch_cicd.png)
+![CICD](../media/MLOpsProcess/mlops_arch_cicd.png)
 
 ### Multi-branch strategy ###
 
@@ -181,7 +181,7 @@ The PR Build on the development branch to QA branch should include the following
 * Deploy only what's needed for production. In some cases you don’t need to deploy training pipelines in production environment, only the scoring infrastructure. In other cases, if training requires access to production data that's only available in production environment, you need to deploy training pipelines as well.
 * Copy all latest approved models (approved models can be tagged)
 
-![Approval process](../media/MLOps_process/mlops_arch_approve.png)
+![Approval process](../media/MLOpsProcess/mlops_arch_approve.png)
 
 In this process we work across several branches:
 
@@ -203,7 +203,7 @@ In the case of the batch scoring, Azure ML is required to run the scoring pipeli
 * copy the latest **production** ready model to QA/Prod environment
 * publish the scoring pipeline to the target Azure ML Workspace
 
-![Batch Deployment](../media/MLOps_process/mlops_arch_batch_deploy.png)
+![Batch Deployment](../media/MLOpsProcess/mlops_arch_batch_deploy.png)
 
 In the case of the runtime service, Azure ML is an optional component in the QA/Prod environment depending on how the model is used:
 
@@ -211,4 +211,4 @@ In the case of the runtime service, Azure ML is an optional component in the QA/
 * deploy the model as part of a custom container image to serve in any service that is not connected to Azure ML: create an image and deploy it to the target service. You can use Azure ML related container registry in the dev environment or any other container registry.
 * serve the model in AKS attached to Azure ML: this is the the recommended way to serve the model. In this case, you need to follow the security best practice to replicate Azure ML Workspace as well as AKS in each environment to ensure AKS is not shared.
 
-![AKS Deployment](../media/MLOps_process/mlops_arch_aks_deploy.png)
+![AKS Deployment](../media/MLOpsProcess/mlops_arch_aks_deploy.png)

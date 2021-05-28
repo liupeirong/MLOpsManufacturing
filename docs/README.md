@@ -6,44 +6,33 @@ challenges we have encountered in real world projects.
 ## Folder Structure
 
 ```bash
-├─ architecture # Azure ML architecture information 
-├─ media # contains images for docs
-├─ observability # contains Azure resouces observability information
-├─ pipeline # contains pipeline information
-├─ process # enginnering fundamentals and developer efficiency
-├─ security # security related information
+├─ architecture # Azure ML architecture docs 
+├─ develop # Docs on developing ML solutions
+├─ media # Images for docs
+├─ observability # Docs on infrastructure or application observability
+├─ security # Docs on security related to ML projects
 ```
 
-## Architecture
+## architecture
 
-This folder contains Azure Machine Learning Architecture related information.
+* [Guideline on data caching and data lineage tracking in ML projects](architecture/DataCachingLineage.md)
+* [Azure Machine Learning process design](architecture/MLOpsProcess.md)
 
-* [Azure Machine Learning Environment: How to use custom software and depencies in Azure ML pipeline](architecture/AzureMLEnvironment.md)
+## develop
 
-## Observability
+* [How to use custom software and depencies in Azure ML pipeline](develop/AzureMLEnvironment.md)
+* [Azure DevOps Pipeline Overview](develop/AzureDevOpsPipeline.md)
+* [How to run and debug Azure Machine Learning projects on local dev machine](develop/LocalDevelopment.md)
+* [How to manage the different types of variables used in ML projects](develop/VariableManagement.md)
+* [How to manage branches](develop/BranchStrategy.md)
 
-This folder contains Azure Resources observability related information.
+## observability
 
-* [Observability Option for Azure Resources and Azure Machine Learning](observability/MonitorAzureResources.md)
+* [Logging options for Azure Machine Learning](observability/AzureMLLogging.md)
+* [Observability options for Azure resources and Azure Machine Learning](observability/MonitorAzureResources.md)
+* [Setting up notifications in Azure](observability/Notification.md)
 
-## Pipeline
+## security
 
-This folder contains Azure DevOps/Azure Machine Learning pipeline information.
-
-* [Azure DevOps Pipeline Overview](pipeline/AzureDevOpsPipeline.md)
-
-## Process
-
-This folder contains Engineering Fondamentals and Developer Efficiency related information.
-
-* [How to run and debug Azure Machine Learning projects on local dev machine](process/local-development.md)
-* [How to manage the different types of variables used in ML projects](process/variable-management.md)
-* [How to manage branches](process/BranchStrategy.md)
-* [Repository Structure information](process/RepositoryStructure.md)
-
-## Security
-
-This folder contains insights into security measures provided by Azure Machine Learning and related Azure Services.
-
-* [Practical guide on how to secure an Azure Machine Learning project](security/azureml-security.md)
-* [Successfully apply RBAC to Azure Machine Learning projects](security/access-control.md)
+* [Practical guide on how to secure an Azure Machine Learning project](security/AzureMLSecurity.md)
+* [Successfully apply RBAC to Azure Machine Learning projects](security/AccessControl.md)

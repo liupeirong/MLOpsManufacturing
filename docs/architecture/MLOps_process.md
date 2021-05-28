@@ -92,28 +92,27 @@ From implementation perspective our pipeline can be represented by a single Pyth
 
 The biggest challenge in ML pipeline development is how to modify and test the same pipeline from different branches. If we use fixed names for all experiments, models and pipeline names, it will be hard to differentiate the artifacts when working in a large team. To make sure that we can locate all feature branch related experiments, use feature branch name to mark all pipelines, experiment runs, and related artifacts. This way we can differentiate pipelines from different branches and data scientists can log various feature branch runs under the same name.
 
-The following example shows how to define Python variables based on initial environment variables for a branch name and pipeline type. Pipeline type is useful when you have multiple pipelines:
+The following example shows how to define names for ML artifacts based on a branch name.
 
 ```py
-pipeline_type = os.environ.get('PIPELINE_TYPE')
-source_branch = os.environ.get('BUILD_SOURCEBRANCHNAME')
+source_branch = os.environ.get('BUILD_SOURCEBRANCHNAME') # ex. f123
 
-model_name = f"{pipeline_type}_{os.environ.get('MODEL_BASE_NAME')}_{source_branch}"
-pipeline_name = f"{pipeline_type}_{os.environ.get('PIPELINE_BASE_NAME')}_{source_branch}"
-experiment_name = f"{pipeline_type}_{os.environ.get('EXPERIMENT_BASE_NAME')}_{source_branch}"
+pipeline_name = f"{os.environ.get('PIPELINE_BASE_NAME')}_{source_branch}"
+experiment_name = f"{os.environ.get('EXPERIMENT_BASE_NAME')}_{source_branch}"
+model_name = f"{os.environ.get('MODEL_BASE_NAME')}_{source_branch}"
 
 # experiment name constraints: https://docs.microsoft.com/en-us/python/api/azureml-core/azureml.core.experiment.experiment?view=azure-ml-py#remarks
 if len(experiment_name) > 36:
     print(f"shorten experiment_name {experiment_name} to the first 36 chars.")
     experiment_name = experiment_name[0:36]
-# model name constraints: at the time of this writing (May 2021), max model name length is 30 characters.
+# model name constraints: at the time of this writing (May 2021), max length for model name is 30 characters in Azure ML.
 if len(model_name) > 30:
     print(f"shorten model_name {model_name} to the first 30 chars.")
     model_name = model_name[0:30]
 
-print(f"pipeline name {pipeline_name}")
-print(f"experiment name {experiment_name}")
-print(f"model name {model_name}")
+print(f"pipeline name: {pipeline_name}") # ex. nyctaxi_pipe_f123
+print(f"experiment name: {experiment_name}") # ex. nyctaxi_exp_f123 
+print(f"model name: {model_name}") # ex. nyctaxi_model_f123
 ```
 
 To get a branch name from a local computer we can use the following code:

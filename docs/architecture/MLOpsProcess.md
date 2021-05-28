@@ -12,7 +12,7 @@ MLOps in this doc refers to the development and operations process for machine l
   * [Development branch builds](#development-branch-builds)
 * [Deployment Process](#deployment-process)
   * [CI/CD on the development branch](#ci/cd-on-the-development-branch)
-i * [Multi-branch strategy](#multi-branch-strategy)
+  * [Multi-branch strategy](#multi-branch-strategy)
   * [Model Deployment](#model-deployment)
 
 ## Machine Learning Pipelines ##
@@ -31,17 +31,17 @@ ML models can be built by executing a ML pipeline, and if the same dataset is us
 
 Datasets are important from many different perspectives including traceability, data labeling, and data drift detection. Each of these topics warrants its own guideline agnostic to MLOps. Here we assume an immutable dataset in a fixed location, and it’s possible to pass the information about the dataset to the ML pipeline as a parameter. If we would like to compare performance and execute pipelines on several different datasets, we will just pass different parameters.
 
-Machine Learning pipelines are often considered a process that generates a new model at the end, however, it can be any process that uses machine learning patterns and practices or a part of bigger ML process. It’s common to see data preprocessing pipelines or scoring pipelines for batch scenarios, and even pipelines that orchestrate training based on cognitive services. **ML pipeline** is a set of steps that can be executed sequentially or in parallel, where each step can be executed on a single node or a set of nodes to speed up tasks. The pipeline itself defines not just the steps but compute resources where the steps should be executed, related datasets, and data stores. So pipeline implementation is specific to a particular set of technologies.
+Machine Learning pipelines are often considered a process that generates a new model at the end, however, it can be any process that uses machine learning patterns and practices or a part of bigger ML process. It’s common to see data preprocessing pipelines or scoring pipelines for batch scenarios, and even pipelines that orchestrate training based on cognitive services. **ML pipeline** is a set of steps that can be executed sequentially or in parallel, where each step can be executed on a single node or a set of nodes to speed up tasks. Parallel processing is one of the main reasons to use pipelines. The pipeline itself defines not just the steps but compute resources where the steps should be executed, related datasets, and data stores. So pipeline implementation is specific to a particular set of technologies.
 
-Let’s look at an example: imagine that we need to train a model to find anomalies in raw video frames (bad pixels). In real life it’s not common to have a ready-to-use dataset. It means that you have to implement preprocessing steps. For example, if the input dataset is a number of raw video files, they have to be extracted into frames first, and additional algorithms can be applied to each particular frame. So, you need to do some tasks to prepare the dataset, ballance it, extract features and so on. After that, you can use any ML framework to train the model. The pre-processing steps could take much longer than the training itself. To reduce compute time, we can run data pre-processing with multiple compute nodes in parallel. It gives us a signal to split our pipeline into several different steps and execute each of them in a different environment (e.g., on a cluster with a number of nodes compared to a single node cluster or GPU nodes versus CPU nodes). If we use a diagram to design our pipeline, it can look like this:
+Let’s look at an example: imagine that we need to train a model to find anomalies in raw video frames (bad pixels). In real life it’s not common to have a ready-to-use dataset. It means that you have to implement preprocessing steps. For example, if the input dataset is a number of raw video files, they have to be extracted into frames first, and additional algorithms can be applied to each particular frame. So, you need to do some tasks to prepare the dataset, balance it, extract features and so on. After that, you can use any ML framework to train the model. The pre-processing steps could take much longer than the training itself. To reduce compute time, we can run data pre-processing with multiple compute nodes in parallel. It gives us a signal to split our pipeline into several different steps and execute each of them in a different environment (e.g., on a cluster with a number of nodes compared to a single node cluster or GPU nodes versus CPU nodes). If we use a diagram to design our pipeline, it can look like this:
 
 ![A pipeline](../media/MLOpsProcess/mlops_arch_pipe.png)
 
-You can see that we have four sequential steps there. We execute the first step in parallel on several nodes to convert all available video files into images. The second step is running in parallel as well, but it can be a different number of nodes because there are many more images to process compared to the number of videos. The third step is training and we can use distributed approach such as  Horovod or Parameter Server. The final step runs on a single node to log the model into storage. Parallel processing is one of the main reasons to use pipelines.
+You can see that we have four sequential steps there. We execute the first step in parallel on several nodes to convert all available video files into images. The second step is running in parallel as well, but it can be a different number of nodes because there are many more images to process compared to the number of videos. The third step is training and we can use distributed approach such as  Horovod or Parameter Server. The final step runs on a single node to log the model into storage.
 
 ### Manage artifacts with Azure Machine Learning ###
 
-Azure Machine Learning is a service that helps orchestrate the development and management of machine learning artifacts. The following are the most important components for pipeline implementations:
+[Azure Machine Learning](https://docs.microsoft.com/en-us/azure/machine-learning/overview-what-is-azure-ml) is a service that helps orchestrate the development and management of machine learning artifacts. The following are the most important components for pipeline implementations:
 
 * **Azure ML SDK for Python**: used to create all Azure ML components and communicate to Azure ML service.
 * **Azure ML Compute**: allows us to create and manage clusters to run pipelines. It can be just one cluster for all steps or different clusters per step. Storage can be mounted to compute cluster instances.
@@ -57,7 +57,7 @@ Let’s see how the above example looks like from technologies perspective:
 
 Data scientists often prefer to use Jupyter Notebooks to do their experiments. Asking them to implement Azure ML pipelines from the beginning could hinder their productivity and creativity for the following reasons:
 
-* Not every Jupyter notebook is going to be a pipeline in production. In some cases data scientists need to test many different approaches and ideas before pick the right one.
+* Not every Jupyter notebook is going to be a pipeline in production. In some cases data scientists need to test many different approaches and ideas before picking the right one.
 * It’s too hard to design a pipeline and all the steps at the beginning of the project because you don’t know the most critical blocks and the right split into steps.
 
 Initial experiments can be done in a notebook, however, there are several signs that indicate maybe it's time to move experiments from a notebook to Azure ML Service:
@@ -68,7 +68,7 @@ Initial experiments can be done in a notebook, however, there are several signs 
 
 Once you see any of these signs, it’s time to wrap experiments using Azure ML Pipeline SDK. We would recommend using the three-step approach:
 
-* **Step 1. Refactor the notebook to Python files.** The primary goal of this step is to move all methods/classes to separate Python files and make them independent from the execution environment.
+* **Step 1. Refactor the notebook to Python files.** This step focuses on pulling out and generalizing components which you expect to be reused across multiple experiments, allowing future notebooks to be implemented more easily using the refactored Python code.
 * **Step 2. Convert existing notebook to a single step pipeline.** You can use the following guideline to create a single step pipeline that will be executed on a single instance. The only difference is that it will be your own code in `train.py`. At this stage you will be able to see how the pipeline works and define all datasets/datastores and parameters if needed. Starting from this stage you can run multiple experiments of the pipeline using different parameters
 * **Step 3. Identify critical blocks in your pipeline and move them to different steps.** The primary reason for this step is to make your pipeline faster. So, you need to understand the most common classes from Azure ML SDK such as `MPIStep` and `ParallelRunStep`.
 
@@ -92,20 +92,27 @@ From implementation perspective our pipeline can be represented by a single Pyth
 
 The biggest challenge in ML pipeline development is how to modify and test the same pipeline from different branches. If we use fixed names for all experiments, models and pipeline names, it will be hard to differentiate the artifacts when working in a large team. To make sure that we can locate all feature branch related experiments, use feature branch name to mark all pipelines, experiment runs, and related artifacts. This way we can differentiate pipelines from different branches and data scientists can log various feature branch runs under the same name.
 
-The following example shows how to define Python variables based on initial environment variables for a branch name and pipeline type. Pipeline type is useful when you have multiple pipelines:
+The following example shows how to define names for ML artifacts based on a branch name.
 
 ```py
-pipeline_type = os.environ.get('PIPELINE_TYPE')
-source_branch = os.environ.get('BUILD_SOURCEBRANCHNAME')
+source_branch = os.environ.get('BUILD_SOURCEBRANCHNAME') # ex. f123
 
-model_name = f"{pipeline_type}_{os.environ.get('MODEL_BASE_NAME')}_{source_branch}"
-pipeline_name = f"{pipeline_type}_{os.environ.get('PIPELINE_BASE_NAME')}_{source_branch}"
-experiment_name = f"{pipeline_type}_{os.environ.get('EXPERIMENT_BASE_NAME')}_{source_branch}"
+pipeline_name = f"{os.environ.get('PIPELINE_BASE_NAME')}_{source_branch}"
+experiment_name = f"{os.environ.get('EXPERIMENT_BASE_NAME')}_{source_branch}"
+model_name = f"{os.environ.get('MODEL_BASE_NAME')}_{source_branch}"
 
+# experiment name constraints: https://docs.microsoft.com/en-us/python/api/azureml-core/azureml.core.experiment.experiment?view=azure-ml-py#remarks
 if len(experiment_name) > 36:
+    print(f"shorten experiment_name {experiment_name} to the first 36 chars.")
     experiment_name = experiment_name[0:36]
+# model name constraints: at the time of this writing (May 2021), max length for model name is 30 characters in Azure ML.
 if len(model_name) > 30:
+    print(f"shorten model_name {model_name} to the first 30 chars.")
     model_name = model_name[0:30]
+
+print(f"pipeline name: {pipeline_name}") # ex. nyctaxi_pipe_f123
+print(f"experiment name: {experiment_name}") # ex. nyctaxi_exp_f123 
+print(f"model name: {model_name}") # ex. nyctaxi_model_f123
 ```
 
 To get a branch name from a local computer we can use the following code:
@@ -171,7 +178,7 @@ The reason to use branches rather than tags is ability to execute some additiona
 
 The PR Build on the development branch to QA branch should include the following tasks:
 
-* Deploy only what's needed for production. In most cases you don’t need to deploy training pipelines in production environment, only the scoring infrastructure.
+* Deploy only what's needed for production. In some cases you don’t need to deploy training pipelines in production environment, only the scoring infrastructure. In other cases, if training requires access to production data that's only available in production environment, you need to deploy training pipelines as well.
 * Copy all latest approved models (approved models can be tagged)
 
 ![Approval process](../media/MLOpsProcess/mlops_arch_approve.png)

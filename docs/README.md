@@ -32,7 +32,7 @@ challenges we have encountered in real world projects.
 * [Observability options for Azure resources and Azure Machine Learning](observability/MonitorAzureResources.md)
 * [Setting up notifications in Azure](observability/Notification.md)
 
-## Security
+## security
 
 * [Practical guide on how to secure an Azure Machine Learning project](security/AzureMLSecurity.md)
 * [Successfully apply RBAC to Azure Machine Learning projects](security/AccessControl.md)

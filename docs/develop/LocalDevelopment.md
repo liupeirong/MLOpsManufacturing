@@ -8,9 +8,9 @@ When you train a machine learning model in an Azure Machine Learning (AML) clust
 
 If the code can run entirely locally without having to communicate with a remote service or cluster, then you can debug it as usual.
 
-For example, in the `image-classification-tensorflow` sample, [train.py](../samples/image-classification-tensorflow/ml_model/train/train.py) contains code to split the data for training and testing and train the model. It depends on Keras but not a remote service or cluster. Meanwhile [train_aml.py](../samples/image-classification-tensorflow/ml_model/train/train_aml.py) accesses Azure ML Datastore and Dataset. You can debug `train.py` without any special setup.
+For example, in the `image-classification-tensorflow` sample, [train.py](../../samples/image-classification-tensorflow/ml_model/train/train.py) contains code to split the data for training and testing and train the model. It depends on Keras but not a remote service or cluster. Meanwhile [train_aml.py](../../samples/image-classification-tensorflow/ml_model/train/train_aml.py) accesses Azure ML Datastore and Dataset. You can debug `train.py` without any special setup.
 
-You could still debug code that has remote dependency as [documented for that sample](../samples/image-classification-tensorflow#running-locally). However, if the code doesn't fully support local run, it will run into errors that don't happen in remote run.
+You could still debug code that has remote dependency as [documented for that sample](../../samples/image-classification-tensorflow#running-locally). However, if the code doesn't fully support local run, it will run into errors that don't happen in remote run.
 
 ## Scenario 2: Run AML experiment locally to train models with Azure ML SDK - Offline Run
 
@@ -26,7 +26,7 @@ You can trigger an AML experiment to run remotely from a local machine, or you c
 
 1. In a terminal, activate the Conda environment and go to the root directory of the sample
 2. Ensure the variables for AML are set correctly in your local `.env`
-3. Place a breakpoint in [build_data_processing_pipeline.py](../samples/image-classification-tensorflow/ml_service/pipelines/build_data_processing_pipeline.py), run
+3. Place a breakpoint in [build_data_processing_pipeline.py](../../samples/image-classification-tensorflow/ml_service/pipelines/build_data_processing_pipeline.py), run
 
    ```bash
     python -m debugpy --listen 5678 --wait-for-client ml_service/pipelines/build_data_processing_pipeline.py
@@ -49,13 +49,13 @@ You can trigger an AML experiment to run remotely from a local machine, or you c
     ]
     ```
 
-5. Place a breakpoint in [run_data_processing_pipeline.py](../samples/image-classification-tensorflow/ml_service/pipelines/run_data_processing_pipeline.py), replacing the `aml_pipeline_name` parameter with your own:
+5. Place a breakpoint in [run_data_processing_pipeline.py](../../samples/image-classification-tensorflow/ml_service/pipelines/run_data_processing_pipeline.py), replacing the `aml_pipeline_name` parameter with your own:
 
     ```bash
     python -m debugpy --listen 5678 --wait-for-client ml_service/pipelines/run_data_processing_pipeline.py --aml_pipeline_name flower-data-processing-pipeline
     ```
 
-You can modify the code to supply additional AML pipeline parameters as shown in [this example](../samples/image-classification-tensorflow/ml_service/pipelines/run_training_pipeline.py#L56).
+You can modify the code to supply additional AML pipeline parameters as shown in [this example](../../samples/image-classification-tensorflow/ml_service/pipelines/run_training_pipeline.py#L56).
 
 ## Scenario 4: Attach your own VM in AML for training to shorten startup time
 

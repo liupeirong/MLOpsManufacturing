@@ -100,7 +100,7 @@ For example, this is how variables are managed in this project:
 | batch_size                | The number of samples that will be propagated through the network during training      |
 | num_epochs                | How many times the training pass over the entire dataset                               |
 | cancel_if_perform_worse   | Used in evaluation phase for the decision whether the trained model is registered      |
-| tags                      | Tagas used in registered model in Azure Machine Learning                               |
+| tags                      | Tags used in registered model in Azure Machine Learning                               |
 
 ## Example 2: yesno
 

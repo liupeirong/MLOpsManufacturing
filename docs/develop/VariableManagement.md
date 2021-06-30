@@ -54,10 +54,10 @@ Here are some suggestions on where to store different types of variables:
 
 For example, this is how variables are managed in this project:
 
-* common infrastructure variables required to run the samples are stored in Azure DevOps variable groups defined [here](../common/infrastructure/README.md). They are referenced in the [infrastructure deployment pipeline](../common/infrastructure/iac-create-environment-pipeline-arm.yml#L27).
-* additional infrastructure variables for the image-classification-tensorflow sample are defined [here](../samples/image-classification-tensorflow#cicd-in-azure-devops). They are referenced in, for example, the [train-evaluate-register DevOps pipeline](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L48)
-* application variables such as the training cluster machine spec have their defaults defined in [devops_pipelines/variable-template.yml](../samples/image-classification-tensorflow/devops_pipelines/variables-template.yml) so you don't have to specify all of them in variable groups, however, based on [the order they are defined in the pipeline](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L46), you can overwrite their values in variables-template.yml by specifying them in the variable groups.
-* for the ML variables that need to change for experimentations, define them as [ML pipeline variables](../samples/image-classification-tensorflow/ml_service/pipelines/build_training_pipeline.py#L46). The defaults for ML variables are stored in [ml_model/parameters.json](../samples/image-classification-tensorflow/ml_model/parameters.json) so that they can run in DevOps pipelines [without having to be specified in the pipeline yamls](../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L119).
+* common infrastructure variables required to run the samples are stored in Azure DevOps variable groups defined [here](../../common/infrastructure/README.md). They are referenced in the [infrastructure deployment pipeline](../../common/infrastructure/iac-create-environment-pipeline-arm.yml#L27).
+* additional infrastructure variables for the image-classification-tensorflow sample are defined [here](../../samples/image-classification-tensorflow#cicd-in-azure-devops). They are referenced in, for example, the [train-evaluate-register DevOps pipeline](../../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L48)
+* application variables such as the training cluster machine spec have their defaults defined in [devops_pipelines/variable-template.yml](../../samples/image-classification-tensorflow/devops_pipelines/variables-template.yml) so you don't have to specify all of them in variable groups, however, based on [the order they are defined in the pipeline](../../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L46), you can overwrite their values in variables-template.yml by specifying them in the variable groups.
+* for the ML variables that need to change for experimentations, define them as [ML pipeline variables](../../samples/image-classification-tensorflow/ml_service/pipelines/build_training_pipeline.py#L46). The defaults for ML variables are stored in [ml_model/parameters.json](../../samples/image-classification-tensorflow/ml_model/parameters.json) so that they can run in DevOps pipelines [without having to be specified in the pipeline yamls](../../samples/image-classification-tensorflow/devops_pipelines/03-train-evaluate-register-model.yml#L119).
 
 ## Example 1: Image-classification-tensorflow
 
@@ -100,7 +100,7 @@ For example, this is how variables are managed in this project:
 | batch_size                | The number of samples that will be propagated through the network during training      |
 | num_epochs                | How many times the training pass over the entire dataset                               |
 | cancel_if_perform_worse   | Used in evaluation phase for the decision whether the trained model is registered      |
-| tags                      | Tagas used in registered model in Azure Machine Learning                               |
+| tags                      | Tags used in registered model in Azure Machine Learning                               |
 
 ## Example 2: yesno
 

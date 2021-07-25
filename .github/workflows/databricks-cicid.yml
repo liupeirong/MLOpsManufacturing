@@ -1,24 +1,32 @@
-name: Build_Test_Deploy
+name: Databricks_CI_CD
 
 on:
   push:
     branches: [main]
     paths:
-      - "!README.md"
-      - "!.env.sample"
+      - "samples/databricks-cicd/**"
+      - "!samples/databricks-cicd/README.md"
+      - "!samples/databricks-cicd/.env.sample"
   pull_request:
     branches: [main]
     paths:
-      - "!README.md"
-      - "!.env.sample"
+      - "samples/databricks-cicd/**"
+      - "!samples/databricks-cicd/README.md"
+      - "!samples/databricks-cicd/.env.sample"
 
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
+
+env:
+  SAMPLE_DIRECTORY: samples/databricks-cicd
 
 jobs:
   build:
     environment: Databricks_Azure_Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ SAMPLE_DIRECTORY }}
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -82,6 +90,9 @@ jobs:
     environment: Databricks_Azure_Production
     needs: build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ SAMPLE_DIRECTORY }}
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}

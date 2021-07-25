@@ -3,4 +3,4 @@ repos:
     rev: v1.0.1
     hooks:
       - id: detect-secrets
-        args: ["--baseline", ".secrets.baseline"]
+        args: ["--baseline", "samples/databricks-cicd/.secrets.baseline"]

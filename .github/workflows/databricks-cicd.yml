@@ -63,7 +63,7 @@ jobs:
       - name: Comment coverage for pull requests
         uses: coroo/pytest-coverage-commentator@v1.0.2
         with:
-          pytest-coverage: pytest-coverage.txt
+          pytest-coverage: ${{ env.SAMPLE_DIRECTORY }}/pytest-coverage.txt
 
       - name: Run integration tests
         env:
@@ -79,11 +79,11 @@ jobs:
         with:
           name: wheel_lib
           path: |
-            src/dist/*.whl
-            src/main_notebook.py
-            src/db_job.json
-            src/get_job_id.py
-            environment.yml
+            ${{ env.SAMPLE_DIRECTORY }}/src/dist/*.whl
+            ${{ env.SAMPLE_DIRECTORY }}/src/main_notebook.py
+            ${{ env.SAMPLE_DIRECTORY }}/src/db_job.json
+            ${{ env.SAMPLE_DIRECTORY }}/src/get_job_id.py
+            ${{ env.SAMPLE_DIRECTORY }}/environment.yml
 
   deploy:
     environment: Databricks_Azure_Production

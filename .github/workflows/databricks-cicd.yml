@@ -89,7 +89,7 @@ jobs:
     environment: Databricks_Azure_Production
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     defaults:
       run:
         working-directory: ${{ env.SAMPLE_DIRECTORY }}

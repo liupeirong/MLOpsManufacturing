@@ -90,9 +90,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     # if: github.ref == 'refs/heads/main'
-    defaults:
-      run:
-        working-directory: ${{ env.SAMPLE_DIRECTORY }}
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -111,7 +108,7 @@ jobs:
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.1.1
         with:
-          environment-file: ${{ env.SAMPLE_DIRECTORY }}/environment.yml
+          environment-file: environment.yml
           activate-environment: databricks_cicd
           python-version: 3.7
 

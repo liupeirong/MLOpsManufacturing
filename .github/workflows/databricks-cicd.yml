@@ -43,7 +43,7 @@ jobs:
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.1.1
         with:
-          environment-file: environment.yml
+          environment-file: ${{ env.SAMPLE_DIRECTORY }}/environment.yml
           activate-environment: databricks_cicd
           python-version: 3.7
 
@@ -111,7 +111,7 @@ jobs:
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.1.1
         with:
-          environment-file: environment.yml
+          environment-file: ${{ env.SAMPLE_DIRECTORY }}/environment.yml
           activate-environment: databricks_cicd
           python-version: 3.7
 

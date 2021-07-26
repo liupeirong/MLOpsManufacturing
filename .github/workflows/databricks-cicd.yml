@@ -2,7 +2,6 @@ name: Databricks_CI_CD
 
 on:
   push:
-    branches: [main]
     paths:
       - "samples/databricks-cicd/**"
       - "!samples/databricks-cicd/README.md"
@@ -90,6 +89,7 @@ jobs:
     environment: Databricks_Azure_Production
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     defaults:
       run:
         working-directory: ${{ SAMPLE_DIRECTORY }}

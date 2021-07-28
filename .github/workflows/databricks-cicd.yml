@@ -47,11 +47,11 @@ jobs:
           activate-environment: databricks_cicd
           python-version: 3.7
 
-      - name: Lint
+      - name: Lint and check formatter
         shell: bash -l {0}
         run: |
           flake8
-          black .
+          black --check .
 
       - name: Run unit tests
         shell: bash -l {0}

@@ -5,10 +5,6 @@ python -m build --wheel src
 name=$(cd src/dist; ls databrickscicd*.whl)
 databricks fs mkdirs ${DATABRICKS_DBFS_PATH}
 
-# tear down whatever was left before
-databricks fs rm ${DATABRICKS_DBFS_PATH}/${name}
-databricks workspace delete ${DATABRICKS_WORKSPACE_PATH}/main_notebook.py
-
 # setup
 export DATABRICKS_LIBRARY_PATH=${DATABRICKS_DBFS_PATH}/${name}
 databricks fs cp --overwrite src/dist/${name} ${DATABRICKS_DBFS_PATH}

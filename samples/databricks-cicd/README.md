@@ -8,7 +8,7 @@ This sample contains a single notebook [main_notebook.py](src/main_notebook.py) 
 
 This sample also shows how to [update the job if a job with the same name already exists](../../.github/workflows/databricks-cicd.yml#L136). Without this, if the CD pipeline publishes a job, it's a new job with a new job id even if another job with the same name already exists.
 
-Another small feature used in this sample is to use a [pre-commit config hook](.pre-commit-config.yaml) to run [detect-secrets](https://github.com/Yelp/detect-secrets) to prevent secrets from being checked into code.
+Another small feature used in this sample is to use a [pre-commit hook](https://pre-commit.com/) as configured in [.pre-commit-config.yaml](.pre-commit-config.yaml) to run [detect-secrets](https://github.com/Yelp/detect-secrets) to prevent secrets from being checked into code.
 
 __What doesn't this sample demonstrate:__
 
@@ -59,7 +59,7 @@ detect-secrets -C ./ scan > .secrets.baseline
 pre-commit install
 ```
 
-You can verify it's set up correctly by put a variable like a password in any code in this sample folder, and try to do a git commit. The commit should fail.
+You can verify it's set up correctly by putting a variable like a password in any code in this sample folder, and try to do a git commit. The commit should fail.
 
 ## How to run GitHub CI/CD workflow
 

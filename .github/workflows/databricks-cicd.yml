@@ -1,0 +1,133 @@
+name: Databricks_CI_CD
+
+on:
+  push:
+    paths:
+      - ".github/workflows/databricks-cicd.yml"
+      - "samples/databricks-cicd/**"
+      - "!samples/databricks-cicd/README.md"
+      - "!samples/databricks-cicd/.env.sample"
+  # Allows you to run this workflow manually from the Actions tab
+  # workflow_dispatch:
+
+env:
+  SAMPLE_DIRECTORY: samples/databricks-cicd
+
+jobs:
+  build:
+    environment: Databricks_Azure_Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.SAMPLE_DIRECTORY }}
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_CLUSTERID: ${{ secrets.DATABRICKS_CLUSTERID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.7
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2.1.1
+        with:
+          environment-file: ${{ env.SAMPLE_DIRECTORY }}/environment.yml
+          activate-environment: databricks_cicd
+          python-version: 3.7
+
+      - name: Lint and check formatter
+        shell: bash -l {0}
+        run: |
+          flake8
+          black --check .
+
+      - name: Run unit tests
+        shell: bash -l {0}
+        run: |
+          echo "{\"host\": \"${DATABRICKS_HOST}\",\"token\": \"${DATABRICKS_TOKEN}\",\"cluster_id\": \"${DATABRICKS_CLUSTERID}\"}" > ~/.databricks-connect
+          pip install -e src/
+          pytest --cache-clear --cov=src test/unittests 2>&1 | tee pytest-coverage.txt
+
+      - name: Comment coverage for pull requests
+        uses: coroo/pytest-coverage-commentator@v1.0.2
+        with:
+          pytest-coverage: ${{ env.SAMPLE_DIRECTORY }}/pytest-coverage.txt
+
+      - name: Run integration tests
+        env:
+          DATABRICKS_DBFS_PATH: dbfs:/mnt/databrickscicd/Testing
+          DATABRICKS_WORKSPACE_PATH: /databrickscicd/Testing
+          DATABRICKS_OUTFILE_PATH: "."
+        shell: bash -l {0}
+        run: |
+          test/run_notebook_tests.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheel_lib
+          path: |
+            ${{ env.SAMPLE_DIRECTORY }}/src/dist/*.whl
+            ${{ env.SAMPLE_DIRECTORY }}/src/main_notebook.py
+            ${{ env.SAMPLE_DIRECTORY }}/src/db_job.json
+            ${{ env.SAMPLE_DIRECTORY }}/src/get_job_id.py
+            ${{ env.SAMPLE_DIRECTORY }}/environment.yml
+
+  deploy:
+    environment: Databricks_Azure_Production
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: wheel_lib
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.7
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2.1.1
+        with:
+          environment-file: environment.yml
+          activate-environment: databricks_cicd
+          python-version: 3.7
+
+      - name: Deploy lib and notebook to Databricks
+        env:
+          DATABRICKS_DBFS_PATH: dbfs:/mnt/databrickscicd/Production
+          DATABRICKS_WORKSPACE_PATH: /databrickscicd/Production
+        shell: bash -l {0}
+        run: |
+          # abort if there are more than one existing jobs with same name
+          job_name=$(python -c 'import json; print(json.load(open("src/db_job.json"))["name"])')
+          existing_jobs=$(databricks jobs list | grep "$job_name")
+          job_id=$(python src/get_job_id.py --job_name "$job_name" --job_list "$existing_jobs")
+
+          # start copying files to cluster
+          name=$(cd src/dist; ls databrickscicd*.whl)
+          databricks fs cp --overwrite src/dist/${name} ${DATABRICKS_DBFS_PATH}
+          databricks workspace import --overwrite src/main_notebook.py --language PYTHON ${DATABRICKS_WORKSPACE_PATH}/main_notebook.py
+          sed -i "s|__DATABRICKS_CICD_LIBRARY__|${DATABRICKS_DBFS_PATH}/${name}|g" src/db_job.json
+          sed -i "s|__DATABRICKS_CICD_NOTEBOOK__|${DATABRICKS_WORKSPACE_PATH}/main_notebook.py|g" src/db_job.json
+
+          # update existing job or create a new job
+          if [ -z "$job_id" ]
+          then
+            databricks jobs create --json-file src/db_job.json
+          else
+            databricks jobs reset --job-id $job_id --json-file src/db_job.json
+          fi

@@ -3,6 +3,7 @@ name: Databricks_CI_CD
 on:
   push:
     paths:
+      - ".github/workflow/databricks-cicd.yml"
       - "samples/databricks-cicd/**"
       - "!samples/databricks-cicd/README.md"
       - "!samples/databricks-cicd/.env.sample"

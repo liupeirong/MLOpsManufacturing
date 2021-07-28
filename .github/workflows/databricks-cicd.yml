@@ -6,13 +6,6 @@ on:
       - "samples/databricks-cicd/**"
       - "!samples/databricks-cicd/README.md"
       - "!samples/databricks-cicd/.env.sample"
-  pull_request:
-    branches: [main]
-    paths:
-      - "samples/databricks-cicd/**"
-      - "!samples/databricks-cicd/README.md"
-      - "!samples/databricks-cicd/.env.sample"
-
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
 

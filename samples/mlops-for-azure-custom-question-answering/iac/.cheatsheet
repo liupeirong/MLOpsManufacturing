@@ -1,0 +1,7 @@
+https://docs.microsoft.com/en-us/azure/templates/microsoft.resources/resourcegroups?tabs=bicep
+
+https://bicepdemo.z22.web.core.windows.net/
+
+
+az deployment sub create -l westeurope -f ./main.bicep --name deploy --parameters salt=one
+az group delete --resource-group custom-question-answering-rg

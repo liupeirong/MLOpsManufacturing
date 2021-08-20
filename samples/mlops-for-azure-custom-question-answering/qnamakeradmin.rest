@@ -1,7 +1,10 @@
+# Exchange endpoint and key for the environment to initialize
 
-@endpoint = {{$dotenv ENDPOINT1}} 
+@endpoint = {{$dotenv ENDPOINT_EDIT}} 
+@key = {{$dotenv KEY_EDIT}} 
 
-@key = {{$dotenv KEY1}} 
+#@endpoint = {{$dotenv ENDPOINT_PROD}} 
+#@key = {{$dotenv KEY_PROD}} 
 
 # List all Knowledgebases
 GET {{endpoint}}/qnamaker/v5.0-preview.2/knowledgebases HTTP/1.1

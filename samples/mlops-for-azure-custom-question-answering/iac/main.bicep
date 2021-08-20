@@ -3,7 +3,7 @@ targetScope = 'subscription'
 @description('Name of the resource group')
 param resourceGroupName string = 'custom-question-answering-rg'
 @description('Azure region for all services')
-param location string = 'westeurope'
+param location string = 'northeurope'
 @description('Salt to generate globally unique names')
 param salt string = 'koreacentral'
 
@@ -16,12 +16,12 @@ module resourceGroups './resourceGroup.bicep' = {
 }
 
 module cqa1 './customquestionanswering.bicep' = {
-  name: 'customQuestionAnswering1'
+  name: 'customQuestionAnsweringEdit'
   scope: resourceGroup(resourceGroupName)
   params: {
     location: location
     salt: salt
-    servicePrefix: '001'
+    servicePrefix: 'edit'
   }
   dependsOn: [
     resourceGroups
@@ -29,12 +29,12 @@ module cqa1 './customquestionanswering.bicep' = {
 }
 
 module cqa2 './customquestionanswering.bicep' = {
-  name: 'customQuestionAnswering2'
+  name: 'customQuestionAnsweringProd'
   scope: resourceGroup(resourceGroupName)
   params: {
     location: location
     salt: salt
-    servicePrefix: '002'
+    servicePrefix: 'prod'
   }
   dependsOn: [
     resourceGroups

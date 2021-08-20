@@ -3,5 +3,15 @@ https://docs.microsoft.com/en-us/azure/templates/microsoft.resources/resourcegro
 https://bicepdemo.z22.web.core.windows.net/
 
 
-az deployment sub create -l westeurope -f ./main.bicep --name deploy --parameters salt=one
+az deployment sub create -l westeurope -f ./main.bicep --name deploy --parameters location=westus2 salt=two
 az group delete --resource-group custom-question-answering-rg
+
+az deployment group show \
+  -g custom-question-answering-rg \
+  -n customQuestionAnswering1 \
+  --query properties.outputs.endpoint.value
+
+az deployment group show \
+  -g custom-question-answering-rg \
+  -n customQuestionAnswering1 \
+  --query properties.outputs.key.value

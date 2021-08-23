@@ -35,8 +35,8 @@ Ocp-Apim-Subscription-Key: {{key}}
 
 ###
 
-@opearationId = {{create.response.body.$.operationId}}
+@operationId = {{create.response.body.$.operationId}}
 
 # Get Operation Status
-GET {{endpoint}}/qnamaker/v5.0-preview.2/operations/{{opearationId}} HTTP/1.1
+GET {{endpoint}}/qnamaker/v5.0-preview.2/operations/{{operationId}} HTTP/1.1
 Ocp-Apim-Subscription-Key: {{key}}

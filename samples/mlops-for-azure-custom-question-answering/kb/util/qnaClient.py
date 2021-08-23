@@ -13,12 +13,16 @@ This utility class was created to provide that support.
 
 import requests
 import json
+import time
 from http import HTTPStatus
 
 
 class QnaClient:
-    def __init__(self, endpoint, subscription_key, kb_id):
-        self.endpoint = endpoint
+    def __init__(self, endpoint: str, subscription_key, kb_id):
+        if(endpoint.endswith('/')):
+            self.endpoint = endpoint[:-1]
+        else:
+            self.endpoint = endpoint
         self.subscription_key = subscription_key
         self.kb_id = kb_id
 
@@ -48,6 +52,46 @@ class QnaClient:
             return qnas_json['qnaDocuments']
         else:
             raise Exception('Replace KB (qnaClient.py download) failed with: ' + response.text)
+
+    def create_knowledgebase(self, kbName, qnas):
+        url = f'{self.endpoint}/knowledgebases/create'
+        payload = json.dumps({
+            "name": kbName,
+            "qnaList": qnas
+        })
+        headers = {
+            'Ocp-Apim-Subscription-Key': self.subscription_key,
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        if(response.status_code == HTTPStatus.ACCEPTED):
+            operation = response.text
+            operation_json = json.loads(operation)
+            operationId = operation_json['operationId']
+
+            # Wait for Operation to finish
+            lastOperationState = 'Running'
+            lastOperationResultJson = json.loads('{}')
+            url = f'{self.endpoint}/operations/{operationId}'
+            print(f"\tChecking status of operationId {operationId}...")
+            while(lastOperationState == 'Running' or lastOperationState == 'NotStarted'):
+                print("\tchecking...")
+                time.sleep(0.5)
+                response = requests.request("GET", url, headers=headers)
+                if(response.status_code == HTTPStatus.OK):
+                    operation = response.text
+                    lastOperationResultJson = json.loads(operation)
+                    lastOperationState = lastOperationResultJson['operationState']
+                else:
+                    raise Exception(f'Create KB ({url}) failed with: ' + response.text)
+
+            print("\tcompleted.")
+            self.kb_id = lastOperationResultJson['resourceLocation'].replace('/knowledgebases/', '')
+            return self.kb_id
+
+        else:
+            raise Exception(f'Create KB ({url}) failed with: ' + response.text)
 
     def replace_knowledgebase(self, qnas):
         url = f'{self.endpoint}/knowledgebases/{self.kb_id}'

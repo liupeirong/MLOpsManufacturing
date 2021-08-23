@@ -1,2 +1,5 @@
 .env
 !pip-requirements.txt
+node_modules
+output
+lib

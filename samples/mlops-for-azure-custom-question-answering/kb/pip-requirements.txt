@@ -1,0 +1,8 @@
+python-dotenv==0.17.1
+black==21.5b1
+flake8==3.9.2
+pycodestyle==2.7.0
+pytest==5.4.*
+pytest-cov==2.8.*
+pytest-mock==3.3.*
+requests==2.26.*

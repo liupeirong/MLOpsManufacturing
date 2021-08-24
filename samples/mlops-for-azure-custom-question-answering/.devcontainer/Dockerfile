@@ -37,4 +37,7 @@ RUN curl -fsSLo Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/mini
 
 ENV PATH /home/node/miniconda3/bin:$PATH
 
+RUN conda init bash \
+    && echo 'conda activate devenv' >> .bashrc
+
 USER root

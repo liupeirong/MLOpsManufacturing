@@ -1,0 +1,6 @@
+steps:
+
+- script: |
+    bash python-env.sh ci pip-requirements.txt
+  displayName: 'Prepare/Update Python Env'
+  workingDirectory: $(System.DefaultWorkingDirectory)/kb

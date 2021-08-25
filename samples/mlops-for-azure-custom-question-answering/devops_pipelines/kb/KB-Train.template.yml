@@ -1,0 +1,172 @@
+parameters:
+  - name: 'pool'
+    default: 'ubuntu-latest'
+  - name: 'lang'
+    default: ''
+  - name: 'kbfilename'
+    default: ''
+  - name: 'storageaccount'
+    default: ''
+  - name: 'testFile'
+    default: ''
+
+stages:
+  - stage: trainTest
+    displayName: 'KB Train and Accuracy Test for ${{ parameters.lang }}'
+    jobs:
+    - job: trainTest
+      displayName: 'KB Train and Accuracy Test'
+      pool: ${{ parameters.pool }}
+      steps:  
+
+      # Prepare Python and retrieve Config Values
+      - template: ../python-job-prep.template.yml
+        parameters:
+          lang: ${{ parameters.lang }}
+      
+      # Publish current KB in Test slot on to be tested system (QA)
+      - script: |
+          python kb/scripts/publish-kb.py --publish_only
+        displayName: 'Publish KB'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+        env:
+          PYTHONPATH: $(System.DefaultWorkingDirectory)
+          QNA_DEST_ENDPOINT: $(QNA_EDIT_ENDPOINT_HOST)
+          QNA_DEST_SUB_KEY: $(QNA_EDIT_ENDPOINT_KEY)
+          QNA_DEST_KB_ID: $(QNA_EDIT_KB_ID)
+      
+       # Additional configuration for Accuracy Test
+      - script: |
+          LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
+          ARTIFACT_NAME="KB_${LANG_UPPER}_$(Build.BuildNumber)"
+          echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
+        name: addConfig
+        displayName: 'Additional Configuration'
+
+      # Prepare Accuracy Tool requirements
+      - script: |
+          npm install 
+        workingDirectory: accuracy_test/
+        displayName: 'NPM Install'
+      
+      # Run Accuracy Tool
+      - script: |
+          npm run build
+          npm run start
+          npm run test:report
+        workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
+        displayName: 'Run Accuracy tests'
+        env:
+          QNA_ENDPOINT_HOST_NAME: $(QNA_EDIT_ENDPOINT_HOST)
+          QNA_ENDPOINT_KEY: $(QNA_EDIT_ENDPOINT_KEY)
+          QNA_KNOWLEDGEBASE_ID: $(QNA_EDIT_KB_ID)
+          TOP_ANSWER: $(TOP_ANSWER)
+          TOP_PROMPT: $(TOP_PROMPT)
+          SCORE_THRESHOLD: $(SCORE_THRESHOLD)
+          SCORE_SIMILARITY: $(SCORE_SIMILARITY)
+          MULTI_TURN_DEPTH: $(MULTI_TURN_DEPTH)
+          PRECISE_ANSWERING: $(PRECISE_ANSWERING)
+          TEST_FILE: ${{ parameters.testFile }}
+          OUTPUT_FILE: 'output/out.tsv' # because fixed input value in package.json
+
+      # Publish Accuracy Tool JUnit test result
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: '$(System.DefaultWorkingDirectory)/accuracy_test/output/test-report.xml'
+          testRunTitle: 'QnA Maker Accuracy Tests'
+          failTaskOnFailedTests: false
+        displayName: 'Publish test results'
+
+      # Upload TestData/TestResult to Storage
+      - script: |
+          az storage blob upload --container-name mlops \
+                          --file ${{ parameters.testFile }} \
+                          --name $(addConfig.ARTIFACT_NAME)/${{ parameters.testFile }} \
+                          --account-name ${{ parameters.storageaccount }} \
+                          --sas-token
+
+          az storage blob upload --container-name mlops \
+                          --file output/out.tsv \
+                          --name $(addConfig.ARTIFACT_NAME)/accuracy_test_result.tsv \
+                          --account-name ${{ parameters.storageaccount }} \
+                          --sas-token
+
+          az storage blob upload --container-name mlops \
+                          --file output/test-report.xml \
+                          --name $(addConfig.ARTIFACT_NAME)/test-report.xml \
+                          --account-name ${{ parameters.storageaccount }} \
+                          --sas-token
+
+        workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
+        displayName: 'Upload TestData & Results to Azure Storage'
+        enabled: false  #################
+        env:
+          AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+
+      - bash: |
+          TESTS=$(sed -rn 's/.*tests="([^"]*)".*/\1/p' output/test-report.xml)
+          FAILURES=$(sed -rn 's/.*failures="([^"]*)".*/\1/p' output/test-report.xml)
+          SUCCESS_RATE=$(node -e "console.log(100-100/$TESTS*$FAILURES)") && echo $SUCCESS_RATE
+          IS_SUCCESS=$(node -e "console.log($SUCCESS_RATE >= $THRESHOLD)") && echo $IS_SUCCESS
+          echo "$TESTS/$FAILURES, $THRESHOLD/$SUCCESS_RATE, $IS_SUCCESS"
+
+          if [ $IS_SUCCESS = true ]; then
+              echo "SUCCESS!!"
+          else
+              echo "FAIL!!"
+              exit 1;
+          fi
+        workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
+        failOnStderr: true
+        displayName: 'Check threshold'          
+        env:
+          THRESHOLD: $(TEST_FAIL_THRESHOLD)
+
+  - stage: artifactPrep
+    displayName: 'Prepare KB (${{ parameters.lang }}) for Transmission'
+    jobs:
+    - job: artifactPrep
+      displayName: 'Store KB as artifact'
+      pool: ${{ parameters.pool }}
+      steps:
+
+      # Prepare Python and retrieve Config Values
+      - template: ../python-job-prep.template.yml
+        parameters:
+          lang: ${{ parameters.lang }}
+
+      # Additional configuration for uploadArtifact
+      - script: |
+          LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
+          ARTIFACT_NAME="KB_${LANG_UPPER}_$(Build.BuildNumber)"
+          echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
+        name: addConfig
+        displayName: 'Additional Configuration'
+
+      # Download KB from current Environment associated to 'pool'
+      - script: |
+          python kb/scripts/download-kb.py --output ${{ parameters.kbfilename }} --slot Test
+        displayName: 'Download KB'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+        env:
+          PYTHONPATH: $(System.DefaultWorkingDirectory)
+          QNA_SOURCE_ENDPOINT: $(QNA_EDIT_ENDPOINT_HOST)
+          QNA_SOURCE_SUB_KEY: $(QNA_EDIT_ENDPOINT_KEY)
+          QNA_SOURCE_KB_ID: $(QNA_EDIT_KB_ID)
+
+      # Create Azure DevOps Artifact
+      - publish: ${{ parameters.kbfilename }}
+        artifact: $(addConfig.ARTIFACT_NAME)
+
+      # Upload KB to Storage
+      - script: |
+          az storage blob upload --container-name mlops \
+                          --file ${{ parameters.kbfilename }} \
+                          --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \
+                          --account-name ${{ parameters.storageaccount }} \
+                          --sas-token
+        displayName: 'Upload to Azure Storage'
+        enabled: false  #################
+        env:
+          AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)

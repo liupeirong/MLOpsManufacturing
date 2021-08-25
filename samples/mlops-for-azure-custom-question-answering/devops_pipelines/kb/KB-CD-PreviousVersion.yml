@@ -1,0 +1,69 @@
+parameters:
+  - name: pool
+    default: 'ubuntu-latest'
+    displayName: 'Azure DevOps Pool to use'
+  - name: 'storageaccount'
+    default: ''
+    displayName: 'Storage Account to find folder under container mlops for KB version to deploy'
+  - name: 'artifactname'
+    default: ''
+    displayName: 'Folder in storage container mlops with KB version to deploy'
+  - name: 'kbfilename'
+    default: 'KB.json'
+    displayName: 'File Name of the JSON formatted KB to deploy'
+  - name: 'lang'
+    default: ''
+    displayName: 'Language code of the KB to deploy [first char big letter, second char small letter (e.g. En, Ko, De)]'
+
+trigger: none
+
+stages:
+  # Download KB from Artifact
+  - stage: artifactPrep
+    displayName: 'Download and AzDO Publish KB'
+    jobs:
+    - job: artifactPrep
+      displayName: Download and AzDO Publish KB
+      pool: ${{ parameters.pool }}
+      steps:
+      - checkout: none
+
+      # Check if Language Parameter and language for provided Artifact are matching
+      # by comparing the language hint in the Artifact folder
+      - script: |
+          LANG_UPPER=$(echo "_${{ parameters.lang }}_" | tr [:lower:] [:upper:])
+          ARTIFACT_NAME_UPPER=$(echo ${{ parameters.artifactname }} | tr [:lower:] [:upper:])
+
+          if [[ $ARTIFACT_NAME_UPPER = *$LANG_UPPER* ]]; then
+            echo "OK"
+          else
+            echo "Language between Artifact and Language Parameter does not match"
+            exit 1
+          fi
+        displayName: 'Artifact Language and Language Parameter Check'
+
+      # Additional configuration for uploadArtifact
+      - script: |
+          echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]${{ parameters.artifactname }}"
+        name: addConfig
+        displayName: 'Artifact Name Configuration'      
+
+      - script: |
+          az storage blob download --container-name mlops \
+                          --file ${{ parameters.kbfilename }} \
+                          --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \
+                          --account-name ${{ parameters.storageaccount }} \
+                          --sas-token
+        displayName: 'download from storage'
+        enabled: false  #################
+        env:
+          AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+
+      - publish: ${{ parameters.kbfilename }}
+        artifact: $(addConfig.ARTIFACT_NAME)
+
+  # Deploy to all environments and regions
+  - template: KB-CD-multi-env-region.template.yml
+    parameters:
+      lang: ${{ parameters.lang }}
+      kbfilename: ${{ parameters.kbfilename }}

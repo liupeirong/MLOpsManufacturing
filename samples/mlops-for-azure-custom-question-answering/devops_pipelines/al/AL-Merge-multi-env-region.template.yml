@@ -1,0 +1,17 @@
+parameters:
+  - name: 'lang'
+    default: ''
+
+stages:
+  # From PROD -> EDIT
+  - template: AL-Merge-per-region.template.yml
+    parameters:
+
+      pool: 'ubuntu-latest'
+
+      source_env: 'EDIT' 
+      target_env: 'PROD'
+
+      target_storageaccount: ''
+
+      lang: ${{ parameters.lang }}

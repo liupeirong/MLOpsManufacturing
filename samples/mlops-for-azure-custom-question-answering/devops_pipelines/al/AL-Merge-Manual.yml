@@ -1,0 +1,12 @@
+parameters:
+  - name: 'lang'
+    default: 'En'
+    displayName: 'Language code first char big letter, second char small letter (e.g. En, Ko, De)'
+
+trigger: none
+
+stages:
+   # Merge from all regions for the language
+  - template: AL-Merge-multi-env-region.template.yml
+    parameters:
+      lang: ${{ parameters.lang }}

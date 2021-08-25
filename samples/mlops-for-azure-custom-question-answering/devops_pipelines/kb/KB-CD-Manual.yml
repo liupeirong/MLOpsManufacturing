@@ -1,0 +1,26 @@
+parameters:
+  - name: 'lang'
+    default: ''
+    displayName: 'Language code of the KB to deploy [first char big letter, second char small letter (e.g. En, Ko, De)]'
+  - name: 'kbfilename'
+    default: 'KB.json'
+    displayName: 'File Name of the JSON formatted KB to deploy'
+  - name: 'testFile'
+    default: ''
+    displayName: 'Relative path in code repo to Test Data set for Language to test (e.g. data/test_en.tsv)'
+
+trigger: none
+
+stages:
+  # Train and Validation Process on QA
+  - template: KB-Train.template.yml
+    parameters:
+      lang: ${{ parameters.lang }}
+      kbfilename: ${{ parameters.kbfilename }}
+      testFile: ${{ parameters.testFile }}
+
+  # Deploy to all environments and regions
+  - template: KB-CD-multi-env-region.template.yml
+    parameters:
+      lang: ${{ parameters.lang }}
+      kbfilename: ${{ parameters.kbfilename }}

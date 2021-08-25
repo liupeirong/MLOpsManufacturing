@@ -28,9 +28,7 @@ def main(args: Namespace):
     # Get the details of the KBs so they can be used in output/storage
     #   folder names.
     source_client = QnaClient(
-        env.qna_source_endpoint,
-        env.qna_source_sub_key,
-        env.qna_source_kb_id
+        env.qna_source_endpoint, env.qna_source_sub_key, env.qna_source_kb_id
     )
 
     source_kb_details = source_client.get_kb_details()
@@ -46,7 +44,7 @@ def main(args: Namespace):
     source_qnas = source_client.download(args.slot)
     print("\t\tDownloaded.")
 
-    with open(args.output, "w", encoding='utf-8') as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         f.write(json.dumps(source_qnas, sort_keys=True, indent=4))
 
     print(f"\t\tSaved to file {args.output}.")
@@ -61,13 +59,14 @@ def parse_arguments():
         "--output",
         type=str,
         required=True,
-        help="Output file name. File content will be JSON.")
+        help="Output file name. File content will be JSON.",
+    )
     argparse.add_argument(
         "-s",
         "--slot",
-        choices=['Test', 'Prod'],
+        choices=["Test", "Prod"],
         required=True,
-        help="Flag to determine from which slot the KB should be downloaded."
+        help="Flag to determine from which slot the KB should be downloaded.",
     )
     return argparse.parse_args()
 

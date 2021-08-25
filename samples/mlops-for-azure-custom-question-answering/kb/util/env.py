@@ -18,22 +18,10 @@ class Env:
 
         # Variables that are used by the control plane scripts but are
         # never passed on to the pipeline steps.
-        self.qna_source_sub_key: Optional[str] = os.environ.get(
-                "QNA_SOURCE_SUB_KEY"
-            )
-        self.qna_source_endpoint: Optional[str] = os.environ.get(
-                "QNA_SOURCE_ENDPOINT"
-            )
-        self.qna_source_kb_id: Optional[str] = os.environ.get(
-                "QNA_SOURCE_KB_ID"
-            )
+        self.qna_source_sub_key: Optional[str] = os.environ.get("QNA_SOURCE_SUB_KEY")
+        self.qna_source_endpoint: Optional[str] = os.environ.get("QNA_SOURCE_ENDPOINT")
+        self.qna_source_kb_id: Optional[str] = os.environ.get("QNA_SOURCE_KB_ID")
 
-        self.qna_dest_sub_key: Optional[str] = os.environ.get(
-                "QNA_DEST_SUB_KEY"
-            )
-        self.qna_dest_endpoint: Optional[str] = os.environ.get(
-                "QNA_DEST_ENDPOINT"
-            )
-        self.qna_dest_kb_id: Optional[str] = os.environ.get(
-                "QNA_DEST_KB_ID"
-            )
+        self.qna_dest_sub_key: Optional[str] = os.environ.get("QNA_DEST_SUB_KEY")
+        self.qna_dest_endpoint: Optional[str] = os.environ.get("QNA_DEST_ENDPOINT")
+        self.qna_dest_kb_id: Optional[str] = os.environ.get("QNA_DEST_KB_ID")

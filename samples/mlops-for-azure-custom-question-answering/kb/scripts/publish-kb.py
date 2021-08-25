@@ -34,9 +34,7 @@ def main(args: Namespace):
     env = Env()
 
     dest_client = QnaClient(
-        env.qna_dest_endpoint,
-        env.qna_dest_sub_key,
-        env.qna_dest_kb_id
+        env.qna_dest_endpoint, env.qna_dest_sub_key, env.qna_dest_kb_id
     )
 
     dest_kb_details = dest_client.get_kb_details()
@@ -45,18 +43,15 @@ def main(args: Namespace):
         f"Destination KB - Name: {dest_kb_details['name']}, ID: {env.qna_dest_kb_id}, Endpoint: {env.qna_dest_endpoint}"
     )
 
-    if(not args.publish_only):
-        with open(args.input, "r", encoding='utf-8') as f:
+    if not args.publish_only:
+        with open(args.input, "r", encoding="utf-8") as f:
             source_qnas = json.load(f)
 
         print(f"\tLoaded Source KB from file {args.input}.")
 
-        if(args.sync_feedback == "y"):
+        if args.sync_feedback == "y":
             print("\tSyncing Feedback from Destination KB to Source KB...")
-            source_qnas = dest_client.sync_feedback(
-                    source_qnas,
-                    args.sync_timespan
-                )
+            source_qnas = dest_client.sync_feedback(source_qnas, args.sync_timespan)
             print("\t\tSynced.")
 
         print("\tReplace destination KB...")
@@ -73,26 +68,25 @@ def main(args: Namespace):
 def parse_arguments():
     argparse = ArgumentParser()
     argparse.add_argument(
-        "-i",
-        "--input",
-        type=str,
-        help="Input file name. File content must be JSON.")
+        "-i", "--input", type=str, help="Input file name. File content must be JSON."
+    )
     argparse.add_argument(
         "-p",
         "--publish_only",
-        action='store_true',
-        help="Publish only without replacing. Default: False")
+        action="store_true",
+        help="Publish only without replacing. Default: False",
+    )
     argparse.add_argument(
         "-sf",
         "--sync_feedback",
-        choices=['y', 'n'],
-        help="Flag to Sync missing Active Learning Feedback in Destination to Source KB"
+        choices=["y", "n"],
+        help="Flag to Sync missing Active Learning Feedback in Destination to Source KB",
     )
     argparse.add_argument(
         "-st",
         "--sync_timespan",
         type=str,
-        help="The amount of time to retroactively sync Active Feedback. E.g. '5d' for 5 days in the past."
+        help="The amount of time to retroactively sync Active Feedback. E.g. '5d' for 5 days in the past.",
     )
     return argparse.parse_args()
 

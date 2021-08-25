@@ -29,14 +29,14 @@ def main(args: Namespace):
     env = Env()
 
     dest_client = QnaClient(
-        env.qna_dest_endpoint,
-        env.qna_dest_sub_key,
-        env.qna_dest_kb_id
+        env.qna_dest_endpoint, env.qna_dest_sub_key, env.qna_dest_kb_id
     )
 
-    print(f"Destination QnA Maker - Endpoint: {env.qna_dest_endpoint} Name: {args.name}")
+    print(
+        f"Destination QnA Maker - Endpoint: {env.qna_dest_endpoint} Name: {args.name}"
+    )
 
-    with open(args.input, "r", encoding='utf-8') as f:
+    with open(args.input, "r", encoding="utf-8") as f:
         source_qnas = json.load(f)
 
     print(f"\tLoaded Source KB from file {args.input}.")
@@ -51,17 +51,15 @@ def main(args: Namespace):
 def parse_arguments():
     argparse = ArgumentParser()
     argparse.add_argument(
-        "-n",
-        "--name",
-        type=str,
-        required=True,
-        help="Name for the new Knowledgebase.")
+        "-n", "--name", type=str, required=True, help="Name for the new Knowledgebase."
+    )
     argparse.add_argument(
         "-i",
         "--input",
         type=str,
         required=True,
-        help="Input file name. File content must be JSON.")
+        help="Input file name. File content must be JSON.",
+    )
     return argparse.parse_args()
 
 

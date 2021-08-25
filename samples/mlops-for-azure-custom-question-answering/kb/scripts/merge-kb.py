@@ -32,9 +32,7 @@ def main(args: Namespace):
     env = Env()
 
     dest_client = QnaClient(
-        env.qna_dest_endpoint,
-        env.qna_dest_sub_key,
-        env.qna_dest_kb_id
+        env.qna_dest_endpoint, env.qna_dest_sub_key, env.qna_dest_kb_id
     )
 
     dest_kb_details = dest_client.get_kb_details()
@@ -43,15 +41,13 @@ def main(args: Namespace):
         f"Destination KB - Name: {dest_kb_details['name']}, ID: {env.qna_dest_kb_id}, Endpoint: {env.qna_dest_endpoint}"
     )
 
-    with open(args.input, "r", encoding='utf-8') as f:
+    with open(args.input, "r", encoding="utf-8") as f:
         incoming_qnas = json.load(f)
 
     print(f"\tLoaded Incoming Active Learning Feedback KB from file {args.input}.")
 
     print("\tMerging Feedback from Incoming KB to Destination KB...")
-    destination_qnas = dest_client.merge_feedback(
-            incoming_qnas
-        )
+    destination_qnas = dest_client.merge_feedback(incoming_qnas)
     print("\t\tSynced.")
 
     print("\tReplace destination KB...")
@@ -68,7 +64,8 @@ def parse_arguments():
         "--input",
         type=str,
         required=True,
-        help="Input file name. File content must be JSON.")
+        help="Input file name. File content must be JSON.",
+    )
     return argparse.parse_args()
 
 

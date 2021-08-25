@@ -6,8 +6,6 @@ parameters:
     default: ''
   - name: 'target_env'
     default: ''
-  - name: 'target_storageaccount'
-    default: ''
 
   - name: 'lang'
     default: ''
@@ -19,6 +17,8 @@ stages:
     - job: alDownload
       displayName: 'Download and Publish Active Learning from ${{ parameters.source_env }}'
       pool: ${{ parameters.pool }}
+      variables:
+      - group: QNA_${{ parameters.source_env }}_SETTINGS
       steps:
 
       # Prepare Python and retrieve Config Values
@@ -41,9 +41,9 @@ stages:
         workingDirectory: $(System.DefaultWorkingDirectory)
         env:
           PYTHONPATH: $(System.DefaultWorkingDirectory)
-          QNA_SOURCE_ENDPOINT: $(QNA_PROD_ENDPOINT_HOST)
-          QNA_SOURCE_SUB_KEY: $(QNA_PROD_ENDPOINT_KEY)
-          QNA_SOURCE_KB_ID: $(QNA_PROD_KB_ID)
+          QNA_SOURCE_ENDPOINT: $(QNA_ENDPOINT_HOST)
+          QNA_SOURCE_SUB_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_SOURCE_KB_ID: $(QNA_KB_ID)
 
       # Create Azure DevOps Artifact
       - publish: ${{ parameters.source_env }}.json
@@ -53,6 +53,9 @@ stages:
       dependsOn: alDownload
       displayName: 'Merge to ${{ parameters.target_env }}'
       pool: ${{ parameters.pool }}
+      variables:
+      - group: QNA_${{ parameters.target_env }}_SETTINGS
+      - group: STORAGE_SETTINGS
       steps:
       # Download artifact
       - download: current
@@ -80,18 +83,18 @@ stages:
         workingDirectory: $(System.DefaultWorkingDirectory)
         env:
           PYTHONPATH: $(System.DefaultWorkingDirectory)
-          QNA_DEST_ENDPOINT: $(QNA_EDIT_ENDPOINT_HOST)
-          QNA_DEST_SUB_KEY: $(QNA_EDIT_ENDPOINT_KEY)
-          QNA_DEST_KB_ID: $(QNA_EDIT_KB_ID)
+          QNA_DEST_ENDPOINT: $(QNA_ENDPOINT_HOST)
+          QNA_DEST_SUB_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_DEST_KB_ID: $(QNA_KB_ID)
 
       # Upload KB to Storage
       - script: |
           az storage blob upload --container-name mlops \
                           --file $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json \
                           --name $(addConfig.STORAGE_FOLDER_NAME)/${{ parameters.source_env }}.json \
-                          --account-name ${{ parameters.target_storageaccount }} \
+                          --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
         displayName: 'Upload to Azure Storage on ${{ parameters.target_env }}'
-        enabled: false  #################
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+          AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)

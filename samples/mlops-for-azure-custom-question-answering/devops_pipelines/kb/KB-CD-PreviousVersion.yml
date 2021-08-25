@@ -2,9 +2,6 @@ parameters:
   - name: pool
     default: 'ubuntu-latest'
     displayName: 'Azure DevOps Pool to use'
-  - name: 'storageaccount'
-    default: ''
-    displayName: 'Storage Account to find folder under container mlops for KB version to deploy'
   - name: 'artifactname'
     default: ''
     displayName: 'Folder in storage container mlops with KB version to deploy'
@@ -12,7 +9,7 @@ parameters:
     default: 'KB.json'
     displayName: 'File Name of the JSON formatted KB to deploy'
   - name: 'lang'
-    default: ''
+    default: 'En'
     displayName: 'Language code of the KB to deploy [first char big letter, second char small letter (e.g. En, Ko, De)]'
 
 trigger: none
@@ -25,6 +22,8 @@ stages:
     - job: artifactPrep
       displayName: Download and AzDO Publish KB
       pool: ${{ parameters.pool }}
+      variables:
+      - group: STORAGE_SETTINGS
       steps:
       - checkout: none
 
@@ -52,12 +51,12 @@ stages:
           az storage blob download --container-name mlops \
                           --file ${{ parameters.kbfilename }} \
                           --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \
-                          --account-name ${{ parameters.storageaccount }} \
+                          --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
         displayName: 'download from storage'
-        enabled: false  #################
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+          AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
 
       - publish: ${{ parameters.kbfilename }}
         artifact: $(addConfig.ARTIFACT_NAME)

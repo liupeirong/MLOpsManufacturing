@@ -12,6 +12,4 @@ stages:
       source_env: 'EDIT' 
       target_env: 'PROD'
 
-      target_storageaccount: ''
-
       lang: ${{ parameters.lang }}

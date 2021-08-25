@@ -5,8 +5,6 @@ parameters:
     default: ''
   - name: 'kbfilename'
     default: ''
-  - name: 'storageaccount'
-    default: ''
   - name: 'testFile'
     default: ''
 
@@ -17,6 +15,10 @@ stages:
     - job: trainTest
       displayName: 'KB Train and Accuracy Test'
       pool: ${{ parameters.pool }}
+      variables:
+      - group: QNA_EDIT_SETTINGS
+      - group: ACCURACY_TEST_SETTINGS
+      - group: STORAGE_SETTINGS
       steps:  
 
       # Prepare Python and retrieve Config Values
@@ -31,9 +33,9 @@ stages:
         workingDirectory: $(System.DefaultWorkingDirectory)
         env:
           PYTHONPATH: $(System.DefaultWorkingDirectory)
-          QNA_DEST_ENDPOINT: $(QNA_EDIT_ENDPOINT_HOST)
-          QNA_DEST_SUB_KEY: $(QNA_EDIT_ENDPOINT_KEY)
-          QNA_DEST_KB_ID: $(QNA_EDIT_KB_ID)
+          QNA_DEST_ENDPOINT: $(QNA_ENDPOINT_HOST)
+          QNA_DEST_SUB_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_DEST_KB_ID: $(QNA_KB_ID)
       
        # Additional configuration for Accuracy Test
       - script: |
@@ -57,9 +59,9 @@ stages:
         workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
         displayName: 'Run Accuracy tests'
         env:
-          QNA_ENDPOINT_HOST_NAME: $(QNA_EDIT_ENDPOINT_HOST)
-          QNA_ENDPOINT_KEY: $(QNA_EDIT_ENDPOINT_KEY)
-          QNA_KNOWLEDGEBASE_ID: $(QNA_EDIT_KB_ID)
+          QNA_ENDPOINT_HOST_NAME: $(QNA_ENDPOINT_HOST)
+          QNA_ENDPOINT_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_KNOWLEDGEBASE_ID: $(QNA_KB_ID)
           TOP_ANSWER: $(TOP_ANSWER)
           TOP_PROMPT: $(TOP_PROMPT)
           SCORE_THRESHOLD: $(SCORE_THRESHOLD)
@@ -83,26 +85,26 @@ stages:
           az storage blob upload --container-name mlops \
                           --file ${{ parameters.testFile }} \
                           --name $(addConfig.ARTIFACT_NAME)/${{ parameters.testFile }} \
-                          --account-name ${{ parameters.storageaccount }} \
+                          --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
 
           az storage blob upload --container-name mlops \
                           --file output/out.tsv \
                           --name $(addConfig.ARTIFACT_NAME)/accuracy_test_result.tsv \
-                          --account-name ${{ parameters.storageaccount }} \
+                          --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
 
           az storage blob upload --container-name mlops \
                           --file output/test-report.xml \
                           --name $(addConfig.ARTIFACT_NAME)/test-report.xml \
-                          --account-name ${{ parameters.storageaccount }} \
+                          --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
 
         workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
         displayName: 'Upload TestData & Results to Azure Storage'
-        enabled: false  #################
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+          AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
 
       - bash: |
           TESTS=$(sed -rn 's/.*tests="([^"]*)".*/\1/p' output/test-report.xml)
@@ -129,6 +131,9 @@ stages:
     - job: artifactPrep
       displayName: 'Store KB as artifact'
       pool: ${{ parameters.pool }}
+      variables:
+      - group: QNA_EDIT_SETTINGS
+      - group: STORAGE_SETTINGS
       steps:
 
       # Prepare Python and retrieve Config Values
@@ -144,16 +149,16 @@ stages:
         name: addConfig
         displayName: 'Additional Configuration'
 
-      # Download KB from current Environment associated to 'pool'
+      # Download KB from EDIT environment
       - script: |
           python kb/scripts/download-kb.py --output ${{ parameters.kbfilename }} --slot Test
         displayName: 'Download KB'
         workingDirectory: $(System.DefaultWorkingDirectory)
         env:
           PYTHONPATH: $(System.DefaultWorkingDirectory)
-          QNA_SOURCE_ENDPOINT: $(QNA_EDIT_ENDPOINT_HOST)
-          QNA_SOURCE_SUB_KEY: $(QNA_EDIT_ENDPOINT_KEY)
-          QNA_SOURCE_KB_ID: $(QNA_EDIT_KB_ID)
+          QNA_SOURCE_ENDPOINT: $(QNA_ENDPOINT_HOST)
+          QNA_SOURCE_SUB_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_SOURCE_KB_ID: $(QNA_KB_ID)
 
       # Create Azure DevOps Artifact
       - publish: ${{ parameters.kbfilename }}
@@ -164,9 +169,9 @@ stages:
           az storage blob upload --container-name mlops \
                           --file ${{ parameters.kbfilename }} \
                           --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \
-                          --account-name ${{ parameters.storageaccount }} \
+                          --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
         displayName: 'Upload to Azure Storage'
-        enabled: false  #################
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+          AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)

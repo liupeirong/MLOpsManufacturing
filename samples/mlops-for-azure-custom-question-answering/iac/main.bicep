@@ -5,7 +5,9 @@ param resourceGroupName string = 'custom-question-answering-rg'
 @description('Azure region for all services')
 param location string = 'northeurope'
 @description('Salt to generate globally unique names')
-param salt string = 'koreacentral'
+param salt string = 'saltissalty'
+@description('Custom Question Answering API version path')
+param apiversion string = 'qnamaker/5.0-preview2'
 
 module resourceGroups './resourceGroup.bicep' = {
   name: resourceGroupName
@@ -41,8 +43,22 @@ module cqa2 './customquestionanswering.bicep' = {
   ]
 }
 
+module str 'storage.bicep' = {
+  name: 'storageAccount'
+  scope: resourceGroup(resourceGroupName)
+  params: {
+    location: location
+    salt: salt
+  }
+  dependsOn: [
+    resourceGroups
+  ]
+}
 
-output cqa1_endpoint string = cqa1.outputs.endpoint
+
+output cqa1_endpoint string = '${cqa1.outputs.endpoint}${apiversion}'
 output cqa1_key string = cqa1.outputs.key
-output cqa2_endpoint string = cqa2.outputs.endpoint
+output cqa2_endpoint string = '${cqa2.outputs.endpoint}${apiversion}'
 output cqa2_key string = cqa2.outputs.key
+output storage_account string = str.outputs.accountName
+output storage_sas string = str.outputs.sasToken

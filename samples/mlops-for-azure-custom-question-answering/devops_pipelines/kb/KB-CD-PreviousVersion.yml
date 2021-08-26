@@ -21,7 +21,8 @@ stages:
     jobs:
     - job: artifactPrep
       displayName: Download and AzDO Publish KB
-      pool: ${{ parameters.pool }}
+      pool:
+        vmImage: ${{ parameters.pool }}
       variables:
       - group: STORAGE_SETTINGS
       steps:

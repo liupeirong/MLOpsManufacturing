@@ -16,7 +16,8 @@ stages:
     jobs:
     - job: alDownload
       displayName: 'Download and Publish Active Learning from ${{ parameters.source_env }}'
-      pool: ${{ parameters.pool }}
+      pool:
+        vmImage: ${{ parameters.pool }}
       variables:
       - group: QNA_${{ parameters.source_env }}_SETTINGS
       steps:
@@ -52,7 +53,8 @@ stages:
     - job: alMerge
       dependsOn: alDownload
       displayName: 'Merge to ${{ parameters.target_env }}'
-      pool: ${{ parameters.pool }}
+      pool:
+        vmImage: ${{ parameters.pool }}
       variables:
       - group: QNA_${{ parameters.target_env }}_SETTINGS
       - group: STORAGE_SETTINGS

@@ -17,7 +17,8 @@ stages:
     jobs:
     - deployment: replaceAndPublish
       displayName: 'KB Replace and Publish to ${{ parameters.env }}'
-      pool: ${{ parameters.pool }}
+      pool:
+        vmImage: ${{ parameters.pool }}
       environment: ${{ parameters.env }}
       variables:
       - group: QNA_${{ parameters.env }}_SETTINGS

@@ -14,7 +14,8 @@ stages:
     jobs:
     - job: trainTest
       displayName: 'KB Train and Accuracy Test'
-      pool: ${{ parameters.pool }}
+      pool:
+        vmImage: ${{ parameters.pool }}
       variables:
       - group: QNA_EDIT_SETTINGS
       - group: ACCURACY_TEST_SETTINGS
@@ -130,7 +131,8 @@ stages:
     jobs:
     - job: artifactPrep
       displayName: 'Store KB as artifact'
-      pool: ${{ parameters.pool }}
+      pool:
+        vmImage: ${{ parameters.pool }}
       variables:
       - group: QNA_EDIT_SETTINGS
       - group: STORAGE_SETTINGS

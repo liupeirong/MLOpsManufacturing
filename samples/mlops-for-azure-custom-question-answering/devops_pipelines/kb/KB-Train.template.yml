@@ -54,6 +54,7 @@ stages:
       
       # Run Accuracy Tool
       - bash: |
+          mkdir output
           npm run build
           npm run start
           npm run test:report

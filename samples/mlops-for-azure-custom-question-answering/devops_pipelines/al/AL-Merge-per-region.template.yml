@@ -28,7 +28,7 @@ stages:
           lang: ${{ parameters.lang }}
 
       # Additional configuration for uploadArtifact
-      - script: |
+      - bash: |
           LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
           ARTIFACT_NAME="AL_${LANG_UPPER}_$(Build.BuildNumber)_${{ parameters.source_env }}"
           echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
@@ -63,7 +63,7 @@ stages:
       - download: current
 
       # Additional configuration
-      - script: |
+      - bash: |
           LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
           ARTIFACT_NAME="AL_${LANG_UPPER}_$(Build.BuildNumber)_${{ parameters.source_env }}"
           echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
@@ -79,7 +79,6 @@ stages:
       
       # Merging Feedback from Target to Source
       - script: |
-          ls $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)
           python kb/scripts/merge-kb.py --input $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json
         displayName: 'Merge Active Learning to ${{ parameters.target_env }}'
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering

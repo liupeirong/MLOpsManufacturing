@@ -1,6 +1,6 @@
 parameters:
   - name: pool
-    default: 'ubuntu-latest'
+    default: 'windows-latest'
     displayName: 'Azure DevOps Pool to use'
   - name: 'artifactname'
     default: ''
@@ -30,7 +30,7 @@ stages:
 
       # Check if Language Parameter and language for provided Artifact are matching
       # by comparing the language hint in the Artifact folder
-      - script: |
+      - bash: |
           LANG_UPPER=$(echo "_${{ parameters.lang }}_" | tr [:lower:] [:upper:])
           ARTIFACT_NAME_UPPER=$(echo ${{ parameters.artifactname }} | tr [:lower:] [:upper:])
 
@@ -43,7 +43,7 @@ stages:
         displayName: 'Artifact Language and Language Parameter Check'
 
       # Additional configuration for uploadArtifact
-      - script: |
+      - bash: |
           echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]${{ parameters.artifactname }}"
         name: addConfig
         displayName: 'Artifact Name Configuration'      

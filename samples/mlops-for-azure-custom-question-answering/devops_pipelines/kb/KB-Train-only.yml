@@ -6,7 +6,7 @@ parameters:
     default: 'KB.json'
     displayName: 'File Name of the JSON formatted KB to deploy'
   - name: 'testFile'
-    default: 'data/test_en.tsv'
+    default: 'samples/mlops-for-azure-custom-question-answering/data/test_en.tsv'
     displayName: 'Relative path in code repo to Test Data set for Language to test (e.g. data/test_en.tsv)'
 
 trigger: none

@@ -7,7 +7,7 @@ stages:
   - template: AL-Merge-per-region.template.yml
     parameters:
 
-      pool: 'ubuntu-latest'
+      pool: 'windows-latest'
 
       source_env: 'EDIT' 
       target_env: 'PROD'

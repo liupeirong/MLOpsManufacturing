@@ -49,7 +49,7 @@ stages:
       # Prepare Accuracy Tool requirements
       - script: |
           npm install 
-        workingDirectory: accuracy_test/
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/
         displayName: 'NPM Install'
       
       # Run Accuracy Tool

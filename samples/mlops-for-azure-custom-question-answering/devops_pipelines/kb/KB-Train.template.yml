@@ -31,9 +31,9 @@ stages:
       - script: |
           python kb/scripts/publish-kb.py --publish_only
         displayName: 'Publish KB'
-        workingDirectory: $(System.DefaultWorkingDirectory)
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:
-          PYTHONPATH: $(System.DefaultWorkingDirectory)
+          PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
           QNA_DEST_ENDPOINT: $(QNA_ENDPOINT_HOST)
           QNA_DEST_SUB_KEY: $(QNA_ENDPOINT_KEY)
           QNA_DEST_KB_ID: $(QNA_KB_ID)
@@ -57,7 +57,7 @@ stages:
           npm run build
           npm run start
           npm run test:report
-        workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/
         displayName: 'Run Accuracy tests'
         env:
           QNA_ENDPOINT_HOST_NAME: $(QNA_ENDPOINT_HOST)
@@ -76,7 +76,7 @@ stages:
       - task: PublishTestResults@2
         condition: succeededOrFailed()
         inputs:
-          testResultsFiles: '$(System.DefaultWorkingDirectory)/accuracy_test/output/test-report.xml'
+          testResultsFiles: '$(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/output/test-report.xml'
           testRunTitle: 'QnA Maker Accuracy Tests'
           failTaskOnFailedTests: false
         displayName: 'Publish test results'
@@ -101,7 +101,7 @@ stages:
                           --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token
 
-        workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/
         displayName: 'Upload TestData & Results to Azure Storage'
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
@@ -120,7 +120,7 @@ stages:
               echo "FAIL!!"
               exit 1;
           fi
-        workingDirectory: $(System.DefaultWorkingDirectory)/accuracy_test/
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/
         failOnStderr: true
         displayName: 'Check threshold'          
         env:
@@ -155,9 +155,9 @@ stages:
       - script: |
           python kb/scripts/download-kb.py --output ${{ parameters.kbfilename }} --slot Test
         displayName: 'Download KB'
-        workingDirectory: $(System.DefaultWorkingDirectory)
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:
-          PYTHONPATH: $(System.DefaultWorkingDirectory)
+          PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
           QNA_SOURCE_ENDPOINT: $(QNA_ENDPOINT_HOST)
           QNA_SOURCE_SUB_KEY: $(QNA_ENDPOINT_KEY)
           QNA_SOURCE_KB_ID: $(QNA_KB_ID)

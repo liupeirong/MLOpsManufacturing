@@ -39,9 +39,9 @@ stages:
       - script: |
           python kb/scripts/download-kb.py --output ${{ parameters.source_env }}.json --slot Test
         displayName: 'Download KB'
-        workingDirectory: $(System.DefaultWorkingDirectory)
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:
-          PYTHONPATH: $(System.DefaultWorkingDirectory)
+          PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
           QNA_SOURCE_ENDPOINT: $(QNA_ENDPOINT_HOST)
           QNA_SOURCE_SUB_KEY: $(QNA_ENDPOINT_KEY)
           QNA_SOURCE_KB_ID: $(QNA_KB_ID)
@@ -82,9 +82,9 @@ stages:
           ls $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)
           python kb/scripts/merge-kb.py --input $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json
         displayName: 'Merge Active Learning to ${{ parameters.target_env }}'
-        workingDirectory: $(System.DefaultWorkingDirectory)
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:
-          PYTHONPATH: $(System.DefaultWorkingDirectory)
+          PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
           QNA_DEST_ENDPOINT: $(QNA_ENDPOINT_HOST)
           QNA_DEST_SUB_KEY: $(QNA_ENDPOINT_KEY)
           QNA_DEST_KB_ID: $(QNA_KB_ID)

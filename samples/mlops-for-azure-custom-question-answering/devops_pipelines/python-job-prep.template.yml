@@ -3,4 +3,4 @@ steps:
 - script: |
     bash python-env.sh ci pip-requirements.txt
   displayName: 'Prepare/Update Python Env'
-  workingDirectory: $(System.DefaultWorkingDirectory)/kb
+  workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/kb

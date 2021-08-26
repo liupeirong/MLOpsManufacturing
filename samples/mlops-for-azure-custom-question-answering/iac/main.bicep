@@ -7,7 +7,7 @@ param location string = 'northeurope'
 @description('Salt to generate globally unique names')
 param salt string = 'saltissalty'
 @description('Custom Question Answering API version path')
-param apiversion string = 'qnamaker/5.0-preview2'
+param apiversion string = 'qnamaker/v5.0-preview.2'
 
 module resourceGroups './resourceGroup.bicep' = {
   name: resourceGroupName

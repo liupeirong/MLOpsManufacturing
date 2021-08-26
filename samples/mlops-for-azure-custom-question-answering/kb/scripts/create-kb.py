@@ -43,7 +43,7 @@ def main(args: Namespace):
 
     print("\tCreate destination KB...")
     kb_id = dest_client.create_knowledgebase(args.name, source_qnas)
-    print(f"\tKB with ID {kb_id} created.")
+    print(f"\tKB with ID #{kb_id}# created.")
 
     print("Create completed (create-kb.py).")
 

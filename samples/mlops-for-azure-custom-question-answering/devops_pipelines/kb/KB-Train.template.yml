@@ -1,6 +1,6 @@
 parameters:
   - name: 'pool'
-    default: 'ubuntu-latest'
+    default: 'windows-latest'
   - name: 'lang'
     default: ''
   - name: 'kbfilename'

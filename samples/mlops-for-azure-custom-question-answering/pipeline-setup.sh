@@ -54,7 +54,7 @@ az pipelines create \
 vg_edit_settings_id=$(az pipelines variable-group create \
 --name 'QNA_EDIT_SETTINGS' \
 --description 'Settings for QNA Maker EDIT environment' \
---variables QNA_ENDPOINT_HOST=$ENDPOINT_EDIT, QNA_KB_ID=$EDIT_KB_ID \
+--variables QNA_ENDPOINT_HOST=$ENDPOINT_EDIT QNA_KB_ID=$EDIT_KB_ID \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
 --query 'id')
@@ -62,7 +62,7 @@ vg_edit_settings_id=$(az pipelines variable-group create \
 vg_prod_settings_id=$(az pipelines variable-group create \
 --name 'QNA_PROD_SETTINGS' \
 --description 'Settings for QNA Maker PROD environment' \
---variables QNA_ENDPOINT_HOST=$ENDPOINT_PROD, QNA_KB_ID=$PROD_KB_ID \
+--variables QNA_ENDPOINT_HOST=$ENDPOINT_PROD QNA_KB_ID=$PROD_KB_ID \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
 --query 'id')
@@ -78,7 +78,7 @@ vg_store_settings_id=$(az pipelines variable-group create \
 az pipelines variable-group create \
 --name 'ACCURACY_TEST_SETTINGS' \
 --description 'Accuracy Test Settings' \
---variables TOP_ANSWER=3, TOP_PROMPT=3, SCORE_THRESHOLD=0.3, SCORE_SIMILARITY=0.5, MULTI_TURN_DEPTH=3, PRECISE_ANSWERING=False, TEST_FAIL_THRESHOLD=80 \
+--variables TOP_ANSWER=3 TOP_PROMPT=3 SCORE_THRESHOLD=0.3 SCORE_SIMILARITY=0.5 MULTI_TURN_DEPTH=3 PRECISE_ANSWERING=False TEST_FAIL_THRESHOLD=80 \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME
 

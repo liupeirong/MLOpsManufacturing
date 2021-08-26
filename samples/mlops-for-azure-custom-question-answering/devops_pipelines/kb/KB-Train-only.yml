@@ -1,12 +1,12 @@
 parameters:
   - name: 'lang'
-    default: ''
+    default: 'En'
     displayName: 'Language code of the KB to deploy [first char big letter, second char small letter (e.g. En, Ko, De)]'
   - name: 'kbfilename'
     default: 'KB.json'
     displayName: 'File Name of the JSON formatted KB to deploy'
   - name: 'testFile'
-    default: ''
+    default: 'data/test_en.tsv'
     displayName: 'Relative path in code repo to Test Data set for Language to test (e.g. data/test_en.tsv)'
 
 trigger: none

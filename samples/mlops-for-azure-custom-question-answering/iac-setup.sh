@@ -52,12 +52,12 @@ if [ -n "$1" ]; then
     # EDIT
     export QNA_DEST_ENDPOINT=$(echo $ENDPOINT_EDIT | xargs)
     export QNA_DEST_SUB_KEY=$(echo $KEY_EDIT | xargs)
-    result=$(python kb/scripts/create-kb.py --input data/init.json --name 'Editorial QnA EN')
+    result=$(python kb/scripts/create-kb.py --input data/init_en.json --name 'Editorial QnA EN')
     EDIT_KB_ID=$(echo $result | cut -d '#' -f 2)
     # PROD
     export QNA_DEST_ENDPOINT=$(echo $ENDPOINT_PROD | xargs)
     export QNA_DEST_SUB_KEY=$(echo $KEY_PROD | xargs)
-    result=$(python kb/scripts/create-kb.py --input data/init.json --name 'Production QnA EN')
+    result=$(python kb/scripts/create-kb.py --input data/init_en.json --name 'Production QnA EN')
     PROD_KB_ID=$(echo $result | cut -d '#' -f 2)
     #
     printf "\n#### Values from Post Deployment #####\n\n" >> .env

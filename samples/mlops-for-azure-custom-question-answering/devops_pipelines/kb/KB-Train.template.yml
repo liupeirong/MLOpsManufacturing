@@ -39,7 +39,7 @@ stages:
           QNA_DEST_KB_ID: $(QNA_KB_ID)
       
        # Additional configuration for Accuracy Test
-      - script: |
+      - bash: |
           LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
           ARTIFACT_NAME="KB_${LANG_UPPER}_$(Build.BuildNumber)"
           echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
@@ -144,7 +144,7 @@ stages:
           lang: ${{ parameters.lang }}
 
       # Additional configuration for uploadArtifact
-      - script: |
+      - bash: |
           LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
           ARTIFACT_NAME="KB_${LANG_UPPER}_$(Build.BuildNumber)"
           echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"

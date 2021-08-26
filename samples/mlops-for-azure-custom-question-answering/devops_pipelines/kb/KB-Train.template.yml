@@ -47,14 +47,13 @@ stages:
         displayName: 'Additional Configuration'
 
       # Prepare Accuracy Tool requirements
-      - script: |
+      - bash: |
           npm install 
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/
         displayName: 'NPM Install'
       
       # Run Accuracy Tool
-      - script: |
-          npm config set script-shell bash
+      - bash: |
           npm run build
           npm run start
           npm run test:report

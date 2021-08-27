@@ -9,7 +9,7 @@ stages:
   # Deploy 
   - template: KB-CD-single-env.template.yml
     parameters:
-      pool: 'ubuntu-latest'
+      pool: 'windows-latest'
       env: 'PROD'
       lang: ${{ parameters.lang }}
       kbfilename: ${{ parameters.kbfilename }}

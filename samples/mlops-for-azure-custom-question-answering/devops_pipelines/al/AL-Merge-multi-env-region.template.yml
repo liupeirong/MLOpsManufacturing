@@ -9,7 +9,7 @@ stages:
 
       pool: 'windows-latest'
 
-      source_env: 'EDIT' 
-      target_env: 'PROD'
+      source_env: 'PROD' 
+      target_env: 'EDIT'
 
       lang: ${{ parameters.lang }}

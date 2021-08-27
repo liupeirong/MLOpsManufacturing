@@ -51,9 +51,7 @@ stages:
       - bash: |
           az storage blob download --container-name mlops \
                           --file ${{ parameters.kbfilename }} \
-                          --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \
-                          --account-name $(AZURE_STORAGE_ACCOUNT) \
-                          --sas-token $(AZURE_STORAGE_SAS_TOKEN)
+                          --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }}
         displayName: 'download from storage'
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:

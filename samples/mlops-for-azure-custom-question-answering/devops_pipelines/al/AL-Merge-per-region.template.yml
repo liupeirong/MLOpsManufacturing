@@ -92,9 +92,7 @@ stages:
       - bash: |
           az storage blob upload --container-name mlops \
                           --file $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json \
-                          --name $(addConfig.STORAGE_FOLDER_NAME)/${{ parameters.source_env }}.json \
-                          --account-name $(AZURE_STORAGE_ACCOUNT) \
-                          --sas-token $(AZURE_STORAGE_SAS_TOKEN)
+                          --name $(addConfig.STORAGE_FOLDER_NAME)/${{ parameters.source_env }}.json
         displayName: 'Upload to Azure Storage on ${{ parameters.target_env }}'
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:

@@ -53,12 +53,12 @@ stages:
                           --file ${{ parameters.kbfilename }} \
                           --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }}
         displayName: 'download from storage'
-        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+        workingDirectory: $(System.DefaultWorkingDirectory)
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
           AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
 
-      - publish: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/${{ parameters.kbfilename }}
+      - publish: $(System.DefaultWorkingDirectory)${{ parameters.kbfilename }}
         artifact: $(addConfig.ARTIFACT_NAME)
 
   # Deploy to all environments and regions

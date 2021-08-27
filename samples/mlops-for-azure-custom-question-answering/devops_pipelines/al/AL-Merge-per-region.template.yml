@@ -78,7 +78,7 @@ stages:
           lang: ${{ parameters.lang }}
       
       # Merging Feedback from Target to Source
-      - bash: |
+      - script: |
           python kb/scripts/merge-kb.py --input $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json
         displayName: 'Merge Active Learning to ${{ parameters.target_env }}'
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
@@ -89,7 +89,7 @@ stages:
           QNA_DEST_KB_ID: $(QNA_KB_ID)
 
       # Upload KB to Storage
-      - bash: |
+      - script: |
           az storage blob upload --container-name mlops \
                           --file $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json \
                           --name $(addConfig.STORAGE_FOLDER_NAME)/${{ parameters.source_env }}.json

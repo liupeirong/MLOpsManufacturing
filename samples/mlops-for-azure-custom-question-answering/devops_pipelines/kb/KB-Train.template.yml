@@ -84,28 +84,23 @@ stages:
 
       # Upload TestData/TestResult to Storage
       - bash: |
-          echo "az storage blob upload --container-name mlops \
-                          --file ${{ parameters.testFile }} \
-                          --name $(addConfig.ARTIFACT_NAME)/test_input.tsv \
-                          --account-name $(AZURE_STORAGE_ACCOUNT) \
-                          --sas-token"
           az storage blob upload --container-name mlops \
                           --file ${{ parameters.testFile }} \
                           --name $(addConfig.ARTIFACT_NAME)/test_input.tsv \
                           --account-name $(AZURE_STORAGE_ACCOUNT) \
-                          --sas-token
+                          --sas-token $(AZURE_STORAGE_SAS_TOKEN)
 
           az storage blob upload --container-name mlops \
                           --file output/out.tsv \
                           --name $(addConfig.ARTIFACT_NAME)/accuracy_test_result.tsv \
                           --account-name $(AZURE_STORAGE_ACCOUNT) \
-                          --sas-token
+                          --sas-token $(AZURE_STORAGE_SAS_TOKEN)
 
           az storage blob upload --container-name mlops \
                           --file output/test-report.xml \
                           --name $(addConfig.ARTIFACT_NAME)/test-report.xml \
                           --account-name $(AZURE_STORAGE_ACCOUNT) \
-                          --sas-token
+                          --sas-token $(AZURE_STORAGE_SAS_TOKEN)
 
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/accuracy_test/
         displayName: 'Upload TestData & Results to Azure Storage'

@@ -78,7 +78,7 @@ stages:
           lang: ${{ parameters.lang }}
       
       # Merging Feedback from Target to Source
-      - script: |
+      - bash: |
           python kb/scripts/merge-kb.py --input $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json
         displayName: 'Merge Active Learning to ${{ parameters.target_env }}'
         workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering

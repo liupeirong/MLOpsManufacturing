@@ -55,11 +55,12 @@ stages:
                           --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token $(AZURE_STORAGE_SAS_TOKEN)
         displayName: 'download from storage'
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
           AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
 
-      - publish: ${{ parameters.kbfilename }}
+      - publish: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/${{ parameters.kbfilename }}
         artifact: $(addConfig.ARTIFACT_NAME)
 
   # Deploy to all environments and regions

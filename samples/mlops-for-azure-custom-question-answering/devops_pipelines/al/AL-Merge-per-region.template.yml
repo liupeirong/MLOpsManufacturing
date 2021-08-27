@@ -47,7 +47,7 @@ stages:
           QNA_SOURCE_KB_ID: $(QNA_KB_ID)
 
       # Create Azure DevOps Artifact
-      - publish: ${{ parameters.source_env }}.json
+      - publish: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/${{ parameters.source_env }}.json
         artifact: $(addConfig.ARTIFACT_NAME)
 
     - job: alMerge
@@ -96,6 +96,7 @@ stages:
                           --account-name $(AZURE_STORAGE_ACCOUNT) \
                           --sas-token $(AZURE_STORAGE_SAS_TOKEN)
         displayName: 'Upload to Azure Storage on ${{ parameters.target_env }}'
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
         env:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
           AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)

@@ -58,7 +58,7 @@ stages:
           AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
           AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
 
-      - publish: $(System.DefaultWorkingDirectory)${{ parameters.kbfilename }}
+      - publish: $(System.DefaultWorkingDirectory)\${{ parameters.kbfilename }}
         artifact: $(addConfig.ARTIFACT_NAME)
 
   # Deploy to all environments and regions

@@ -48,7 +48,7 @@ stages:
         name: addConfig
         displayName: 'Artifact Name Configuration'      
 
-      - script: |
+      - bash: |
           az storage blob download --container-name mlops \
                           --file ${{ parameters.kbfilename }} \
                           --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \

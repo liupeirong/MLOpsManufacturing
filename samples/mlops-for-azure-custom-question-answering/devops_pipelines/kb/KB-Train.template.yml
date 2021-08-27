@@ -83,7 +83,7 @@ stages:
         displayName: 'Publish test results'
 
       # Upload TestData/TestResult to Storage
-      - script: |
+      - bash: |
           az storage blob upload --container-name mlops \
                           --file ${{ parameters.testFile }} \
                           --name $(addConfig.ARTIFACT_NAME)/test_input.tsv \
@@ -168,7 +168,7 @@ stages:
         artifact: $(addConfig.ARTIFACT_NAME)
 
       # Upload KB to Storage
-      - script: |
+      - bash: |
           az storage blob upload --container-name mlops \
                           --file ${{ parameters.kbfilename }} \
                           --name $(addConfig.ARTIFACT_NAME)/${{ parameters.kbfilename }} \

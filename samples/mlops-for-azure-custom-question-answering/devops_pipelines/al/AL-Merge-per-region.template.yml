@@ -89,7 +89,7 @@ stages:
           QNA_DEST_KB_ID: $(QNA_KB_ID)
 
       # Upload KB to Storage
-      - script: |
+      - bash: |
           az storage blob upload --container-name mlops \
                           --file $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json \
                           --name $(addConfig.STORAGE_FOLDER_NAME)/${{ parameters.source_env }}.json

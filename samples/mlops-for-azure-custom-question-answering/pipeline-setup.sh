@@ -120,7 +120,7 @@ access_token=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-26
 # Wrap it as BASIC Auth Credentials
 basic_auth=$(printf ":$access_token" | base64 --wrap=0)
 # X Headers are important
-curl -v -X POST \
+curl -X POST \
 -H "Authorization: Basic $basic_auth" \
 -H "X-TFS-FedAuthRedirect: Suppress" \
 -H "X-VSS-ForceMsaPassThrough: True" \
@@ -128,7 +128,7 @@ curl -v -X POST \
 -d '{"name": "EDIT", "description": "Environment for Content Editing"}' \
 "https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG/$YOUR_AZURE_DEV_OPS_PROJECT_NAME/_apis/distributedtask/environments?api-version=6.1-preview.1"
 
-curl -v -X POST \
+curl -X POST \
 -H "Authorization: Basic $basic_auth" \
 -H "X-TFS-FedAuthRedirect: Suppress" \
 -H "X-VSS-ForceMsaPassThrough: True" \

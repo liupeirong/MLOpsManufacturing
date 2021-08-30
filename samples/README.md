@@ -26,6 +26,7 @@ principles which are covered
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|compatible (not implemented yet)|prerequisite|compatible|showcasing|
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./wrapping-existing-ml-scripts-tutorial)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
+|[MLOps for Azure Custom Question Answering](./mlops-for-azure-custom-question-answering)|not compatible|IaC script provided|not compatible|not compatible|
 
 ## Relation to MLOps / DevOps for Data Science
 
@@ -38,6 +39,7 @@ principles which are covered
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|:heavy_check_mark:|:x:|:heavy_check_mark:|:x:|
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./wrapping-existing-ml-scripts-tutorial)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
+|[MLOps for Azure Custom Question Answering](./mlops-for-azure-custom-question-answering)|:heavy_check_mark:|:x:|:x:|:x:|
 
 ## Relation to Azure Well Architected Framework Principals
 
@@ -51,3 +53,4 @@ principles which are covered
 |[Run non-Python code in AML Pipelines](./non-python-preprocess)|Pay for consumption|Optimize build and release processes, Monitor the system (planned)|||Use Identity as Primary Access Control|
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|Pay for consumption|Monitor the system (planned)|Monitor and optimize (planned)|||
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./wrapping-existing-ml-scripts-tutorial)|Pay for consumption|||||
+|[MLOps for Azure Custom Question Answering](./mlops-for-azure-custom-question-answering)|Pay for consumption|Fully automated infrastructure provisioning and code deployment||||

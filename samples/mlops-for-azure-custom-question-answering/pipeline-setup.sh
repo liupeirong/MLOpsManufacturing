@@ -1,9 +1,10 @@
 #!/bin/bash
 ## Azure Pipelines Setup Script
 
-# load configuration from IaC script
+### load configuration from IaC script
 export $(cat .env | grep -v '#' | xargs) 
 
+### Create a GitHub Service Connection/Endpoint called github
 service_connection_id=$(az devops service-endpoint github create \
 --github-url https://github.com/$YOUR_GIT_HUB_ID/$GIT_HUB_REPO_ID/ \
 --name github \
@@ -11,6 +12,7 @@ service_connection_id=$(az devops service-endpoint github create \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
 -o tsv --query 'id')
 
+### Create Pipelines
 az pipelines create \
 --name 'Train & Deploy' \
 --description 'Executes accuracy test in EDIT environment and deploys result to PROD' \
@@ -51,6 +53,7 @@ az pipelines create \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
 --service-connection $service_connection_id
 
+### Create Variable Groups
 vg_edit_settings_id=$(az pipelines variable-group create \
 --name 'QNA_EDIT_SETTINGS' \
 --description 'Settings for QNA Maker EDIT environment' \
@@ -82,6 +85,8 @@ az pipelines variable-group create \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME
 
+
+### Add Secrets to Variable Groups
 az pipelines variable-group variable create \
 --group-id $vg_edit_settings_id \
 --name 'QNA_ENDPOINT_KEY' \
@@ -105,3 +110,28 @@ az pipelines variable-group variable create \
 --secret \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME
+
+### Add Environments 
+# Reverse Engineered this part by looking into Azure DevOps CLI Extension
+# https://github.com/Azure/azure-devops-cli-extension/blob/8cf32a41126b2b66f130843d4d16de19290052b9/azure-devops/azext_devops/devops_sdk/client.py#L71
+
+# First get access token for resource 499b84ac-1321-427f-aa17-267ca6975798
+access_token=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query 'accessToken' | xargs)
+# Wrap it as BASIC Auth Credentials
+basic_auth=$(printf ":$access_token" | base64 --wrap=0)
+# X Headers are important
+curl -v -X POST \
+-H "Authorization: Basic $basic_auth" \
+-H "X-TFS-FedAuthRedirect: Suppress" \
+-H "X-VSS-ForceMsaPassThrough: True" \
+-H "Content-Type: application/json" \
+-d '{"name": "EDIT", "description": "Environment for Content Editing"}' \
+"https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG/$YOUR_AZURE_DEV_OPS_PROJECT_NAME/_apis/distributedtask/environments?api-version=6.1-preview.1"
+
+curl -v -X POST \
+-H "Authorization: Basic $basic_auth" \
+-H "X-TFS-FedAuthRedirect: Suppress" \
+-H "X-VSS-ForceMsaPassThrough: True" \
+-H "Content-Type: application/json" \
+-d '{"name": "PROD", "description": "Production Environment"}' \
+"https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG/$YOUR_AZURE_DEV_OPS_PROJECT_NAME/_apis/distributedtask/environments?api-version=6.1-preview.1"

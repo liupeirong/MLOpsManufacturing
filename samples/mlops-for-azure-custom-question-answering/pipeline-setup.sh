@@ -21,7 +21,8 @@ az pipelines create \
 --yml-path samples/mlops-for-azure-custom-question-answering/devops_pipelines/kb/KB-CD-Manual.yml \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
---service-connection $service_connection_id
+--service-connection $service_connection_id \
+--skip-run
 
 az pipelines create \
 --name 'Train Only' \
@@ -31,7 +32,8 @@ az pipelines create \
 --yml-path samples/mlops-for-azure-custom-question-answering/devops_pipelines/kb/KB-Train-only.yml \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
---service-connection $service_connection_id
+--service-connection $service_connection_id \
+--skip-run
 
 az pipelines create \
 --name 'Deploy Previous' \
@@ -41,7 +43,8 @@ az pipelines create \
 --yml-path samples/mlops-for-azure-custom-question-answering/devops_pipelines/kb/KB-CD-PreviousVersion.yml \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
---service-connection $service_connection_id
+--service-connection $service_connection_id \
+--skip-run
 
 az pipelines create \
 --name 'Merge Active Learning Feedback' \
@@ -51,7 +54,8 @@ az pipelines create \
 --yml-path samples/mlops-for-azure-custom-question-answering/devops_pipelines/al/AL-Merge-Manual.yml \
 --organization https://dev.azure.com/$YOUR_AZURE_DEV_OPS_ORG \
 --project $YOUR_AZURE_DEV_OPS_PROJECT_NAME \
---service-connection $service_connection_id
+--service-connection $service_connection_id \
+--skip-run
 
 ### Create Variable Groups
 vg_edit_settings_id=$(az pipelines variable-group create \

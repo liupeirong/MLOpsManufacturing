@@ -40,4 +40,7 @@ ENV PATH /home/node/miniconda3/bin:$PATH
 RUN conda init bash \
     && echo 'conda activate devenv' >> .bashrc
 
+# Sometimes updates are needed which open up a prompt
+RUN az config set extension.use_dynamic_install=yes_without_prompt
+
 USER root

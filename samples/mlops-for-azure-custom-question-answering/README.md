@@ -93,11 +93,16 @@ You should see some JSON results from each of the commands and some warnings tha
 You can verify if everything worked by checking following three menus in your Azure DevOps project:
 
 * Pipelines->Pipelines
-![PipelinesCreated](.images/pipelines_menu.png)
+
+    ![PipelinesCreated](.images/pipelines_menu.png)
+
 * Pipelines->Environments
-![EnvironmentsCreated](.images/environments_menu.png)
+
+    ![EnvironmentsCreated](.images/environments_menu.png)
+
 * Pipelines->Library
-![LibraryCreated](.images/library_menu.png)
+
+    ![LibraryCreated](.images/library_menu.png)
 
 ## Run the Pipelines
 

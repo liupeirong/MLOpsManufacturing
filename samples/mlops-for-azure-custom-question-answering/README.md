@@ -119,3 +119,44 @@ bash cleanup.sh
 ```
 
 To cleanup Azure DevOps please [delete the project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/delete-project?view=azure-devops&tabs=browser) you created for this sample.
+
+# How does it work
+
+## Background
+
+While Custom Question Answering already has a two states for Knowledgebases namely `test` and `published` most organization demanding logical identical test environments next to a production environment.
+Some have even several test environments getting more and more similar to the production environment to do additional infrastructure related tests. So this means that we can not use a single Custom Question Answering service in these settings.
+
+## Conceptual Architecture and MLOps flow
+
+The below diagram shows the conceptual architecture and MLOps flow. Important to note is that a `Content Administrator` will only be allowed to modify Knowledgebases on the `Content Editing` (called `EDIT` in the scripts and pipelines) environment, which will also be used for testing/accuracy tests. This could be the QA/UAT/Testing environment in your organization, or an additional environment just for content editing.
+
+The service users will ask their questions against the endpoint in the `Content Serving` environment (called `PROD` in the scripts and pipelines). So as a result in the service in this environment the Active Feedback Suggestions will be gathered. But the `Content Administrators` can not see it. So we need to synchronize that data back to the `Content Editing` environment as well.
+
+One of our main goals is to automate the testing and deployment process for new or edited content on the `Content Editing` environment. This automation is encapsuled in the [Azure DevOps pipelines](#run-the-pipelines) mentioned earlier.
+
+![MLOpsFlow](.images/mlops_flow_overview.png)
+
+## Components for MLOps on Custom Question Answering
+
+We need following components/automated tasks for setting up our MLOps process for Custom Question Answering:
+
+1. Publish changes in Knowledgebases from `test` to `published` state
+1. Accuracy test using a test dataset
+1. Exporting Knowledgebases
+1. Store a set of current Knowledgebase state together with test data set and test results
+1. Importing Knowledgebases
+1. Merge Active Learning Suggestions into an existing Knowledgebase
+
+The components for 1./3./5. were developed in Python and leveraging the Custom Question Answering REST API. Also [these scripts](kb/scripts) only point to one Custom Question Answering service at a time, input and output are in the JSON format defined by Custom Question Answering service.
+This was done to be able to use them even when the environments are network isolated and can not be reached from within the same machine at once.
+
+The [merge logic for 6.](kb/scripts/merge-kb.py) was implemented by us since there was not tool around to do that.
+
+Component for 4. the archive/store for all history runs will be Azure Storage and we just leveraging the Azure CLI capabilities to upload and download the artifacts to and from there.
+
+For component 2. accuracy test we developed a [TypeScript based tool](accuracy_test) which also leverages the Custom Question Answering REST API and needs a simple [TSV input file](data/test_en.tsv) for the test data.
+
+## MLOps Pipelines
+
+The pipelines itself just orchestrating the execution of components mentioned before in the right order. What each pipeline does is explained [here](#run-the-pipelines).

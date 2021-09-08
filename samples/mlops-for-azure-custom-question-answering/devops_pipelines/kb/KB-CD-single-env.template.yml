@@ -1,0 +1,45 @@
+parameters:
+  - name: 'pool'
+    default: ''
+  - name: 'env'
+    default: ''
+  - name: 'lang'
+    default: ''
+  - name: 'kbfilename'
+    default: ''
+
+stages: 
+  - stage: deploy${{ parameters.env }}
+    dependsOn: artifactPrep
+    variables:
+      ARTIFACT_NAME: $[ stageDependencies.artifactPrep.artifactPrep.outputs['addConfig.ARTIFACT_NAME'] ]
+    displayName: 'KB Publish for ${{ parameters.lang }} to ${{ parameters.env }}'
+    jobs:
+    - deployment: replaceAndPublish
+      displayName: 'KB Replace and Publish to ${{ parameters.env }}'
+      pool:
+        vmImage: ${{ parameters.pool }}
+      environment: ${{ parameters.env }}
+      variables:
+      - group: QNA_${{ parameters.env }}_SETTINGS
+      strategy:
+        runOnce:  
+          deploy:
+            steps:
+            - checkout: self
+
+            # Prepare Python and retrieve Config Values
+            - template: ../python-job-prep.template.yml
+              parameters:
+                lang: ${{ parameters.lang }}
+
+            # Merge Active Learning Feedback, Replace and Publish KB
+            - script: |
+                python kb/scripts/publish-kb.py --input $(Pipeline.Workspace)/$(ARTIFACT_NAME)/${{ parameters.kbfilename }} --sync_feedback y --sync_timespan 7d
+              displayName: 'Sync & Publish KB'
+              workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+              env:
+                PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+                QNA_DEST_ENDPOINT: $(QNA_ENDPOINT_HOST)
+                QNA_DEST_SUB_KEY: $(QNA_ENDPOINT_KEY)
+                QNA_DEST_KB_ID: $(QNA_KB_ID)

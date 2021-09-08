@@ -1,0 +1,15 @@
+parameters:
+  - name: 'lang'
+    default: ''
+
+stages:
+  # From PROD -> EDIT
+  - template: AL-Merge-per-region.template.yml
+    parameters:
+
+      pool: 'windows-latest'
+
+      source_env: 'PROD' 
+      target_env: 'EDIT'
+
+      lang: ${{ parameters.lang }}

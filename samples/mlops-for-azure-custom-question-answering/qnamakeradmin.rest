@@ -1,0 +1,42 @@
+# Exchange endpoint and key for the environment to initialize
+
+@endpoint = {{$dotenv ENDPOINT_EDIT}} 
+@key = {{$dotenv KEY_EDIT}} 
+
+#@endpoint = {{$dotenv ENDPOINT_PROD}} 
+#@key = {{$dotenv KEY_PROD}} 
+
+# List all Knowledgebases
+GET {{endpoint}}/qnamaker/v5.0-preview.2/knowledgebases HTTP/1.1
+Ocp-Apim-Subscription-Key: {{key}}
+
+###
+
+
+# Create a new Knowledgebase
+# @name create
+POST {{endpoint}}/qnamaker/v5.0-preview.2/knowledgebases/create HTTP/1.1
+Ocp-Apim-Subscription-Key: {{key}}
+
+{
+  "name": "QnA Maker FAQ",
+  "qnaList": [
+    {
+      "id": 0,
+      "answer": "You can change the default message if you use the QnAMakerDialog. See this for details: https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle",
+      "source": "Custom Editorial",
+      "questions": [
+        "How can I change the default message from QnA Maker?"
+      ],
+      "metadata": []
+    }
+  ]
+}
+
+###
+
+@operationId = {{create.response.body.$.operationId}}
+
+# Get Operation Status
+GET {{endpoint}}/qnamaker/v5.0-preview.2/operations/{{operationId}} HTTP/1.1
+Ocp-Apim-Subscription-Key: {{key}}

@@ -1,0 +1,15 @@
+parameters:
+  - name: 'lang'
+    default: ''
+  - name: 'kbfilename'
+    default: ''
+
+
+stages:
+  # Deploy 
+  - template: KB-CD-single-env.template.yml
+    parameters:
+      pool: 'windows-latest'
+      env: 'PROD'
+      lang: ${{ parameters.lang }}
+      kbfilename: ${{ parameters.kbfilename }}

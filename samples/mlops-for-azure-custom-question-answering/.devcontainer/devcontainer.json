@@ -1,0 +1,53 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.187.0/containers/ubuntu
+{
+	"name": "Node.js & Python",
+	"build": {
+		"dockerfile": "Dockerfile",
+		// Update 'VARIANT' to pick an Ubuntu version: focal, bionic
+		"args": { "VARIANT": "14-buster" }
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"python.pythonPath": "/home/node/miniconda3/bin/python",
+		"python.languageServer": "Pylance",
+		"python.linting.enabled": true,
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
+		"python.formatting.blackPath": "/home/node/miniconda3/bin/black",
+		"python.linting.flake8Path": "/home/node/miniconda3/bin/flake8",
+	},
+
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"DavidAnson.vscode-markdownlint",
+		"njpwerner.autodocstring",
+		"streetsidesoftware.code-spell-checker",
+		"eamodio.gitlens",
+		"ms-vsliveshare.vsliveshare",
+		"ms-azuretools.vscode-bicep",
+		"humao.rest-client"
+	],
+
+	"remoteEnv": {
+		"PYTHONPATH": "${containerWorkspaceFolder}",
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash .devcontainer/postCreateCommands.sh",
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "node",
+
+	// Mounts .ssh folder regardless if you are using Windows or Linux/WSL
+	"mounts": [
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+	],
+}

@@ -1,0 +1,100 @@
+parameters:
+  - name: 'pool'
+    default: ''
+
+  - name: 'source_env'
+    default: ''
+  - name: 'target_env'
+    default: ''
+
+  - name: 'lang'
+    default: ''
+
+stages:
+  - stage: alMergeFrom${{ parameters.source_env }}
+    displayName: 'Active Learning Merge for ${{ parameters.lang }} from ${{ parameters.source_env }} to ${{ parameters.target_env }} '
+    jobs:
+    - job: alDownload
+      displayName: 'Download and Publish Active Learning from ${{ parameters.source_env }}'
+      pool:
+        vmImage: ${{ parameters.pool }}
+      variables:
+      - group: QNA_${{ parameters.source_env }}_SETTINGS
+      steps:
+
+      # Prepare Python and retrieve Config Values
+      - template: ../python-job-prep.template.yml
+        parameters:
+          lang: ${{ parameters.lang }}
+
+      # Additional configuration for uploadArtifact
+      - bash: |
+          LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
+          ARTIFACT_NAME="AL_${LANG_UPPER}_$(Build.BuildNumber)_${{ parameters.source_env }}"
+          echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
+        name: addConfig
+        displayName: 'Additional Configuration'
+
+      # Download KB from current Environment associated to 'pool'
+      - script: |
+          python kb/scripts/download-kb.py --output ${{ parameters.source_env }}.json --slot Test
+        displayName: 'Download KB'
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+        env:
+          PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+          QNA_SOURCE_ENDPOINT: $(QNA_ENDPOINT_HOST)
+          QNA_SOURCE_SUB_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_SOURCE_KB_ID: $(QNA_KB_ID)
+
+      # Create Azure DevOps Artifact
+      - publish: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering/${{ parameters.source_env }}.json
+        artifact: $(addConfig.ARTIFACT_NAME)
+
+    - job: alMerge
+      dependsOn: alDownload
+      displayName: 'Merge to ${{ parameters.target_env }}'
+      pool:
+        vmImage: ${{ parameters.pool }}
+      variables:
+      - group: QNA_${{ parameters.target_env }}_SETTINGS
+      - group: STORAGE_SETTINGS
+      steps:
+      # Download artifact
+      - download: current
+
+      # Additional configuration
+      - bash: |
+          LANG_UPPER=$(echo ${{ parameters.lang }} | tr [:lower:] [:upper:])
+          ARTIFACT_NAME="AL_${LANG_UPPER}_$(Build.BuildNumber)_${{ parameters.source_env }}"
+          echo "##vso[task.setvariable variable=ARTIFACT_NAME;isOutput=true]$ARTIFACT_NAME"
+          STORAGE_FOLDER_NAME="AL_${LANG_UPPER}_$(Build.BuildNumber)"
+          echo "##vso[task.setvariable variable=STORAGE_FOLDER_NAME;isOutput=true]$STORAGE_FOLDER_NAME"
+        name: addConfig
+        displayName: 'Additional Configuration'
+
+      # Prepare Python and retrieve Config Values
+      - template: ../python-job-prep.template.yml
+        parameters:
+          lang: ${{ parameters.lang }}
+      
+      # Merging Feedback from Target to Source
+      - script: |
+          python kb/scripts/merge-kb.py --input $(Pipeline.Workspace)/$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json
+        displayName: 'Merge Active Learning to ${{ parameters.target_env }}'
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+        env:
+          PYTHONPATH: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+          QNA_DEST_ENDPOINT: $(QNA_ENDPOINT_HOST)
+          QNA_DEST_SUB_KEY: $(QNA_ENDPOINT_KEY)
+          QNA_DEST_KB_ID: $(QNA_KB_ID)
+
+      # Upload KB to Storage
+      - bash: |
+          az storage blob upload --container-name mlops \
+                          --file ../../../$(addConfig.ARTIFACT_NAME)/${{ parameters.source_env }}.json \
+                          --name $(addConfig.STORAGE_FOLDER_NAME)/${{ parameters.source_env }}.json
+        displayName: 'Upload to Azure Storage on ${{ parameters.target_env }}'
+        workingDirectory: $(System.DefaultWorkingDirectory)/samples/mlops-for-azure-custom-question-answering
+        env:
+          AZURE_STORAGE_SAS_TOKEN: $(AZURE_STORAGE_SAS_TOKEN)
+          AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)

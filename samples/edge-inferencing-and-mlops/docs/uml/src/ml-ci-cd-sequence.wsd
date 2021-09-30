@@ -1,0 +1,55 @@
+@startuml ml-ci-cd-sequence
+hide footbox
+skinparam maxMessageSize 300
+skinparam ParticipantPadding 44
+skinparam BoxPadding 44
+skinparam SequenceBoxBorderColor #Gray
+
+title Sequence for Model orchestration
+
+actor Engineer as "Engineer/Data Scientist"
+box "Azure Devops" #White
+participant pip as "Pipeline Artifacts"
+participant ci as "PR/CI Pipeline"
+participant cd as "CD Pipeline"
+end box
+box "AML" #White
+participant amlP as "AML & AML Pipeline"
+end box
+database Mregistry as "Model Registry"
+database Cregistry as "Container Registry"
+
+Engineer -> ci : New PR in GitHub triggers PR pipeline
+ci --> ci: **PR**: Run code quality, unit and local model validation tests on pull request
+ci --> ci : **PR**: Pull request approved + code is merged into main branch, which automatically kicks off CI
+ci --> ci: **CI**: Run code quality, unit and local model validation tests on 'main' branch
+ci --> pip: **CI**: Package artifacts to be used
+ci -> cd: **CI**: Trigger CD once CI pipeline is completed
+cd --> pip: Download the artifacts from the triggered CI job
+cd -> amlP: <color red>Publish AML pipeline
+note left #orange
+currently, we do not have security access to allow publishing,
+so it is not implemented in the code base
+end note
+cd -> amlP: Run AML pipeline
+note right
+the sequences below all run on a different server agent (non-devops)
+end note
+amlP --> amlP: Run the model training and validation steps specified in our codebase
+note right
+Steps:
+Data preperation (choosing and cleaning data)
+Train model
+Training Validation
+Scoring + Scoring Validation
+Register Model
+end note
+...25-40 minutes later...
+amlP -> Mregistry: Register the model
+cd -> Mregistry: Get model information for model comparison
+note left
+If current model is best, tag current model in the registry and untag previous best model
+end note
+cd --> cd: Download current model + build the ML inferencing service container with the latest model
+cd -> Cregistry: Publish ML inferencing service container
+@enduml

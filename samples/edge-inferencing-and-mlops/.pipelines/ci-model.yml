@@ -1,0 +1,76 @@
+trigger:
+  branches:
+    include:
+      - refs/heads/main
+  paths:
+    include:
+      - model
+      - aml
+      - .pipelines/ci-model.yml
+      - .pipelines/variables/common.yml
+      - .pipelines/templates/template-ml-train-validation.yml
+      - .pipelines/templates/template-inferencing-service-ci.yml
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+  - template: variables/dev.yml
+  - name: pythonVersion
+    value: '3.8'
+  - name: artifactSourceFolder
+    value: '.'
+  - name: modelRegexIncludeFilter
+    value: 'model\/.*'
+  - name: modelWorkingDir
+    value: '$(Build.SourcesDirectory)/model'
+  - name: amlRegexIncludeFilter
+    value: 'aml\/.*'
+  - name: amlWorkingDir
+    value: '$(Build.SourcesDirectory)/aml'
+
+jobs:
+  - job: model_code_validation_job
+    displayName: 'Run model code validation tests'
+    steps:
+      - template: templates/template-model-validation.yml
+        parameters:
+          pythonVersion: $(pythonVersion)
+          regexIncludeFilter: $(modelRegexIncludeFilter)
+          workingDir: $(modelWorkingDir)
+
+  - job: aml_code_validation_job
+    displayName: 'Run AML code validation tests'
+    steps:
+      - template: templates/template-python-code-validation.yml
+        parameters:
+          pythonVersion: $(pythonVersion)
+          regexIncludeFilter: $(amlRegexIncludeFilter)
+          reportPrefix: 'aml'
+          workingDir: $(amlWorkingDir)
+
+  - job: ml_publish_artifacts_job
+    dependsOn:
+      - model_code_validation_job
+      - aml_code_validation_job
+    condition: succeeded()
+    displayName: 'Publish artifacts'
+    steps:
+      - task: CopyFiles@2
+        displayName: 'Collect Artifacts'
+        inputs:
+          Contents: |
+            aml/**
+            model/**
+            scripts/**
+            grpc_inferencing_service/service/**
+          TargetFolder: $(Build.ArtifactStagingDirectory)
+          SourceFolder: $(artifactSourceFolder)
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Artifacts'
+        inputs:
+          targetPath: $(Build.ArtifactStagingDirectory)
+          artifactName: $(modelName)

@@ -1,0 +1,20 @@
+__pycache__/
+
+# All nested proto files, but not the ones at the root
+**/protos/*.proto
+**/protos/*.py
+!**/protos/init.py
+!protos/**
+
+# Model files
+*.csv
+*.pkl
+
+# Test files
+*.xml
+
+venv/
+# Environment variables
+.env
+
+.DS_Store

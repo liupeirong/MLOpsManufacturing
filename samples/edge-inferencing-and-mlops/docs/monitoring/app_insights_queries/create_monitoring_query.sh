@@ -1,0 +1,2 @@
+# example command to create the alert. Update alert.parameters.json before calling
+az deployment group create --name AlertDeployment --resource-group <RESOURCE GROUP> --template-file model-monitor-alert.json --parameters alert.parameters.json

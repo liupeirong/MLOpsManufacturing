@@ -1,0 +1,79 @@
+trigger: none
+
+pr: none
+
+resources:
+  pipelines:
+    - pipeline: ci-model
+      source: '[CI] Model'
+      trigger:
+        branches:
+          include:
+            - refs/heads/main
+
+variables:
+  - template: ./variables/dev.yml
+  - group: dev_env_secrets
+  - name: mlModelArtifact
+    value: 'ml-model-files'
+  - name: runAmlModule
+    value: 'train_model'
+  - name: workingDirectoryScripts
+    value: '$(Build.SourcesDirectory)/scripts'
+  - name: workingDirectoryInferencing
+    value: '$(Build.SourcesDirectory)/grpc_inferencing_service/service'
+
+stages:
+  - stage: build
+    displayName: 'Download and Publish Artifacts'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    jobs:
+      - deployment: download_artifacts
+        environment: 'dev'
+        displayName: 'Download artifacts'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - bash: echo $(buildSource)
+                - download: ci-model
+                  artifact: $(modelName)
+                  displayName: 'Download model artifacts'
+
+                - publish: '$(Pipeline.Workspace)/ci-model/$(modelName)'
+                  artifact: $(modelName)
+                  displayName: 'Publish model artifacts'
+
+  - stage: dev
+    displayName: 'Dev - Model Training & Deployment'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    dependsOn: build
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'))
+    jobs:
+      - template: templates/template-ml-train-validation.yml
+        parameters:
+          buildSource: $(buildSource)
+          computeTargetName: $(computeTargetName)
+          containerRegistry: $(containerRegistry)
+          dataStorageAccountName: $(dataStorageAccountName)
+          dataStorageAccountKey: $(dataStorageAccountKey)
+          datastoreName: $(datastoreName)
+          datastoreContainerName: $(datastoreContainerName)
+          datastoreResourceGroupName: $(iotResourceGroupName)
+          environmentBaseImage: $(environmentBaseImage)
+          environmentName: $(environmentName)
+          environmentVersion: $(environmentVersion)
+          inferencingServiceImageRepository: $(inferencingServiceImageRepository)
+          mlModelArtifact: $(mlModelArtifact)
+          modelName: $(modelName)
+          runamlModule: $(runamlModule)
+          servicePrincipalId: $(servicePrincipalId)
+          servicePrincipalSecret: $(servicePrincipalSecret)
+          subscriptionId: $(subscriptionId)
+          tenantId: $(tenantId)
+          workingDirectoryInferencing: $(workingDirectoryInferencing)
+          workingDirectoryScripts: $(workingDirectoryScripts)
+          workspaceName: $(workspaceName)
+          workspaceResourceGroupName: $(mlResourceGroupName)

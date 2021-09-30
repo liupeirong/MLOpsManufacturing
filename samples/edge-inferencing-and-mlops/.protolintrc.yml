@@ -1,0 +1,8 @@
+lint:
+  rules:
+    # This set to false means all the rules will default to the official style guide
+    no_default: false
+
+    # If we want to add or remove specific rules and deviate from the official style guide we can do that here.
+    remove:
+      - MAX_LINE_LENGTH

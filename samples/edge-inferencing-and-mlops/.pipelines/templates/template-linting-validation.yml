@@ -1,0 +1,26 @@
+# Mega-Linter pipeline template
+
+parameters:
+  - name: flavorName
+    type: string
+  - name: regexIncludeFilter
+    type: string
+  - name: reportPrefix
+    type: string
+    default: 'code'
+
+steps:
+  # In order for this script to work, it must be run from a Microsoft hosted agent.
+  # It will not work from pool 'Default' or pool 'QA'
+  # The volume mount -v doesn't properly work and the .mega-linter.yml file isn't found and respected
+  - script: |
+      docker pull nvuillam/${{ parameters.flavorName }}
+      docker run -e FILTER_REGEX_INCLUDE='${{ parameters.regexIncludeFilter }}' -v $(System.DefaultWorkingDirectory):/tmp/lint nvuillam/${{ parameters.flavorName }}
+    displayName: 'Run Mega-Linter'
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Mega-Linter results as artifact'
+    inputs:
+      targetPath: '$(Pipeline.Workspace)/s/report'
+      artifact: '${{ parameters.reportPrefix }}_lintingReports'
+      publishLocation: 'pipeline'

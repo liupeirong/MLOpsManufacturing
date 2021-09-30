@@ -1,0 +1,24 @@
+# Configuration file for Mega-Linter
+# See all available variables at https://nvuillam.github.io/mega-linter/configuration/ and in linters documentation
+
+APPLY_FIXES: none
+DEFAULT_BRANCH: main
+SHOW_ELAPSED_TIME: true
+FORMATTERS_DISABLE_ERRORS: false    # Display all warnings as errors
+PRINT_ALPACA: false
+
+ENABLE_LINTERS:
+  - MARKDOWN_MARKDOWNLINT
+  - SPELL_CSPELL
+  - YAML_YAMLLINT
+  - PYTHON_FLAKE8
+  - PROTOBUF_PROTOLINT
+
+MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.jsonc
+PYTHON_FLAKE8_RULES_PATH: .flake8
+
+# Always ignore the auto-generated python proto files
+FILTER_REGEX_EXCLUDE: '(pb2_grpc|pb2)'
+
+# Don't spell check code files
+SPELL_CSPELL_FILTER_REGEX_INCLUDE: '(.md)'

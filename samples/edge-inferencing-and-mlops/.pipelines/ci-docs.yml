@@ -1,0 +1,13 @@
+trigger:
+  - main
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+steps:
+  - template: templates/template-linting-validation.yml
+    parameters:
+      flavorName: 'mega-linter-documentation:v4'
+      regexIncludeFilter: '.*\.(md|yml|yaml)'

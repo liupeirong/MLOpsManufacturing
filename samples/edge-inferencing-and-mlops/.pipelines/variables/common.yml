@@ -1,0 +1,32 @@
+---
+variables:
+
+  # General variables
+  tenantId: 'change-me'
+  subscriptionId: 'change-me'
+  resourceGroupLocation: 'westus2'
+
+  # Shared resources
+  containerRegistry: 'sharingacr'
+
+  # MLOps
+  inferencingServiceImageRepository: 'inferencing-service'
+
+  # Azure ML variables
+  workspaceName: sharing_aml
+  computeTargetName: sharingamlcompute
+  environmentName: 'AzureML-sklearn-0.24-ubuntu18.04-py37-cuda11-gpu'
+  environmentVersion: 2
+  environmentBaseImage: 'mcr.microsoft.com/azureml/sklearn-0.24.1-ubuntu18.04-py37-cpu-inference:latest'
+
+  # Azure ML data location & filtering
+  dataStorageAccountName: sharingsa
+  datastoreName: 'workspaceblobstore'
+  datastoreContainerName: 'azureml-blobstore-d4e67fb5-e284-4203-a982-7f70db952098'
+
+  # Model training variables
+  ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/main'), not(startsWith(variables['Build.SourceBranch'], 'refs/tags/release-'))) }}:
+    buildSource: 'testrun'
+  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/tags/release-')) }}:
+    buildSource: 'devops'
+  modelName: 'simple_classifier'

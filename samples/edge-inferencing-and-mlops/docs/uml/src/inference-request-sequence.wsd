@@ -1,0 +1,16 @@
+@startuml inference-request-sequence
+hide footbox
+
+actor Consumer as "API Consumer"
+participant gRPCServer as "gRPC Server"
+participant InferenceService
+participant EdgeModel
+
+Consumer -> gRPCServer : GetRecommendation(inference_request)
+gRPCServer -> InferenceService : GetRecommendation(inference_request)
+InferenceService -> EdgeModel : Inference(args)
+EdgeModel --> InferenceService : recommendation
+InferenceService --> gRPCServer : inference_response
+gRPCServer --> Consumer : inference_response
+
+@enduml

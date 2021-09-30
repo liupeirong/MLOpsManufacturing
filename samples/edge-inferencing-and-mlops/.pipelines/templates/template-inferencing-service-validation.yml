@@ -1,0 +1,31 @@
+# Template for the inferencing service CI pipeline validation
+
+parameters:
+  - name: workingDir
+    type: string
+
+steps:
+  - template: template-setup-protos.yml
+    parameters:
+      workingDirectory: ${{ parameters.workingDir }}
+
+  - template: template-python-code-validation.yml
+    parameters:
+      generateProtobufs: true
+      pythonVersion: '3.8'
+      regexIncludeFilter: 'grpc_inferencing_service\/service\/.*'
+      workingDir: ${{ parameters.workingDir }}
+
+  - script: |
+      export TEST_RESULT_DIRECTORY=$(Common.TestResultsDirectory)
+      docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+    displayName: Run integration tests
+    workingDirectory: ${{ parameters.workingDir }}
+
+  - task: PublishTestResults@2
+    displayName: 'Publish integration results'
+    inputs:
+      testResultsFiles: '**/test-integration-results.xml'
+      testRunTitle: 'Integration tests'
+      failTaskOnFailedTests: true
+      searchFolder: $(Common.TestResultsDirectory)

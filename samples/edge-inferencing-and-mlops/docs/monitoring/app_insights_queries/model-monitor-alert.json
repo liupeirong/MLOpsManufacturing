@@ -1,0 +1,112 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "scheduledqueryrules_name": {
+            "defaultValue": "Model Performance Degredation Automation",
+            "type": "String"
+        },
+        "resourceId": {
+            "type": "String"
+        },
+        "actionGroups_model_owners": {
+            "type": "String"
+        },
+        "alertDescription": {
+            "defaultValue": "This alert checks for a specified metric to be below a given value",
+            "type": "String",
+            "metadata": {
+                "description": "Description of alert"
+            }
+        },
+        "alertSeverity": {
+            "type": "int",
+            "defaultValue": 3,
+            "allowedValues": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ],
+            "metadata": {
+                "description": "Severity of alert {0,1,2,3,4}"
+            }
+        },
+        "isEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies whether the alert is enabled"
+            }
+        },
+        "alertQuery": {
+            "type": "string",
+            "metadata":{
+                "description": "The Kusto Query that identifies which metrics to set off an alert"
+            }
+        },
+        "windowSize": {
+            "type": "string",
+            "defaultValue": "P1D",
+            "metadata": {
+                "description": "Period of time used to monitor alert activity based on the threshold. Must be between one minute and one day. ISO 8601 duration format."
+            }
+        },
+        "evaluationFrequency": {
+            "type": "string",
+            "defaultValue": "P1D",
+            "metadata": {
+                "description": "how often the metric alert is evaluated represented in ISO 8601 duration format"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "microsoft.insights/scheduledqueryrules",
+            "apiVersion": "2021-02-01-preview",
+            "name": "[parameters('scheduledqueryrules_name')]",
+            "location": "westus",
+            "properties": {
+                "displayName": "[parameters('scheduledqueryrules_name')]",
+                "description": "[parameters('alertDescription')]",
+                "severity": "[parameters('alertSeverity')]",
+                "enabled": "[parameters('isEnabled')]",
+                "evaluationFrequency": "[parameters('evaluationFrequency')]",
+                "scopes": [
+                    "[parameters('resourceId')]"
+                ],
+                "windowSize": "[parameters('windowSize')]",
+                "criteria": {
+                    "allOf": [
+                        {
+                            "query": "[parameters('alertQuery')]",
+                            "timeAggregation": "Count",
+                            "dimensions": [
+                                {
+                                    "name": "line",
+                                    "operator": "Include",
+                                    "values": [
+                                        "*"
+                                    ]
+                                }
+                            ],
+                            "operator": "GreaterThanOrEqual",
+                            "threshold": 1,
+                            "failingPeriods": {
+                                "numberOfEvaluationPeriods": 1,
+                                "minFailingPeriodsToAlert": 1
+                            }
+                        }
+                    ]
+                },
+                "actions": {
+                    "actionGroups": [
+                        "[parameters('actionGroups_model_owners')]"
+                    ]
+                }
+            }
+        }
+    ]
+}

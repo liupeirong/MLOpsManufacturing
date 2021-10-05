@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "scheduledqueryrules_name": {
+            "value": "Regression Performance Degradation Automated"
+        },
+        "alertDescription": {
+            "value": "This alert checks for a specified metric to be below a given value"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "alertQuery": {
+            "value": "traces|\nwhere customDimensions has \"rmse\"\n| extend rmse = todynamic(tostring(customDimensions.rmse))\n| where rmse > 0.06"
+        },
+        "evaluationFrequency": {
+            "value": "PT1H"
+        },
+        "windowSize": {
+            "value": "PT24H"
+        }
+    }
+}

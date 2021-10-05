@@ -1,0 +1,14 @@
+# Template for setting up the certificate and protos
+
+parameters:
+  - name: workingDirectory
+    type: string
+
+steps:
+  - task: Bash@3
+    displayName: Copy proto files
+    inputs:
+      targetType: 'filePath'
+      filePath: ${{ parameters.workingDirectory }}/copy_files.sh
+      workingDirectory: ${{ parameters.workingDirectory }}
+      failOnStderr: true

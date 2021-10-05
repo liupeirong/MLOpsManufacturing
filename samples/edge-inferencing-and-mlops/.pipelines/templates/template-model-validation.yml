@@ -1,0 +1,42 @@
+# Model validation steps template
+
+parameters:
+  - name: dataWorkingDir
+    type: string
+    default: '$(Build.SourcesDirectory)/model/dataset'
+  - name: localBuildId
+    type: string
+    default: '0'
+  - name: localBuildSource
+    type: string
+    default: 'devops-test'
+  - name: modelName
+    type: string
+    default: 'simple_classifier'
+  - name: modelWorkingDir
+    type: string
+    default: '$(Build.SourcesDirectory)/model/output_model'
+  - name: pythonVersion
+    type: string
+  - name: regexIncludeFilter
+    type: string
+  - name: workingDir
+    type: string
+
+
+steps:
+  - template: template-python-code-validation.yml
+    parameters:
+      pythonVersion: ${{ parameters.pythonVersion }}
+      regexIncludeFilter: ${{ parameters.regexIncludeFilter }}
+      reportPrefix: 'model'
+      workingDir: ${{ parameters.workingDir }}
+
+  - script: |
+      python -m create_dataset --output-folder ${{ parameters.dataWorkingDir }}  && \
+      python -m main --data-folder ${{ parameters.dataWorkingDir }} --output-folder ${{ parameters.modelWorkingDir }} && \
+      python -m register_model --data-folder ${{ parameters.modelWorkingDir }} --model-name ${{ parameters.modelName }} \
+      --build-id ${{ parameters.localBuildId }} --build-source ${{ parameters.localBuildSource }}
+    displayName: 'Run local model validation tests'
+    workingDirectory: ${{ parameters.workingDir }}
+    failOnStderr: true

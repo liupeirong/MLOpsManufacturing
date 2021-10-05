@@ -1,0 +1,101 @@
+parameters:
+  - name: artifactName
+    type: string
+  - name: containerRegistry
+    type: string
+  - name: dependsOn
+    type: string
+    default: 'None'
+  - name: inferencingServiceImageRepository
+    type: string
+  - name: modelName
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: servicePrincipalId
+    type: string
+  - name: servicePrincipalSecret
+    type: string
+  - name: source
+    type: string
+  - name: tenantId
+    type: string
+  - name: trainedModelDir
+    type: string
+    default: trained_model
+  - name: workingDirectoryInferencing
+    type: string
+  - name: workingDirectoryScripts
+    type: string
+  - name: workspaceName
+    type: string
+
+jobs:
+  - job: inferencing_service_ci_download
+    displayName: 'Download ML model'
+    ${{ if ne(parameters.dependsOn, 'None') }}:
+      dependsOn:
+        - ${{ parameters.dependsOn }}
+      condition: succeeded()
+    steps:
+      - template: template-download-ml-model.yml
+        parameters:
+          artifactName: ${{ parameters.artifactName }}
+          modelName: ${{ parameters.modelName }}
+          resourceGroupName: ${{ parameters.resourceGroupName }}
+          servicePrincipalId: ${{ parameters.servicePrincipalId }}
+          servicePrincipalSecret: ${{ parameters.servicePrincipalSecret }}
+          source: ${{ parameters.source }}
+          tenantId: ${{ parameters.tenantId }}
+          trainedModelDir: ${{ parameters.trainedModelDir }}
+          workingDir: ${{ parameters.workingDirectoryScripts }}
+          workspaceName: ${{ parameters.workspaceName }}
+
+  - job: inferencing_service_ci_validation
+    displayName: 'Validate inferencing service'
+    dependsOn:
+      - inferencing_service_ci_download
+    steps:
+      - ${{ if ne(parameters.dependsOn, 'None') }}:
+          - download: current
+            artifact: ${{ parameters.modelName }}
+            displayName: 'Download artifacts'
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download model into lib'
+        inputs:
+          artifact: ${{ parameters.artifactName }}
+          path: ${{ parameters.workingDirectoryInferencing }}/lib
+
+      - template: template-inferencing-service-validation.yml
+        parameters:
+          workingDir: ${{ parameters.workingDirectoryInferencing }}
+
+  - job: inferencing_service_ci_publish
+    displayName: 'Build and publish inferencing service'
+    dependsOn:
+      - inferencing_service_ci_validation
+    steps:
+      - ${{ if ne(parameters.dependsOn, 'None') }}:
+          - download: current
+            artifact: ${{ parameters.modelName }}
+            displayName: 'Download artifacts'
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download model into lib'
+        inputs:
+          artifact: ${{ parameters.artifactName }}
+          path: ${{ parameters.workingDirectoryInferencing }}/lib
+
+      - template: template-setup-protos.yml
+        parameters:
+          workingDirectory: ${{ parameters.workingDirectoryInferencing }}
+
+      - template: template-docker-build-and-push.yml
+        parameters:
+          containerRegistry: ${{ parameters.containerRegistry }}
+          dockerFilePath: "Dockerfile"
+          imageRepository: ${{ parameters.inferencingServiceImageRepository }}
+          servicePrincipalId: ${{ parameters.servicePrincipalId }}
+          servicePrincipalSecret: ${{ parameters.servicePrincipalSecret }}
+          tenantId: ${{ parameters.tenantId }}
+          workingDirectory: ${{ parameters.workingDirectoryInferencing }}

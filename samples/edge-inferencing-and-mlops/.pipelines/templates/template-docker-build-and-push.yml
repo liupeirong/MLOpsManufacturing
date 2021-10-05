@@ -1,0 +1,43 @@
+# Template for building and pushing a container image
+
+parameters:
+  - name: containerRegistry
+    type: string
+  - name: dockerFilePath
+    type: string
+  - name: imageRepository
+    type: string
+  - name: servicePrincipalId
+    type: string
+  - name: servicePrincipalSecret
+    type: string
+  - name: tenantId
+    type: string
+  - name: workingDirectory
+    type: string
+
+steps:
+  - bash: |
+      echo "Login using service principal ${{ parameters.servicePrincipalId }}"
+      az login --service-principal -u ${{ parameters.servicePrincipalId }} -p=$SP_SECRET --tenant ${{ parameters.tenantId }}
+      az acr login --name ${{ parameters.containerRegistry }}
+
+      containerTag=$(Build.BuildId)
+
+      if [ "$(buildSource)" != "devops" ]; then
+        containerTag+="-testrun"
+      fi
+
+      echo "-----------------------"
+      echo "Using $containerTag"
+      echo "-----------------------"
+
+      imageName=${{ parameters.containerRegistry }}.azurecr.io/${{ parameters.imageRepository }}:$containerTag
+
+      echo "Build and push $imageName"
+      docker build -f ${{ parameters.dockerFilePath }} -t $imageName .
+      docker push $imageName
+    displayName: Build and publish docker image
+    workingDirectory: ${{ parameters.workingDirectory }}
+    env:
+      SP_SECRET: ${{ parameters.servicePrincipalSecret }}

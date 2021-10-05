@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package protos.inference.grpc;
+
+// protolint:disable FIELD_NAMES_LOWER_SNAKE_CASE
+
+message InferenceRequest {
+  double x1 = 1;
+  double x2 = 2;
+}
+
+message InferenceResponse {
+  int32 prediction = 1;
+  repeated string warnings = 2;
+  repeated string errors = 3;
+}
+
+service Inference {
+  rpc GetRecommendation (InferenceRequest) returns (InferenceResponse) {}
+}

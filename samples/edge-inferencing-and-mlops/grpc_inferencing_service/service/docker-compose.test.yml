@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  inferencing_service:
+    image: inferencing_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 50039:50039
+      - 50051:50051
+    networks:
+      - vnet
+    healthcheck:
+      test: "exit 0"
+
+  integration_test:
+    image: integration_test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      GRPC_SERVER_HOST: inferencing_service
+    volumes:
+      - ${TEST_RESULT_DIRECTORY}:/service/results/
+    depends_on:
+      inferencing_service:
+        condition: service_healthy
+    networks:
+      - vnet
+    healthcheck:
+      test: "exit 0"
+
+networks:
+  vnet:

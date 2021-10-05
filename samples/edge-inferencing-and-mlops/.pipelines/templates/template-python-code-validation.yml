@@ -1,0 +1,57 @@
+# Python validation steps template
+
+parameters:
+  - name: generateProtobufs
+    type: boolean
+    default: false
+  - name: pythonVersion
+    type: string
+  - name: regexIncludeFilter
+    type: string
+  - name: reportPrefix
+    type: string
+    default: 'test'
+  - name: workingDir
+    type: string
+
+steps:
+  - template: template-linting-validation.yml
+    parameters:
+      flavorName: 'mega-linter-python:v4'
+      regexIncludeFilter: ${{ parameters.regexIncludeFilter }}
+      reportPrefix: ${{ parameters.reportPrefix }}
+
+  - template: template-python-env-setup.yml
+    parameters:
+      pythonVersion: ${{ parameters.pythonVersion }}
+      workingDir: ${{ parameters.workingDir }}
+
+  - script: |
+      python  -m grpc_tools.protoc -I protos protos/*.proto --grpc_python_out=protos --python_out=protos
+    displayName: 'Generate protobufs'
+    workingDirectory: ${{ parameters.workingDir }}
+    condition: and(succeeded(), eq('${{ parameters.generateProtobufs }}', true))
+
+  - script: |
+      python -m pytest \
+      --without-integration \
+      --junitxml=$(Common.TestResultsDirectory)/${{ parameters.reportPrefix }}_unittest-results.xml \
+      --cov=. \
+      --cov-report=xml:$(Common.TestResultsDirectory)/${{ parameters.reportPrefix }}_coverage.xml .
+    displayName: 'Run unit tests'
+    workingDirectory: ${{ parameters.workingDir }}
+
+  - task: PublishTestResults@2
+    displayName: 'Publish unit test results'
+    inputs:
+      testResultsFiles: '**/*_unittest-results.xml'
+      testRunTitle: 'Unit tests'
+      failTaskOnFailedTests: true
+      searchFolder: $(Common.TestResultsDirectory)
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage results'
+    inputs:
+      codeCoverageTool: cobertura
+      pathToSources: ${{ parameters.workingDir }}
+      summaryFileLocation: '$(Common.TestResultsDirectory)/**/*_coverage.xml'

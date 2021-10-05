@@ -1,0 +1,55 @@
+@startuml ml-drift
+hide footbox
+skinparam maxMessageSize 300
+skinparam ParticipantPadding 44
+skinparam BoxPadding 44
+skinparam SequenceBoxBorderColor #Gray
+
+title Sequence for using the data drift monitor
+
+actor usr as "Engineer/Data Scientist"
+participant scpo as "Script or Portal"
+participant aml as "Azure ML"
+
+usr -> scpo : Manually run a script or do this in the portal
+scpo -> aml: Clean up column names
+alt If you don't have data in the cloud
+    scpo -> aml: Upload your own data
+end
+scpo -> aml : Create + register the **target dataset** (can point to any folder structure in blob)
+scpo -> aml : Create + register the **baseline dataset**
+
+note right
+this can point to any folder structure in blob
+or it can be created based on the target dataset
+end note
+
+alt If you don't have a compute target already
+    scpo -> aml: Create and set a **compute target**
+end
+
+scpo -> aml: Create a **drift monitor** w/ the two datasets & compute target
+
+note left
+when creating the monitor, you can set it to run once
+or on a daily, weekly, or monthly schedule
+end note
+
+scpo -> aml: Update **feature list**
+
+note right
+you can choose which specific features to include or exclude for drfit analysis (during or after monitor creation);
+
+**e.g.** you might want to exlclude features that naturally drift over time
+end note
+
+scpo -> aml: Run the monitor (once or kick off the schedule)
+
+usr -> aml: View results in the portal by going to the dataset monitor (preview) tab
+
+note left
+you can also run python code to display the results in the console
+end note
+
+aml --> usr: If drift % is over a specified threshold, send an email or other form of notification to the user
+@enduml

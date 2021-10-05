@@ -27,6 +27,7 @@ principles which are covered
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./wrapping-existing-ml-scripts-tutorial)|compatible (not implemented)|prerequisite|compatible|compatible (not implemented)|
 |[MLOps for Azure Custom Question Answering](./mlops-for-azure-custom-question-answering)|not compatible|IaC script provided|not compatible|not compatible|
+|[Edge Inferencing and MLOps](./edge-inferencing-and-mlops)|compatible (not implemented)|prerequisite|compatible|compatible|
 
 ## Relation to MLOps / DevOps for Data Science
 
@@ -40,6 +41,7 @@ principles which are covered
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./wrapping-existing-ml-scripts-tutorial)|:x:|:x:|:heavy_check_mark:|:heavy_check_mark:|
 |[MLOps for Azure Custom Question Answering](./mlops-for-azure-custom-question-answering)|:heavy_check_mark:|:x:|:x:|:x:|
+|[Edge Inferencing and MLOps](./edge-inferencing-and-mlops)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
 ## Relation to Azure Well Architected Framework Principals
 
@@ -54,3 +56,4 @@ principles which are covered
 |[Parallel Data Preprocessing in AML Pipelines](./parallel-processing-california-housing-data)|Pay for consumption|Monitor the system (planned)|Monitor and optimize (planned)|||
 |[Wrapping existing ML scripts for AML Pipelines Tutorial](./wrapping-existing-ml-scripts-tutorial)|Pay for consumption|||||
 |[MLOps for Azure Custom Question Answering](./mlops-for-azure-custom-question-answering)|Pay for consumption|Fully automated infrastructure provisioning and code deployment||||
+|[Edge Inferencing and MLOps](./edge-inferencing-and-mlops)|Pay for consumption|||||

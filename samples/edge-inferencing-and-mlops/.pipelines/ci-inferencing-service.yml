@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - refs/heads/main
+  paths:
+    include:
+      - grpc_inferencing_service
+      - protos
+      - .pipelines/ci-inferencing-service.yml
+      - .pipelines/templates/template-inferencing-service-ci.yml
+
+pr: none
+
+variables:
+  - template: ./variables/dev.yml
+  - group: dev_env_secrets
+  - name: workingDirectoryScripts
+    value: '$(Build.SourcesDirectory)/scripts'
+  - name: workingDirectoryInferencing
+    value: '$(Build.SourcesDirectory)/grpc_inferencing_service/service'
+  - name: mlModelArtifact
+    value: 'ml-model-files'
+
+stages:
+  - stage: dev
+    displayName: 'Dev Environment CI'
+    jobs:
+      - template: ./templates/template-inferencing-service-ci.yml
+        parameters:
+          artifactName: $(mlModelArtifact)
+          containerRegistry: $(containerRegistry)
+          inferencingServiceImageRepository: $(inferencingServiceImageRepository)
+          modelName: $(modelName)
+          resourceGroupName: $(mlResourceGroupName)
+          servicePrincipalId: $(servicePrincipalId)
+          servicePrincipalSecret: $(servicePrincipalSecret)
+          source: $(buildSource)
+          tenantId: $(tenantId)
+          workingDirectoryScripts: $(workingDirectoryScripts)
+          workingDirectoryInferencing: $(workingDirectoryInferencing)
+          workspaceName: $(workspaceName)

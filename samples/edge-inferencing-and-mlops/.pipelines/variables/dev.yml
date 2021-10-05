@@ -1,0 +1,18 @@
+# Dev environmnet variables
+
+variables:
+
+  - name: environment
+    value: 'dev'
+
+  - name: poolName
+    value: 'Default'
+
+  - name: mlResourceGroupName
+    value: 'change-me'
+
+  - name: servicePrincipalId
+    value: 'change-me'
+
+  # Import common variables template
+  - template: common.yml

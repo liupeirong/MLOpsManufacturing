@@ -1,0 +1,42 @@
+trigger: none
+
+# This will not cause triggers in Azure Repos git, for that you need a branch policy
+# But it will trigger for other source code repos, like GitHub
+pr:
+  paths:
+    include:
+      - grpc_inferencing_service
+      - protos
+      - .pipelines/pr-inferencing-service.yml
+      - .pipelines/templates/template-python-code-validation.yml
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+variables:
+  - name: pythonVersion
+    value: '3.8'
+  - name: inferencingWorkingDir
+    value: '$(Build.SourcesDirectory)/grpc_inferencing_service/service'
+
+steps:
+  - task: Bash@3
+    displayName: Copy proto files
+    inputs:
+      targetType: 'filePath'
+      filePath: $(inferencingWorkingDir)/copy_files.sh
+      workingDirectory: $(inferencingWorkingDir)
+      failOnStderr: true
+
+  - template: templates/template-python-code-validation.yml
+    parameters:
+      generateProtobufs: true
+      pythonVersion: $(pythonVersion)
+      regexIncludeFilter: 'grpc_inferencing_service\/.*'
+      workingDir: $(inferencingWorkingDir)
+
+  - task: Docker@2
+    displayName: Build container
+    inputs:
+      command: 'build'
+      Dockerfile: '$(inferencingWorkingDir)/Dockerfile'

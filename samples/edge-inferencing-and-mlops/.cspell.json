@@ -1,0 +1,56 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "ignorePaths": [
+        ".github",
+        "**/.git/**",
+        ".vscode",
+        ".pipelines",
+        ".mega-linter.yml",
+        ".markdownlintrc",
+        "node_modules",
+        "venv",
+        ".cspell.json"
+    ],
+  "words": [
+    "azureml",
+    "azuremlci",
+    "cicd",
+    "datadrift",
+    "dataloader",
+    "datasetpy",
+    "grpc",
+    "iiot",
+    "inferencing",
+    "ipynb",
+    "Kubernetes",
+    "mainpy",
+    "markdownlint",
+    "modelpy",
+    "mlops",
+    "nvuillam",
+    "operationalization",
+    "operationalize",
+    "operationalized",
+    "productionalized",
+    "proto",
+    "protos",
+    "pyenv",
+    "pytest",
+    "rmse",
+    "venv",
+    "virtualenv",
+    "workstream",
+    "workstreams"
+  ],
+    "languageSettings": [
+        {
+            // use with Markdown files
+            "languageId": "markdown",
+            // Exclude code.
+            "ignoreRegExpList": [
+                "/^\\s*```[\\s\\S]*?^\\s*```/gm"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,105 @@
+# ML train and validation template
+
+parameters:
+  - name: buildSource
+    type: string
+  - name: computeTargetName
+    type: string
+  - name: containerRegistry
+    type: string
+  - name: dataStorageAccountName
+    type: string
+  - name: dataStorageAccountKey
+    type: string
+  - name: datastoreName
+    type: string
+  - name: datastoreContainerName
+    type: string
+  - name: datastoreResourceGroupName
+    type: string
+  - name: environmentBaseImage
+    type: string
+  - name: environmentName
+    type: string
+  - name: environmentVersion
+    type: string
+  - name: inferencingServiceImageRepository
+    type: string
+  - name: mlModelArtifact
+    type: string
+  - name: modelName
+    type: string
+  - name: runamlModule
+    type: string
+  - name: servicePrincipalId
+    type: string
+  - name: servicePrincipalSecret
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: tenantId
+    type: string
+  - name: workingDirectoryInferencing
+    type: string
+  - name: workingDirectoryScripts
+    type: string
+  - name: workspaceName
+    type: string
+  - name: workspaceResourceGroupName
+    type: string
+
+jobs:
+  - job: run_aml_experiment_job
+    displayName: 'Run AML Experiment'
+    steps:
+      - download: current
+        artifact: ${{ parameters.modelName }}
+        displayName: 'Download artifacts'
+
+      - script: |
+          python3.8 -m pip install --upgrade pip setuptools wheel
+        displayName: 'Install tools'
+
+      - script: |
+          python3.8 -m pip install -r requirements.txt
+        displayName: 'Install requirements'
+        workingDirectory: '$(Pipeline.Workspace)/${{ parameters.modelName }}/aml'
+
+      - script: |
+          python3.8 -m ${{ parameters.runamlModule }}
+        name: run_aml_experiment
+        displayName: 'Run Azure ML experiment'
+        workingDirectory: '$(Pipeline.Workspace)/${{ parameters.modelName }}/aml'
+        env:
+          SUBSCRIPTION_ID: ${{ parameters.subscriptionId }}
+          WORKSPACE_RESOURCE_GROUP: ${{ parameters.workspaceResourceGroupName }}
+          DATASTORE_RESOURCE_GROUP: ${{ parameters.datastoreResourceGroupName }}
+          AAD_TENANT_ID: ${{ parameters.tenantId }}
+          AAD_SERVICE_PRINCIPAL_ID: ${{ parameters.servicePrincipalId }}
+          AAD_SERVICE_PRINCIPAL_SECRET: ${{ parameters.servicePrincipalSecret }}
+          WORKSPACE_NAME: ${{ parameters.workspaceName }}
+          COMPUTE_TARGET_NAME: ${{ parameters.computeTargetName }}
+          DATASTORE_NAME: ${{ parameters.datastoreName }}
+          DATASTORE_CONTAINER_NAME: ${{ parameters.datastoreContainerName }}
+          ENVIRONMENT_NAME: ${{ parameters.environmentName }}
+          ENVIRONMENT_VERSION: ${{ parameters.environmentVersion }}
+          ENVIRONMENT_BASE_IMAGE: ${{ parameters.environmentBaseImage }}
+          DATA_STORAGE_ACCOUNT_NAME: ${{ parameters.dataStorageAccountName }}
+          DATA_STORAGE_ACCOUNT_KEY: ${{ parameters.dataStorageAccountKey }}
+          MODEL_NAME: ${{ parameters.modelName }}
+
+  - template: template-inferencing-service-ci.yml
+    parameters:
+      artifactName: ${{ parameters.mlModelArtifact }}
+      containerRegistry: ${{ parameters.containerRegistry }}
+      dependsOn: run_aml_experiment_job
+      inferencingServiceImageRepository: ${{ parameters.inferencingServiceImageRepository }}
+      modelName: ${{ parameters.modelName }}
+      resourceGroupName: ${{ parameters.workspaceResourceGroupName }}
+      servicePrincipalId: ${{ parameters.servicePrincipalId }}
+      servicePrincipalSecret: ${{ parameters.servicePrincipalSecret }}
+      source: ${{ parameters.buildSource }}
+      tenantId: ${{ parameters.tenantId }}
+      workingDirectoryScripts: ${{ parameters.workingDirectoryScripts }}
+      workingDirectoryInferencing: ${{ parameters.workingDirectoryInferencing }}
+      workspaceName: ${{ parameters.workspaceName }}

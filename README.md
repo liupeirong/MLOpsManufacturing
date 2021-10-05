@@ -24,7 +24,7 @@ ML pipelines run in the Azure environment deployed using the Azure DevOps pipeli
 ├─ common # contains tools and code cross-cutting samples
 │
 ├─ docs # how-tos and best practices
-│ 
+│
 ├─ samples # each sample may have different folders, below is a typical example
 │    ├─ <sample 1>
 │    │    ├─ .devcontainer # VSCode dev container you can optionally use for development

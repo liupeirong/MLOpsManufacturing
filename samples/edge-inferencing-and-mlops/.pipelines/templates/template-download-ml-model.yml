@@ -1,0 +1,57 @@
+parameters:
+  - name: artifactName
+    type: string
+  - name: modelName
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: servicePrincipalId
+    type: string
+  - name: servicePrincipalSecret
+    type: string
+  - name: source
+    type: string
+  - name: tenantId
+    type: string
+  - name: trainedModelDir
+    type: string
+    default: trained_model
+  - name: workingDir
+    type: string
+  - name: workspaceName
+    type: string
+
+steps:
+  - bash: |
+      echo "Login using service principal ${{ parameters.servicePrincipalId }}"
+      az login --service-principal -u ${{ parameters.servicePrincipalId }} -p=$SP_SECRET --tenant ${{ parameters.tenantId }}
+
+      mkdir -p ${{ parameters.trainedModelDir }}
+
+      source get_model_details.sh \
+        modelName=${{ parameters.modelName }} \
+        resourceGroupName=${{ parameters.resourceGroupName }} \
+        workspaceName=${{ parameters.workspaceName }} \
+        source=${{ parameters.source }}
+
+      model_id=$(echo $modelDetails | jq -r .id)
+
+      echo Model Id found: $model_id
+
+      echo "##vso[task.setvariable variable=modelId]$model_id"
+
+      az ml model download --model-id $model_id \
+        --target-dir ${{ parameters.trainedModelDir }} \
+        --resource-group ${{ parameters.resourceGroupName }} \
+        --workspace-name ${{ parameters.workspaceName }} \
+        --overwrite
+
+      echo Here are the downloaded model files in ${{ parameters.trainedModelDir }}/${{ parameters.modelName }}
+      ls -a ${{ parameters.trainedModelDir }}/${{ parameters.modelName }}
+    workingDirectory: ${{ parameters.workingDir }}
+    displayName: 'Download Azure ML model'
+    env:
+      SP_SECRET: ${{ parameters.servicePrincipalSecret }}
+
+  - publish: ${{ parameters.workingDir }}/${{ parameters.trainedModelDir }}/${{ parameters.modelName }}
+    artifact: ${{ parameters.artifactName }}

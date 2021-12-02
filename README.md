@@ -1,3 +1,5 @@
+# THIS REPO HAS BEEN MOVED TO https://github.com/Azure-Samples/MLOpsManufacturing.
+
 # Overview
 
 This repo contains samples of machine learning (ML) projects we have often seen in the industry.
